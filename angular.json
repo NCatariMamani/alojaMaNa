@@ -60,6 +60,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
               "src/scss/bootstrap.scss",
               "src/scss/app.scss",
               "src/scss/icons.scss",
@@ -140,6 +141,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
               "src/styles.scss"
             ],
             "scripts": []

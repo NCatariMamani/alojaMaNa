@@ -12,25 +12,25 @@
 
 .toast-success {
   background-color: white;
-  background-image: url('./assets/images/toastr-icons/success.png');
+  //background-image: url('./assets/images/toastr-icons/success.png');
   background-size: 100%;
 }
 
 .toast-error {
   background-color: white;
-  background-image: url('./assets/images/toastr-icons/error.png');
+  //background-image: url('./assets/images/toastr-icons/error.png');
   background-size: 100%;
 }
 
 .toast-info {
   background-color: white;
-  background-image: url('./assets/images/toastr-icons/info.png');
+  //background-image: url('./assets/images/toastr-icons/info.png');
   background-size: 100%;
 }
 
 .toast-warning {
   background-color: white;
-  background-image: url('./assets/images/toastr-icons/warning.png');
+  //background-image: url('./assets/images/toastr-icons/warning.png');
   background-size: 100%;
 }
 
@@ -172,7 +172,7 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.2);
-  background-image: url('./assets/images/loader-button.gif');
+  //background-image: url('./assets/images/loader-button.gif');
   vertical-align: -50% !important;
   background-position: center;
   background-repeat: no-repeat;
@@ -557,7 +557,7 @@ ng-scrollbar.table-scrollbar {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('./assets/images/loader-button.gif');
+  //background-image: url('./assets/images/loader-button.gif');
   background-position: center;
   background-repeat: no-repeat;
   background-size: 100px 100px;
@@ -936,3 +936,6 @@ div:where(.swal2-container).swal2-bottom {
   position: fixed !important;
 }
 
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,15 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HomeComponent } from './admin/home/home.component';
-
+import {MatSidenavModule} from '@angular/material/sidenav';
+import { PagesRoutingModule } from './pages-routing.module';
 
 
 @NgModule({
   declarations: [
-    HomeComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MatSidenavModule,
+    PagesRoutingModule
   ]
 })
 export class PagesModule { }
