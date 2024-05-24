@@ -51,11 +51,12 @@ export const TABLE_SETTINGS: TableSettings = {
 
 @Component({
     template: '',
-  })
+})
 
 export abstract class BasePage
     extends ClassWidthAlert
     implements OnDestroy, AfterViewInit {
+    loading: boolean = false;
     $unSubscribe = new Subject<void>();
     settings = { ...TABLE_SETTINGS };
 
