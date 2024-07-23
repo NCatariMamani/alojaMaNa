@@ -8,18 +8,32 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
 import { FullModule } from './layouts/full/full.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { ContentComponent } from './layouts/content/content.component';
+import { LoadingComponent } from './shared/components/loading/loading.component';
 
+export function tokenGetter() {
+  return localStorage.getItem('token');
+}
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ContentComponent,
+    LoadingComponent
   ],
   imports: [
     BrowserModule,
     FullModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatSidenavModule
+    MatSidenavModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ['localhost:3000'],
+        disallowedRoutes: [],
+      },
+    }),
   ],
   providers: [
     JwtInterceptor,

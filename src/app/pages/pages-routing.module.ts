@@ -12,7 +12,7 @@ const routes: Routes = [
     path: 'catalogs',
     loadChildren: async () =>
       (await import('./catalogs/catalogs.module')).CatalogsModule,
-    //data: { title: 'catalogos' },
+    data: { title: 'catalogos' },
   },
 ];
 

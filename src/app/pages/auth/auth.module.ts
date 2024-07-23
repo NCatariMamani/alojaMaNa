@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthRoutingModule } from './auth-routing.module';
 import {MatCardModule} from '@angular/material/card';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import {MatCardModule} from '@angular/material/card';
     CommonModule,
     ReactiveFormsModule,
     AuthRoutingModule,
-    MatCardModule
+    MatCardModule,
+    SharedModule
   ]
 })
 export class AuthModule { }

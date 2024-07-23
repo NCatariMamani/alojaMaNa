@@ -72,7 +72,8 @@ export const customCurrencyMaskConfig = {
     FormFieldComponent,
     ConfirmButtonComponent,
     ReactiveFormsModule
-  ]
+  ],
+  providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })
 export class SharedModule {
   constructor(private localeService: BsLocaleService) {
