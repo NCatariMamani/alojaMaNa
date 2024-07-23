@@ -18,6 +18,9 @@ import { defineLocale } from 'ngx-bootstrap/chronos';
 import { CustomDatepickerEs } from './utils/CustomDatepickerEs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { ModalComponent } from './components/modal/modal.component';
+import { FormFieldComponent } from './components/form-field/form-field.component';
+import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
 
 export const customCurrencyMaskConfig = {
   align: 'right',
@@ -37,6 +40,9 @@ export const customCurrencyMaskConfig = {
     ColumnsSelectComponent,
     PaginationComponent,
     PaginateComponent,
+    ModalComponent,
+    FormFieldComponent,
+    ConfirmButtonComponent
   ],
   imports: [
     CommonModule,
@@ -61,8 +67,13 @@ export const customCurrencyMaskConfig = {
     NgScrollbarModule,
     BsDatepickerModule,
     FormsModule,
-    NgSelectModule
-  ]
+    NgSelectModule,
+    ModalComponent,
+    FormFieldComponent,
+    ConfirmButtonComponent,
+    ReactiveFormsModule
+  ],
+  providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })
 export class SharedModule {
   constructor(private localeService: BsLocaleService) {
