@@ -20,16 +20,16 @@
                     <div class="row p-2">
                       <form-field
                         [showRequiredMark]="false"
-                        [control]="loginForm.get('username')"
+                        [control]="loginForm.get('email')"
                         label="Usuario">
                         <input
                           type="text"
                           class="form-control input-wrapper"
-                          formControlName="username" />
+                          formControlName="email" />
                         <svg
                           [ngClass]="{
-                            claseUser1: loginForm.get('username')?.invalid,
-                            claseUser2: loginForm.get('username')?.valid,
+                            claseUser1: loginForm.get('email')?.invalid,
+                            claseUser2: loginForm.get('email')?.valid,
                             'input-icon': deleteClass
                           }"
                           xmlns="http://www.w3.org/2000/svg"

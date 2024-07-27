@@ -7,13 +7,24 @@ import { TopbarComponent } from './topbar/topbar.component';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { MenuDynamicComponent } from './sidebar/menu-dynamic/menu-dynamic.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { PopoverModule } from 'ngx-bootstrap/popover';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule,
     MatSidenavModule,
-    ProgressbarModule
+    ProgressbarModule,
+    BrowserAnimationsModule,
+    NgScrollbarModule,
+    BsDropdownModule,
+    RouterModule,
+    TooltipModule.forRoot(),
+    PopoverModule
   ],
   declarations: [FullComponent,
     TopbarComponent,
