@@ -54,7 +54,9 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
       }
     });
     this._scrollElement();
-    this.menu = new MetisMenu(this.sideMenu?.nativeElement);
+    if(this.sideMenu){
+      this.menu = new MetisMenu(this.sideMenu?.nativeElement);
+    }
     this._activateMenuDropdown();
   }
 
@@ -65,7 +67,9 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnChanges() {
     if ((!this.isCondensed && this.sideMenu) || this.isCondensed) {
       setTimeout(() => {
-        this.menu = new MetisMenu(this.sideMenu?.nativeElement);
+        if(this.sideMenu){
+          this.menu = new MetisMenu(this.sideMenu!.nativeElement);
+        }
       });
     } else if (this.menu) {
       this.menu.dispose();

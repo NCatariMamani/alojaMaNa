@@ -14,7 +14,7 @@
 
         <a routerLink="/" class="logo logo-light">
           <span class="logo-sm">
-           <!-- <img src="assets/images/logo-light.svg" alt="" height="22" />-->
+            <!-- <img src="assets/images/logo-light.svg" alt="" height="22" />-->
           </span>
           <span class="logo-lg">
             <!--<img src="assets/images/logo-light.png" alt="" height="19" />-->
@@ -26,7 +26,8 @@
         type="button"
         class="btn btn-sm px-3 font-size-16 header-item"
         id="vertical-menu-btn"
-        (click)="toggleMobileMenu($event)">
+        (click)="toggleMobileMenu($event)"
+      >
         <i class="fa fa-fw fa-bars"></i>
       </button>
     </div>
@@ -47,76 +48,85 @@
           class="btn header-item"
           (click)="binnacle()"
           tooltip="Bitácora del sistema"
-          placement="bottom">
+          placement="bottom"
+        >
           <i
             class="fa fa-book text-secondary custom-button"
-            aria-hidden="true"></i>
+            aria-hidden="true"
+          ></i>
         </button>
         <button
           type="button"
           class="btn header-item"
           (click)="help()"
           tooltip="Ayuda"
-          placement="bottom">
+          placement="bottom"
+        >
           <i
             class="fa fa-question-circle text-info custom-button"
-            aria-hidden="true"></i>
+            aria-hidden="true"
+          ></i>
         </button>
       </div>
       <ng-template #userPop>
         <div class="row">
           <div
-            class="col-md-4 p-cont d-flex justify-content-center align-items-center">
+            class="col-md-4 p-cont d-flex justify-content-center align-items-center"
+          >
             <div>
               <img
                 width="60px"
                 class="rounded-circle"
                 src="assets/images/users/avatar-2.jpg"
-                alt="Header Avatar" />
+                alt="Header Avatar"
+              />
             </div>
           </div>
-          <!--<div class="col-md-8 d-flex align-items-center">
+          <div class="col-md-8 d-flex align-items-center">
             <div>
               <p class="lh-1">
-                <span class="font-weight-bold">Nombre: </span> {{ user.name }}
+                <!--<span class="font-weight-bold">Nombre: </span> {{ user.name }}-->
+                <span class="font-weight-bold">Nombre: </span>
               </p>
               <p class="lh-1">
-                <span class="font-weight-bold">Correo: </span> {{ user.email }}
+                <!--<span class="font-weight-bold">Correo: </span> {{ user.email }}-->
+                <span class="font-weight-bold">Correo: </span>
               </p>
               <p class="lh-1">
-                <span class="font-weight-bold">Puesto: </span> {{ user.puesto }}
+                <!--<span class="font-weight-bold">Puesto: </span> {{ user.puesto }}-->
+                <span class="font-weight-bold">Puesto: </span>
               </p>
             </div>
-          </div>-->
+          </div>
         </div>
         <div class="row">
           <div class="col-md-12">
-            <!--<p class="lh-1">
+            <p class="lh-1">
               <span class="font-weight-bold">Delegación Regional: </span>
-              {{ user.delegacionreg }}
+              <!--{{ user.delegacionreg }}-->
             </p>
             <p class="lh-1">
               <span class="font-weight-bold">Tipo Empleado: </span>
-              {{ user.employeetype }}
+              <!--{{ user.employeetype }}-->
             </p>
             <p class="lh-1">
               <span class="font-weight-bold">Dirección Corporativa: </span>
-              {{ user.siglasnivel1 }} - {{ user.cargonivel1 }}
+              <!--{{ user.siglasnivel1 }} - {{ user.cargonivel1 }}-->
             </p>
             <p class="lh-1">
               <span class="font-weight-bold">Dirección Ejecutiva: </span>
-              {{ user.siglasnivel2 }} - {{ user.cargonivel2 }}
+              <!--{{ user.siglasnivel2 }} - {{ user.cargonivel2 }}-->
             </p>
             <p class="lh-1">
               <span class="font-weight-bold"
                 >Coordinación Regional / Coordinación Administrativa:
               </span>
-              {{ user.siglasnivel3 }} - {{ user.cargonivel3 }}
+              <!--{{ user.siglasnivel3 }} - {{ user.cargonivel3 }}-->
             </p>
             <p class="lh-1">
               <span class="font-weight-bold">Puesto/Cargo: </span>
-              {{ user.siglasnivel4 }} - {{ user.cargonivel4 }}
-            </p>-->
+              <!--{{ user.siglasnivel4 }} - {{ user.cargonivel4 }}-->
+            </p>
           </div>
         </div>
       </ng-template>
@@ -124,18 +134,19 @@
       <!--  -->
       <div class="dropdown d-inline-block" dropdown>
         <button
-          
           container="body"
           placement="bottom"
           triggers="mouseenter:mouseleave"
           type="button"
           class="btn header-item"
           dropdownToggle
-          id="page-header-user-dropdown">
+          id="page-header-user-dropdown"
+        >
           <img
             class="rounded-circle header-profile-user"
             src="assets/images/users/avatar-2.jpg"
-            alt="Header Avatar" />
+            alt="Header Avatar"
+          />
           <span class="d-none d-xl-inline-block ms-1 user-font">{{
             userName
           }}</span>
@@ -143,41 +154,48 @@
         </button>
         <div class="dropdown-menu dropdown-menu-end user-font" *dropdownMenu>
           <!-- item-->
-          <!--<a class="dropdown-item" routerLink="/contacts/profile">
+          <a class="dropdown-item" routerLink="/contacts/profile">
             <i class="bx bx-user font-size-16 align-middle me-1"></i>
             Perfil
-          </a>-->
-          <!--<a class="dropdown-item" href="javascript: void(0);">
+          </a>
+          <a class="dropdown-item" href="javascript: void(0);">
             <i class="bx bx-wallet font-size-16 align-middle me-1"></i>
             Billetera
-          </a>-->
-          <!--<a class="dropdown-item d-block" href="javascript: void(0);">
+          </a>
+          <a class="dropdown-item d-block" href="javascript: void(0);">
             <span class="badge bg-success float-end">11</span>
             <i class="bx bx-wrench font-size-16 align-middle me-1"></i>
             Configuración
-          </a>-->
-          <!--<a class="dropdown-item" href="javascript: void(0);">
+          </a>
+          <a class="dropdown-item" href="javascript: void(0);">
             <i class="bx bx-lock-open font-size-16 align-middle me-1"></i>
             Pantalla de bloqueo
-          </a>-->
-          <!--<div class="dropdown-divider"></div>-->
+          </a>
+          <div class="dropdown-divider"></div>
           <a
             [routerLink]="['/auth']"
             class="dropdown-item text-danger"
             href="javascript: void(0);"
-            (click)="logout()">
+            (click)="logout()"
+          >
             <i
-              class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i>
+              class="bx bx-power-off font-size-16 align-middle me-1 text-danger"
+            ></i>
             Cerrar sesión
           </a>
         </div>
       </div>
 
-      <!-- <div class="dropdown d-inline-block">
-                <button type="button" class="btn header-item noti-icon right-bar-toggle" (click)="toggleRightSidebar()">
-                    <i class="bx bx-cog bx-spin"></i>
-                </button>
-            </div> -->
+      <div class="dropdown d-inline-block">
+        <button
+          type="button"
+          class="btn header-item noti-icon right-bar-toggle"
+          (click)="toggleRightSidebar()"
+        >
+          <i class="bx bx-cog bx-spin"></i>
+        </button>
+      </div>
+
     </div>
   </div>
 </header>
