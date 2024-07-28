@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnDestroy } from "@angular/core";
 import { ClassWidthAlert } from "./alert-class";
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
+import { ListParams } from "src/app/common/repository/interfaces/list-params";
 
 interface TableSettings {
     selectMode: string;
@@ -70,6 +71,15 @@ export abstract class BasePage
 
     ngAfterViewInit(): void {
 
+    }
+
+    protected pageFilter(params: BehaviorSubject<ListParams>) {
+        if (params.getValue().page > 1) {
+            const paramsP = params.getValue();
+            paramsP.page = 1;
+            params.next(paramsP);
+        }
+        return params;
     }
 
 }
