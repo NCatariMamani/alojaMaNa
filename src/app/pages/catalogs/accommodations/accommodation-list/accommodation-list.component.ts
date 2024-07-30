@@ -73,8 +73,29 @@ export class AccommodationListComponent  extends BasePage implements OnInit {
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAffairAll());
+      .subscribe(() => this.getAllAcommodations());
       
+  }
+
+  getAllAcommodations() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.accomodationService.getAll(params).subscribe({
+      next: response => {
+        this.data.load(response.data);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        (this.loading = false)
+      }
+    }
+      
+    );
   }
 
 
