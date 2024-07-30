@@ -50,12 +50,21 @@ export class LoginComponent extends BasePage implements OnInit {
 
   onSubmit() {
     this.loading = true;
+    let token: any;
+    let roles: any; //RolesModel;
     //event.preventDefault();
     this.authService.login(this.loginForm.controls['email'].value,this.loginForm.controls['password'].value).subscribe({
-      next: () => {
-        this.loading = false;
-        console.log('entraste');
-        this.router.navigate(['/pages/catalogs/accommodations']);
+      next: data => {
+        token = data;
+      }, complete: () =>{
+        if(this.authService.getToken()){
+          this.loading = false;
+          console.log('entraste');
+          this.router.navigate(['pages/catalogs/accommodations']);
+          /*setTimeout(() => {
+            location.reload();
+          }, 1000);*/
+        }
       }, error: (err) => {
         this.loading = false;
         this.alert('error', 'Credenciales Incorrectas', ``);

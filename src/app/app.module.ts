@@ -31,13 +31,13 @@ export function tokenGetter() {
     BrowserAnimationsModule,
     MatSidenavModule,
     HttpClientModule,
-    /*JwtModule.forRoot({
+    JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
         allowedDomains: ['localhost:3000'],
         disallowedRoutes: [],
       },
-    }),*/
+    }),
   ],
   providers: [
     JwtInterceptor,

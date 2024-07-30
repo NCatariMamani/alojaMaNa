@@ -2,6 +2,9 @@ import { AfterViewInit, Component, OnDestroy } from "@angular/core";
 import { ClassWidthAlert } from "./alert-class";
 import { BehaviorSubject, Subject } from "rxjs";
 import { ListParams } from "src/app/common/repository/interfaces/list-params";
+import { SweetAlertIcon } from "sweetalert2";
+import { HttpErrorResponse } from '@angular/common/http';
+
 
 interface TableSettings {
     selectMode: string;
@@ -81,6 +84,25 @@ export abstract class BasePage
         }
         return params;
     }
+
+
+    protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
+        this.alert(icon, title, text);
+        // ? Se ha reemplazado lost toast por sweet alert
+        // const throwToast = {
+        //   success: (title: string, text: string) =>
+        //     this._toastrService.success(text, title),
+        //   info: (title: string, text: string) =>
+        //     this._toastrService.info(text, title),
+        //   warning: (title: string, text: string) =>
+        //     this._toastrService.warning(text, title),
+        //   error: (title: string, text: string) =>
+        //     this._toastrService.error(text, title),
+        //   question: (title: string, text: string) =>
+        //     this._toastrService.info(text, title),
+        // };
+        // return throwToast[icon](title, text);
+      }
 
 }
 

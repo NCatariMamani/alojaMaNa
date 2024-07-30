@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
@@ -11,9 +11,9 @@ import {
 } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs';
-import { PermissionsService } from 'src/app/common/services/permissions.service';
-import { showHideErrorInterceptorService } from '../../common/services/show-hide-error-interceptor.service';
-import { AuthService } from '../services/authentication/auth.service';
+//import { PermissionsService } from 'src/app/common/services/permissions.service';
+//import { showHideErrorInterceptorService } from '../../common/services/show-hide-error-interceptor.service';
+//import { AuthService } from '../services/authentication/auth.service';
 const READ_PERMISSION = 'read';
 
 @Injectable({
@@ -22,17 +22,22 @@ const READ_PERMISSION = 'read';
 export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
   timeOut: number = 10;
   private isRefreshing = false;
+  private jwtHelper: JwtHelperService;
 
   constructor(
     //private readonly authService: AuthService,
     private readonly router: Router,
     //private permissionsService: PermissionsService,
     //private showHideErrorService: showHideErrorInterceptorService,
-    private jwtHelper: JwtHelperService
-  ) {}
+    //private jwtHelper: JwtHelperService
+    private injector: Injector
+  ) {
+    this.jwtHelper = this.injector.get(JwtHelperService);
+  }
 
   canActivate(
-    route: ActivatedRouteSnapshot
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
     return this.verify(route);
   }
@@ -52,10 +57,11 @@ export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
     return this.verify(childRoute);
   }
 
-  verify(route: Route) {
+  verify(route: Route | ActivatedRouteSnapshot) {
     const token = localStorage.getItem('token');
-    const isTokenExpired = this.jwtHelper.isTokenExpired(token);
+    const isTokenExpired = this.jwtHelper.isTokenExpired(token || '');
     if (!token || isTokenExpired) {
+      console.log(token, isTokenExpired);
       this.router.navigate(['/auth/login']);
       return false;
     }
