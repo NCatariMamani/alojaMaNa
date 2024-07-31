@@ -15,6 +15,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../../core/services/authentication/auth.service';
+import { FormDataService } from '../services/authentication/form-data.service';
 
 @Injectable()
 export class AuthInterceptor extends BasePage implements HttpInterceptor {
@@ -30,7 +31,9 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
   private timeOut: number = 10;
   constructor(
     private router: Router,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    //private showHideErrorInterceptorService: ShowHideAuthErrorInterceptorService
+    private formDataService: FormDataService
   ) {
     super();
   }
@@ -46,6 +49,13 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     // Clone the request object
     let newReq = request.clone();
+    const formData = this.formDataService.getFormData();
+    const email = formData.username || '';
+    const password = formData.password || '';
+
+    const authToken = this.authService.getToken(email,password);
+
+    
 
     //ignore interceptor when is refresh token
     if (request.context.get(BYPASS_JW_TOKEN) === true) {
@@ -55,9 +65,7 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
     if (this.authService.useReportToken) {
       //Set Bearer Token
       const authHeaders: HttpHeaders = new HttpHeaders({
-        Authorization:
-          'Basic ' +
-          btoa(`${environment.API_REPORTS_USR}:${environment.API_REPORTS_PSW}`),
+        Authorization: `Bearer ${authToken}`
       });
       newReq = request.clone({
         headers: authHeaders,
@@ -66,9 +74,10 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       this.authService.existToken() &&
       !this.authService.isTokenExpired()
     ) {
-      const timeNow = new Date(
+      /*const timeNow = new Date(
         this.authService.getTokenExpiration().valueOf() - new Date().valueOf()
       ).getMinutes();
+
 
       if (timeNow <= this.timeOut && timeNow > 0) {
         this.refreshToken(newReq, next).subscribe();
@@ -80,7 +89,7 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
             'Bearer ' + this.authService.accessToken()
           ),
         });
-      }
+      }*/
 
       //Set Bearer Token
     }
@@ -93,9 +102,9 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
     );
   }
 
-  get showError() {
+  /*get showError() {
     return this.showHideErrorInterceptorService.showError;
-  }
+  }*/
 
   // resetValue() {
   //   this.showHideErrorInterceptorService.showHideError(true);
@@ -108,9 +117,9 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
     //console.log(this.showError);
 
     const message = 'Error en el servidor'; // error?.error?.message ?? 'Error en el servidor';
-    if (this.showError === false) {
+    /*if (this.showError === false) {
       return;
-    }
+    }*/
     if (status === 0) {
       /*this.onLoadToast(
         'error',
@@ -120,7 +129,7 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       return;
     }
 
-    if (status === 401 && error.url.indexOf('firebase') < 0) {
+    if (status === 401) {
       localStorage.clear();
       sessionStorage.clear();
       let message = 'La sesión expiró';
@@ -135,7 +144,7 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
       }
       this.router.navigate(['/auth/login']);
       return;
-    } else if (status === 401 && error.url.indexOf('firebase') >= 0) {
+    } else if (status === 401) {
       console.log('ERROR FIREBASE');
 
       return;

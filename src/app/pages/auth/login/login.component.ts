@@ -2,7 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, Renderer2} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FormDataService } from 'src/app/common/services/authentication/form-data.service';
 import { AuthService } from 'src/app/common/services/authentication/auth.service';
+//import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -29,12 +31,10 @@ export class LoginComponent extends BasePage implements OnInit {
     //private elementRef: ElementRef,
     private renderer: Renderer2,
     private authService: AuthService, 
-    private http: HttpClient
+    private http: HttpClient,
+    private formDataService: FormDataService
   ) {
     super();
-    this.authService.getTokenObservable().subscribe(token => {
-      this.token = token;
-    });
   }
 
   ngOnInit(): void {
@@ -50,21 +50,30 @@ export class LoginComponent extends BasePage implements OnInit {
 
   onSubmit() {
     this.loading = true;
+    let { email, password } = this.loginForm.value;
     let token: any;
     let roles: any; //RolesModel;
+
+    if (this.loginForm.valid) {
+      this.formDataService.setFormData(this.loginForm.value);
+    }
+
     //event.preventDefault();
-    this.authService.login(this.loginForm.controls['email'].value,this.loginForm.controls['password'].value).subscribe({
+    this.authService.login(email,password).subscribe({
       next: data => {
         token = data;
       }, complete: () =>{
-        if(this.authService.getToken()){
+
+        this.loading = false;
+          console.log('entraste');
+          this.router.navigate(['pages/catalogs/accommodations']);
+
+        /*if(this.authService.existToken()){
+
           this.loading = false;
           console.log('entraste');
           this.router.navigate(['pages/catalogs/accommodations']);
-          /*setTimeout(() => {
-            location.reload();
-          }, 1000);*/
-        }
+        }*/
       }, error: (err) => {
         this.loading = false;
         this.alert('error', 'Credenciales Incorrectas', ``);
