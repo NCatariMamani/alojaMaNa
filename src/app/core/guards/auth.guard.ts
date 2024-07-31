@@ -13,7 +13,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs';
 //import { PermissionsService } from 'src/app/common/services/permissions.service';
 //import { showHideErrorInterceptorService } from '../../common/services/show-hide-error-interceptor.service';
-//import { AuthService } from '../services/authentication/auth.service';
+import { AuthService } from '../services/authentication/auth.service';
 const READ_PERMISSION = 'read';
 
 @Injectable({
@@ -22,14 +22,14 @@ const READ_PERMISSION = 'read';
 export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
   timeOut: number = 10;
   private isRefreshing = false;
-  private jwtHelper: JwtHelperService;
+  //private jwtHelper: JwtHelperService;
 
   constructor(
-    //private readonly authService: AuthService,
+    private readonly authService: AuthService,
     private readonly router: Router,
     //private permissionsService: PermissionsService,
     //private showHideErrorService: showHideErrorInterceptorService,
-    //private jwtHelper: JwtHelperService
+    private jwtHelper: JwtHelperService,
     private injector: Injector
   ) {
     this.jwtHelper = this.injector.get(JwtHelperService);
@@ -58,6 +58,8 @@ export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
   }
 
   verify(route: Route | ActivatedRouteSnapshot) {
+    //localStorage.clear();
+    //sessionStorage.clear();
     const token = localStorage.getItem('token');
     const isTokenExpired = this.jwtHelper.isTokenExpired(token || '');
     if (!token || isTokenExpired) {
@@ -80,7 +82,7 @@ export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
   }*/
 
   refreshToken(token: string) {
-    /*if (!this.isRefreshing) {
+    if (!this.isRefreshing) {
       this.isRefreshing = true;
       this.authService.refreshToken(token).subscribe({
         next: response => {
@@ -89,6 +91,6 @@ export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
           this.isRefreshing = false;
         },
       });
-    }*/
+    }
   }
 }

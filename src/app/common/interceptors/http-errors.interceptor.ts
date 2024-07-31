@@ -9,7 +9,7 @@ import {
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, map, Observable, throwError } from 'rxjs';
-import { showHideErrorInterceptorService } from './../services/show-hide-error-interceptor.service';
+//import { showHideErrorInterceptorService } from './../services/show-hide-auth-error-interceptor.service';
 
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -31,7 +31,7 @@ export const InterceptorSkipHeader = 'X-Skip-Interceptor';
   providedIn: 'root',
 })
 export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
-  showError: boolean;
+  showError?: boolean;
   constructor(
     private router: Router,
     private showHideErrorInterceptorService: showHideErrorInterceptorService
@@ -82,13 +82,13 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     }
   }
 
-  getValue() {
+  /*getValue() {
     this.showError = this.showHideErrorInterceptorService.getValue();
   }
 
   resetValue() {
     this.showHideErrorInterceptorService.showHideError(true);
-  }
+  }*/
 
   handleError(error: HttpErrorResponse) {
     // //
@@ -116,14 +116,14 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       //this.onLoadToast('warning', 'Advertencia', message);
       return;
     }
-    if (status === 401 && error.url.indexOf('firebase') < 0 && this.showError) {
+    if (status === 401) {
       localStorage.clear();
       sessionStorage.clear();
       message = 'La sesión expiró';
       this.onLoadToast('error', 'No autorizado', message);
       this.router.navigate(['/auth/login']);
       return;
-    } else if (status === 401 && error.url.indexOf('firebase') >= 0) {
+    } else if (status === 401) {
       return;
     }
     if (status === 403) {
@@ -184,7 +184,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
         },
         headers: response.headers,
         status: statusCode,
-        url: response.url,
+        //url: response.url,
       });
 
       this.handleError(error);

@@ -54,13 +54,13 @@ export class AuthService {
     }, _timeout);
   }
 
-  getToken(username: string, password: string): Observable<AuthModel> {
-    let params = `client_id=indep-auth&grant_type=password&client_secret=AzOyl1GDe3G9mhI8c7cIEYQ1nr5Qdpjs&scope=openid&username=${username}&password=${password}`;
+  getToken(email?: string, password?: string): Observable<any> {
+    //let params = `client_id=indep-auth&grant_type=password&client_secret=AzOyl1GDe3G9mhI8c7cIEYQ1nr5Qdpjs&scope=openid&username=${username}&password=${password}`;
     let headers = new HttpHeaders().set(
       'Content-Type',
       'application/x-www-form-urlencoded'
     );
-    return this.http.post<AuthModel>(this.tokenUrl, params, { headers }).pipe(
+    return this.http.post<any>(this.tokenUrl, { email, password }, { headers }).pipe(
       tap(response => {
         localStorage.setItem('token', response.access_token);
         localStorage.setItem('r_token', response.refresh_token);
@@ -120,7 +120,7 @@ export class AuthService {
     return decodedToken;
   }
 
-  getTokenExpiration() {
+  getTokenExpiration(): Date | null {
     const expirationDate = this.jwtService.getTokenExpirationDate(this.token);
     return expirationDate;
   }
