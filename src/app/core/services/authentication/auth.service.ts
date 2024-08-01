@@ -54,18 +54,31 @@ export class AuthService {
     }, _timeout);
   }
 
-  getToken(email?: string, password?: string): Observable<any> {
+  getToken(email0?: string, password0?: string): Observable<any> {
     //let params = `client_id=indep-auth&grant_type=password&client_secret=AzOyl1GDe3G9mhI8c7cIEYQ1nr5Qdpjs&scope=openid&username=${username}&password=${password}`;
-    let headers = new HttpHeaders().set(
+    /*let headers = new HttpHeaders().set(
       'Content-Type',
-      'application/x-www-form-urlencoded'
-    );
-    return this.http.post<any>(this.tokenUrl, { email, password }, { headers }).pipe(
+      'application/x-www-form-urlencoded' , { headers }
+    );*/
+    let body ={
+      email: email0,
+      password: password0
+    }
+    return this.http.post<any>(this.tokenUrl, body).pipe(
       tap(response => {
-        localStorage.setItem('token', response.access_token);
-        localStorage.setItem('r_token', response.refresh_token);
+        const token = response.access_token;
+        if (this.isValidJWT(token)) {
+          localStorage.setItem('token', response.access_token);
+          localStorage.setItem('r_token', response.refresh_token);
+        }  
       })
     );
+  }
+
+  isValidJWT(token: string | null): boolean {
+    if (!token) return false;
+    const parts = token.split('.');
+    return parts.length === 3;
   }
 
   getToken2(username: string, password: string): Observable<AuthModel> {
