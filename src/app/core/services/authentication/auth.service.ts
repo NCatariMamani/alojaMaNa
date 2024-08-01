@@ -66,10 +66,13 @@ export class AuthService {
     }
     return this.http.post<any>(this.tokenUrl, body).pipe(
       tap(response => {
-        const token = response.access_token;
+
+        console.log('Server response:', response.token);
+
+        const token = response.token;
         if (this.isValidJWT(token)) {
-          localStorage.setItem('token', response.access_token);
-          localStorage.setItem('r_token', response.refresh_token);
+          localStorage.setItem('token', response.token);
+          //localStorage.setItem('r_token', response.refresh_token);
         }  
       })
     );
