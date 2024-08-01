@@ -61,6 +61,7 @@ export class AuthGuard implements CanActivate, CanLoad, CanActivateChild {
     //localStorage.clear();
     //sessionStorage.clear();
     const token = localStorage.getItem('token');
+    
     const isTokenExpired = this.jwtHelper.isTokenExpired(token || '');
     if (!token || isTokenExpired) {
       console.log(token, isTokenExpired);
