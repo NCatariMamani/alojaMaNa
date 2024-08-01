@@ -16,8 +16,10 @@ import { IRepository } from './interfaces/repository.interface';
 export class Repository<T> implements IRepository<T> {
   constructor(public readonly httpClient: HttpClient) {}
   
-  create(route: string, model: T): Observable<T> {
-    throw new Error('Method not implemented.');
+  create(route: string, formData: T): Observable<T> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.post<T>(`${fullRoute}`, formData);
+    //throw new Error('Method not implemented.');
   }
   update(route: string, id: number | string, model: T): Observable<Object> {
     throw new Error('Method not implemented.');

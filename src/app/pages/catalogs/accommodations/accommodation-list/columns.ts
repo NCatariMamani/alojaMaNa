@@ -4,11 +4,11 @@ export const ACCOMMODATIONS_COLUMNS = {
         sort: false,
         width: '10%',
     },
-    nombreA: {
+    nombre: {
         title: 'Nombre de Alojamiento',
         sort: false,
     },
-    canthabitacion: {
+    noHabitaciones: {
         title: 'No. Habitación',
         sort: false,
     },

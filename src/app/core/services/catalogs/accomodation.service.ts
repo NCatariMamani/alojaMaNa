@@ -29,7 +29,7 @@ export class AccomodationService extends HttpService {
   }
 
   update(id: string | number, model: any): Observable<Object> {
-    return this.accomodationRepo.update(this.router, id, model);
+    return this.accomodationRepo.updateTypeServices(this.router, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
