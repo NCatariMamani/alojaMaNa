@@ -9,6 +9,12 @@ const routes: Routes = [
       (await import('./accommodations/accommodations.module')).AccommodationsModule,
     data: { title: 'Alojamientos' },
   },
+  {
+    path: 'accommodations',
+    loadChildren: async () =>
+      (await import('./accommodations/accommodations.module')).AccommodationsModule,
+    data: { title: 'Alojamientos' },
+  },
 ]
 
 
