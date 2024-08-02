@@ -1,20 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams, ListParamsFather, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared';
-import { ACCOMMODATIONS_COLUMNS } from './columns';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { AccommodatioDetailComponent } from '../accommodatio-detail/accommodatio-detail.component';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { AccomodationService } from 'src/app/core/services/catalogs/accomodation.service';
 import { IAccommodation } from 'src/app/core/models/catalogs/accommodation.model';
 
 @Component({
-  selector: 'app-accommodation-list',
-  templateUrl: './accommodation-list.component.html',
-  styleUrls: ['./accommodation-list.component.css']
+  selector: 'app-shopping-list',
+  templateUrl: './shopping-list.component.html',
+  styleUrls: ['./shopping-list.component.css']
 })
-export class AccommodationListComponent extends BasePage implements OnInit {
+export class ShoppingListComponent extends BasePage implements OnInit {
+
   data: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   data1: any = [];

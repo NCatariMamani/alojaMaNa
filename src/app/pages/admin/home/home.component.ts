@@ -18,7 +18,7 @@ import {
 })
 export class HomeComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
-  params = new BehaviorSubject<ListParamsFather>(new ListParams());
+  params = new BehaviorSubject<ListParams>(new ListParams());
   data1: any = [];
   totalItems: number = 0;
   constructor(

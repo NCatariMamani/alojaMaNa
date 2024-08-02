@@ -15,8 +15,8 @@ import { BasePage } from 'src/app/core/shared';
   styleUrls: ['./pagination.component.scss'],
 })
 export class PaginationComponent extends BasePage implements OnInit {
-  @Input() params: BehaviorSubject<ListParamsFather> = new BehaviorSubject(
-    new ListParamsFather()
+  @Input() params: BehaviorSubject<ListParams> = new BehaviorSubject(
+    new ListParams()
   );
   @Input() filterParams: BehaviorSubject<FilterParams> = new BehaviorSubject(
     new FilterParams()
