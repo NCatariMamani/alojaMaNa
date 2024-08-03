@@ -21,6 +21,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ModalComponent } from './components/modal/modal.component';
 import { FormFieldComponent } from './components/form-field/form-field.component';
 import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
+import { CustomDateFilterComponent } from './utils/custom-date-filter';
 
 export const customCurrencyMaskConfig = {
   align: 'right',
@@ -42,7 +43,8 @@ export const customCurrencyMaskConfig = {
     PaginateComponent,
     ModalComponent,
     FormFieldComponent,
-    ConfirmButtonComponent
+    ConfirmButtonComponent,
+    CustomDateFilterComponent
   ],
   imports: [
     CommonModule,

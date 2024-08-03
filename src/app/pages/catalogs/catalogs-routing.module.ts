@@ -10,10 +10,10 @@ const routes: Routes = [
     data: { title: 'Alojamientos' },
   },
   {
-    path: 'accommodations',
+    path: 'shopping',
     loadChildren: async () =>
-      (await import('./accommodations/accommodations.module')).AccommodationsModule,
-    data: { title: 'Alojamientos' },
+      (await import('./shopping/shopping.module')).ShoppingModule,
+    data: { title: 'Compras' },
   },
 ]
 

@@ -1,6 +1,6 @@
 export interface IAccommodation {
    id: number;
-   nombreA: string;
+   nombre: string;
    canthabitacion: number;
    direccion: string; 
 }
