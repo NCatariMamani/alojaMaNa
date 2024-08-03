@@ -104,5 +104,21 @@ export abstract class BasePage
         // return throwToast[icon](title, text);
       }
 
+
+      protected returnParseDate(data: any) {
+        let fechaString = '';
+        // Obtener los componentes de la fecha
+        if (data !== '') {
+          console.log(data);
+          const año = data.getFullYear().toString();
+          const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+          const dia = data.getDate().toString().padStart(2, '0');
+    
+          // Crear la cadena de texto en formato "año mes día"
+          fechaString = `${año}-${mes}-${dia}`;
+        }
+        return fechaString;
+      }
+
 }
 

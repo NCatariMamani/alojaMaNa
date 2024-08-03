@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { AccomodationService } from 'src/app/core/services/catalogs/accomodation.service';
 import { IAccommodation } from 'src/app/core/models/catalogs/accommodation.model';
+import { SHOPPING_COLUMNS } from './columns';
+import { ShoppingDetailComponent } from '../shopping-detail/shopping-detail.component';
+import { ShoppingService } from 'src/app/core/services/catalogs/shopping.service';
+import { IShopping } from 'src/app/core/models/catalogs/shopping.model';
 
 @Component({
   selector: 'app-shopping-list',
@@ -20,10 +24,12 @@ export class ShoppingListComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   totalItems: number = 0;
   accommodation?: IAccommodation;
+  shopping?: IShopping;
 
   constructor(
     private modalService: BsModalService,
-    private accomodationService: AccomodationService
+    private accomodationService: AccomodationService,
+    private shoppingService: ShoppingService,
   ) {
     super();
     this.settings = {
@@ -36,7 +42,7 @@ export class ShoppingListComponent extends BasePage implements OnInit {
         add: false,
         position: 'right',
       },
-      columns: { ...ACCOMMODATIONS_COLUMNS },
+      columns: { ...SHOPPING_COLUMNS },
     };
   }
 
@@ -56,8 +62,13 @@ export class ShoppingListComponent extends BasePage implements OnInit {
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'noHabitaciones':
+              case 'fecha':
+                filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
+                break;   
+              case 'alojamientos':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.nombreA`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -71,23 +82,23 @@ export class ShoppingListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getAllAcommodations();
+          this.getAllShopping();
         }
       });
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAllAcommodations());
+      .subscribe(() => this.getAllShopping());
 
   }
 
-  getAllAcommodations() {
+  getAllShopping() {
     this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.accomodationService.getAll(params).subscribe({
+    this.shoppingService.getAll(params).subscribe({
       next: response => {
         console.log(response);
         this.data.load(response.data);
@@ -104,26 +115,26 @@ export class ShoppingListComponent extends BasePage implements OnInit {
     );
   }
 
-  edit(accommodation1: IAccommodation) {
-    this.openModal(accommodation1);
+  edit(shopping1: IShopping) {
+    this.openModal(shopping1);
   }
 
 
-  openModal(accommodation?: IAccommodation) {
+  openModal(shopping?: IShopping) {
     let config: ModalOptions = {
       initialState: {
-        accommodation,
+        shopping,
         callback: (next: boolean) => {
-          if (next) this.getAllAcommodations();
+          if (next) this.getAllShopping();
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(AccommodatioDetailComponent, config);
+    this.modalService.show(ShoppingDetailComponent, config);
   }
 
-  showDeleteAlert(accom: IAccommodation) {
+  showDeleteAlert(shopping: IShopping) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -131,7 +142,7 @@ export class ShoppingListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
 
-        this.delete(accom.id);
+        this.delete(shopping.id);
         //Swal.fire('Borrado', '', 'success');
       }
     });
@@ -143,7 +154,7 @@ export class ShoppingListComponent extends BasePage implements OnInit {
         this.alert('success', 'Alojamiento', 'Borrado Correctamente');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getAllAcommodations());
+          .subscribe(() => this.getAllShopping());
       }, error: err => {
         this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
       },
