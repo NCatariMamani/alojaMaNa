@@ -68,7 +68,7 @@ export class ShoppingListComponent extends BasePage implements OnInit {
                 break;   
               case 'alojamientos':
                 searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}.nombreA`;
+                field = `filter.${filter.field}.nombre`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -149,9 +149,9 @@ export class ShoppingListComponent extends BasePage implements OnInit {
   }
 
   delete(id: string | number) {
-    this.accomodationService.remove(id).subscribe({
+    this.shoppingService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Alojamiento', 'Borrado Correctamente');
+        this.alert('success', 'Compras', 'Borrado Correctamente');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getAllShopping());

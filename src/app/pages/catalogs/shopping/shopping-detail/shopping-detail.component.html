@@ -5,54 +5,28 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <!--<div class="col-md-6">
-          <form-field
-            label="Proceso Detona"
-            [control]="form.get('processDetonate')">
-            <ng-select
-              formControlName="processDetonate"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="ABANDONO">ABANDONO</ng-option>
-              <ng-option value="AMPARO">AMPARO</ng-option>
-              <ng-option value="DEVOLUCION">DEVOLUCION</ng-option>
-              <ng-option value="INFORMACION">INFORMACION</ng-option>
-              <ng-option value="RES_ESPECIE">RES_ESPECIE</ng-option>
-              <ng-option value="RES_NUMERARIO">RES_NUMERARIO</ng-option>
-              <ng-option value="RES_PAGO_ESPECIE">RES_PAGO_ESPECIE</ng-option>
-              <ng-option value="TRANSFERENCIA">TRANSFERENCIA</ng-option>
-            </ng-select>
-          </form-field>
-        </div>-->
         <div class="col-md-6">
-          <form-field label="Nombre de Alojamimento" [control]="form.get('nombre')">
+          <form-field label="Fecha" [control]="form.get('fecha')">
             <input
               type="text"
               class="form-control"
-              formControlName="nombre"
+              formControlName="fecha"
             />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field label="No. Habitaciones" [control]="form.get('noHabitaciones')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="noHabitaciones"
-            />
-          </form-field>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 pt-4">
-          <form-field label="Dirección" [control]="form.get('direccion')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="direccion"
-            />
-          </form-field>
+          <!--<form-field [control]="departmentForm.get('numDelegation')">
+            <ngx-select
+              [form]="departmentForm"
+              control="numDelegation"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegations"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              value="id"
+              (change)="onSubDelegation($event)"
+              [readonly]="false"></ngx-select>
+          </form-field>-->
         </div>
       </div>
     </form>

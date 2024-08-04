@@ -22,6 +22,7 @@ import { ModalComponent } from './components/modal/modal.component';
 import { FormFieldComponent } from './components/form-field/form-field.component';
 import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
 import { CustomDateFilterComponent } from './utils/custom-date-filter';
+import { SelectComponent } from './components/select/select.component';
 
 export const customCurrencyMaskConfig = {
   align: 'right',
@@ -44,7 +45,8 @@ export const customCurrencyMaskConfig = {
     ModalComponent,
     FormFieldComponent,
     ConfirmButtonComponent,
-    CustomDateFilterComponent
+    CustomDateFilterComponent,
+    SelectComponent
   ],
   imports: [
     CommonModule,
@@ -73,7 +75,8 @@ export const customCurrencyMaskConfig = {
     ModalComponent,
     FormFieldComponent,
     ConfirmButtonComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SelectComponent
   ],
   providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })
