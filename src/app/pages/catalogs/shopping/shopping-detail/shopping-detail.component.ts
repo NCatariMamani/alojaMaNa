@@ -7,6 +7,8 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { BasePage } from 'src/app/core/shared';
 import { ShoppingService } from 'src/app/core/services/catalogs/shopping.service';
 import { IShopping } from 'src/app/core/models/catalogs/shopping.model';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 
 @Component({
@@ -22,6 +24,9 @@ export class ShoppingDetailComponent extends BasePage implements OnInit {
   edit: boolean = false;
   accommodation?: IAccommodation;
   shopping?: IShopping;
+
+  accomodations = new DefaultSelect();
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -45,6 +50,9 @@ export class ShoppingDetailComponent extends BasePage implements OnInit {
       console.log(this.shopping);
       this.form.patchValue(this.shopping);
     }
+    setTimeout(() => {
+      this.getAccomodation(new ListParams());
+    }, 1000);
   }
 
 
@@ -105,6 +113,25 @@ export class ShoppingDetailComponent extends BasePage implements OnInit {
   }
   close() {
     this.modalRef.hide();
+  }
+
+  getAccomodation(params: ListParams) {
+    if (params.text) {
+      params['filter.nombre'] = `$ilike:${params.text}`;
+    }
+    this.accomodationService.getAll(params).subscribe({
+      next: data => {
+        this.accomodations = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.accomodations = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  onChangeAccomodation(event: any){
+    console.log(event);
   }
 
 

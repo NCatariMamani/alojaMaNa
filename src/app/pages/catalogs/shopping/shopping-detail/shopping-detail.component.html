@@ -15,18 +15,18 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <!--<form-field [control]="departmentForm.get('numDelegation')">
+          <form-field [control]="form.get('alojamientoId')">
             <ngx-select
-              [form]="departmentForm"
-              control="numDelegation"
-              (fetchItems)="getDelegations($event)"
-              [data]="delegations"
-              bindLabel="description"
-              label="Delegaci&oacute;n"
+              [form]="form"
+              control="alojamientoId"
+              (fetchItems)="getAccomodation($event)"
+              [data]="accomodations"
+              bindLabel="nombre"
+              label="Nombre del Alojamiento"
               value="id"
-              (change)="onSubDelegation($event)"
+              (change)="onChangeAccomodation($event)"
               [readonly]="false"></ngx-select>
-          </form-field>-->
+          </form-field>
         </div>
       </div>
     </form>
