@@ -6,15 +6,6 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
-          <form-field label="Fecha" [control]="form.get('fecha')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="fecha"
-            />
-          </form-field>
-        </div>
-        <div class="col-md-6">
           <form-field [control]="form.get('alojamientoId')">
             <ngx-select
               [form]="form"
@@ -27,6 +18,21 @@
               (change)="onChangeAccomodation($event)"
               [readonly]="false"></ngx-select>
           </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('fecha')" label="Fecha">
+            <input
+              type="text"
+              formControlName="fecha"
+              class="form-control"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY',
+                displayOneMonthRange: true
+              }"
+              [maxDate]="maxDate"
+              (bsValueChange)="validateDate($event)"
+              bsDatepicker />
+          </form-field>  
         </div>
       </div>
     </form>

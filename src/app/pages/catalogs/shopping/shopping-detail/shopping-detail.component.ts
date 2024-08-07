@@ -9,6 +9,7 @@ import { ShoppingService } from 'src/app/core/services/catalogs/shopping.service
 import { IShopping } from 'src/app/core/models/catalogs/shopping.model';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { DatePipe } from '@angular/common';
 
 
 @Component({
@@ -24,6 +25,8 @@ export class ShoppingDetailComponent extends BasePage implements OnInit {
   edit: boolean = false;
   accommodation?: IAccommodation;
   shopping?: IShopping;
+  editDate?: Date;
+  maxDate: Date = new Date();
 
   accomodations = new DefaultSelect();
 
@@ -32,6 +35,7 @@ export class ShoppingDetailComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private accomodationService: AccomodationService,
     private shoppingService: ShoppingService,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -47,8 +51,10 @@ export class ShoppingDetailComponent extends BasePage implements OnInit {
     });
     if (this.shopping != null) {
       this.edit = true;
-      console.log(this.shopping);
+      const formattedDate = this.datePipe.transform(this.shopping.fecha, 'dd/MM/yyyy');
+      console.log(formattedDate);
       this.form.patchValue(this.shopping);
+      this.form.controls['fecha'].setValue(formattedDate);
     }
     setTimeout(() => {
       this.getAccomodation(new ListParams());
@@ -91,8 +97,9 @@ export class ShoppingDetailComponent extends BasePage implements OnInit {
   update() {
     if (this.shopping) {
       this.loading = true;
+      let setDate;      
       let body = {
-        fecha: this.form.controls['fecha'].getRawValue(),
+        fecha: this.editDate,
         alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue()),
       }
 
@@ -111,6 +118,9 @@ export class ShoppingDetailComponent extends BasePage implements OnInit {
         );
     }
   }
+
+
+
   close() {
     this.modalRef.hide();
   }
@@ -133,6 +143,14 @@ export class ShoppingDetailComponent extends BasePage implements OnInit {
   onChangeAccomodation(event: any){
     console.log(event);
   }
+
+
+  validateDate(event: any){
+    if(event){
+      this.editDate = event;
+    }
+  }
+
 
 
 
