@@ -15,6 +15,12 @@ const routes: Routes = [
       (await import('./shopping/shopping.module')).ShoppingModule,
     data: { title: 'Compras' },
   },
+  {
+    path: 'bedrooms',
+    loadChildren: async () =>
+      (await import('./bedrooms/bedrooms.module')).BedroomsModule,
+    data: { title: 'Habitaciones' },
+  },
 ]
 
 
