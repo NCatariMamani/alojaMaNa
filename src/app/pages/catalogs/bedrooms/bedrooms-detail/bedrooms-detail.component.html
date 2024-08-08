@@ -1,3 +1,102 @@
-<p>
-  bedrooms-detail works!
-</p>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? "Editar" : "Nuevo" }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <!--<div class="col-md-6">
+          <form-field
+            label="Proceso Detona"
+            [control]="form.get('processDetonate')">
+            <ng-select
+              formControlName="processDetonate"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="ABANDONO">ABANDONO</ng-option>
+              <ng-option value="AMPARO">AMPARO</ng-option>
+              <ng-option value="DEVOLUCION">DEVOLUCION</ng-option>
+              <ng-option value="INFORMACION">INFORMACION</ng-option>
+              <ng-option value="RES_ESPECIE">RES_ESPECIE</ng-option>
+              <ng-option value="RES_NUMERARIO">RES_NUMERARIO</ng-option>
+              <ng-option value="RES_PAGO_ESPECIE">RES_PAGO_ESPECIE</ng-option>
+              <ng-option value="TRANSFERENCIA">TRANSFERENCIA</ng-option>
+            </ng-select>
+          </form-field>
+        </div>-->
+        <div class="col-md-6">
+          <form-field label="No. Habitaciones" [control]="form.get('noHabitacion')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noHabitacion"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('alojamientoId')">
+            <ngx-select
+              [form]="form"
+              control="alojamientoId"
+              (fetchItems)="getAccomodation($event)"
+              [data]="accomodations"
+              bindLabel="nombre"
+              label="Nombre del Alojamiento"
+              value="id"
+              (change)="onChangeAccomodation($event)"
+              [readonly]="false"></ngx-select>
+          </form-field>
+        </div>
+        
+      </div>
+      <div class="row">
+        <div class="col-md-6 pt-4">
+          <form-field
+            label="Preferencias"
+            [control]="form.get('preferencias')">
+            <ng-select
+              formControlName="preferencias"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="SIMPLE">SIMPLE</ng-option>
+              <ng-option value="BAÑO PRIVADO">BAÑO PRIVADO</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-4">
+          <form-field
+            label="Estado"
+            [control]="form.get('estado')">
+            <ng-select
+              formControlName="estado"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="OCUPADO">OCUPADO</ng-option>
+              <ng-option value="LIBRE">LIBRE</ng-option>
+              <ng-option value="SUCIO">SUCIO</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="form.invalid"
+          (confirm)="confirm()"
+        ></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

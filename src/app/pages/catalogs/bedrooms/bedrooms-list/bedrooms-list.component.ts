@@ -115,15 +115,15 @@ export class BedroomsListComponent extends BasePage implements OnInit {
     );
   }
 
-  edit(shopping1: IBedroom) {
-    this.openModal(shopping1);
+  edit(bedroom: IBedroom) {
+    this.openModal(bedroom);
   }
 
 
-  openModal(shopping?: IBedroom) {
+  openModal(bedroom?: IBedroom) {
     let config: ModalOptions = {
       initialState: {
-        shopping,
+        bedroom,
         callback: (next: boolean) => {
           if (next) this.getAllShopping();
         },
