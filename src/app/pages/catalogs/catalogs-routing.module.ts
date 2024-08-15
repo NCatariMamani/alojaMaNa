@@ -21,6 +21,54 @@ const routes: Routes = [
       (await import('./bedrooms/bedrooms.module')).BedroomsModule,
     data: { title: 'Habitaciones' },
   },
+  {
+    path: 'inventories',
+    loadChildren: async () =>
+      (await import('./inventories/inventories.module')).InventoriesModule,
+    data: { title: 'Inventarios' },
+  },
+  {
+    path: 'products',
+    loadChildren: async () =>
+      (await import('./products/products.module')).ProductsModule,
+    data: { title: 'Productos' },
+  },
+  {
+    path: 'productShopping',
+    loadChildren: async () =>
+      (await import('./productShopping/productShopping.module')).ProductShoppingModule,
+    data: { title: 'Producto Compras' },
+  },
+  {
+    path: 'productInventory',
+    loadChildren: async () =>
+      (await import('./productInventory/productInventory.module')).ProductInventoryModule,
+    data: { title: 'Producto Inventario' },
+  },
+  {
+    path: 'reservations',
+    loadChildren: async () =>
+      (await import('./reservations/reservations.module')).ReservationsModule,
+    data: { title: 'Recervaciones' },
+  },
+  {
+    path: 'sales',
+    loadChildren: async () =>
+      (await import('./sales/sales.module')).SalesModule,
+    data: { title: 'Ventas' },
+  },
+  {
+    path: 'productSales',
+    loadChildren: async () =>
+      (await import('./productSales/productSales.module')).ProductSalesModule,
+    data: { title: 'Producto Venta' },
+  },
+  {
+    path: 'inCharges',
+    loadChildren: async () =>
+      (await import('./inCharge/inCharge.module')).InChargeModule,
+    data: { title: 'Encargados' },
+  },
 ]
 
 
