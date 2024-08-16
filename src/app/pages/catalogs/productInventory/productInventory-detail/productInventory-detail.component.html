@@ -1,3 +1,112 @@
-<p>
-  productInventory-detail works!
-</p>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? "Editar" : "Nuevo" }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('alojamientoId')">
+            <ngx-select
+              [form]="form"
+              control="alojamientoId"
+              (fetchItems)="getAccomodation($event)"
+              [data]="accomodations"
+              bindLabel="nombre"
+              label="Nombre del Alojamiento"
+              value="id"
+              (change)="onChangeAccomodation($event)"
+              [readonly]="false"
+            ></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('productoId')">
+            <ngx-select
+              [form]="form"
+              control="productoId"
+              (fetchItems)="getProducts($event)"
+              [data]="products"
+              bindLabel="nombre"
+              label="Nombre del Alojamiento"
+              value="id"
+              (change)="onChangeProducts($event)"
+              [readonly]="false"
+            ></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('fecha')" label="Fecha">
+            <input
+              type="text"
+              formControlName="fecha"
+              class="form-control"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY',
+                displayOneMonthRange: true
+              }"
+              [maxDate]="maxDate"
+              (bsValueChange)="validateDate($event)"
+              bsDatepicker
+            />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Cantidad" [control]="form.get('cantidad')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cantidad"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Entrada" [control]="form.get('entrada')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="entrada"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Salida" [control]="form.get('salida')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="salida"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Stock" [control]="form.get('stock')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="stock"
+            />
+          </form-field>
+        </div>
+      </div>
+      <div class="row"></div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="form.invalid"
+          (confirm)="confirm()"
+        ></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
