@@ -1,0 +1,52 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? "Editar" : "Nuevo" }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form" (ngSubmit)="confirm()">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field label="Email" [control]="form.get('email')">
+            <input type="email" class="form-control" formControlName="email" autocomplete="nope"/>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field label="Contraseña" [control]="form.get('password')">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-control"
+              autocomplete="new-password" 
+              formControlName="password"
+            />
+            <i
+              (click)="showPassword = !showPassword"
+              [ngClass]="{
+                'input-icon-eye2': form.get('password')?.invalid,
+                'input-icon-eye1': form.get('password')?.valid,
+                'input-icon-eye': deleteClass
+              }"
+              [class]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"
+              id="togglePassword"
+            ></i>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="form.invalid"
+          (confirm)="confirm()"
+        ></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
