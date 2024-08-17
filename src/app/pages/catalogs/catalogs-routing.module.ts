@@ -69,6 +69,12 @@ const routes: Routes = [
       (await import('./inCharge/inCharge.module')).InChargeModule,
     data: { title: 'Encargados' },
   },
+  {
+    path: 'users',
+    loadChildren: async () =>
+      (await import('./users/users.module')).UsersModule,
+    data: { title: 'Usuarios' },
+  },
 ]
 
 

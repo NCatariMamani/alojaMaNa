@@ -3,29 +3,29 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
-import { InChargeService } from 'src/app/core/services/catalogs/inCharge.service';
+import { UsersService } from 'src/app/core/services/catalogs/users.service';
 import { BasePage } from 'src/app/core/shared';
-import { INCHARGE_COLUMNS } from './columns';
-import { IInCharge } from 'src/app/core/models/catalogs/inCharge.model';
-import { InChargeDetailComponent } from '../inCharge-detail/inCharge-detail.component';
+import { USERS_COLUMNS } from './columns';
+import { IUser } from 'src/app/core/models/catalogs/users.model';
+import { UsersDetailComponent } from '../users-detail/users-detail.component';
 
 @Component({
-  selector: 'app-inCharge-list',
-  templateUrl: './inCharge-list.component.html',
-  styleUrls: ['./inCharge-list.component.css']
+  selector: 'app-users-list',
+  templateUrl: './users-list.component.html',
+  styleUrls: ['./users-list.component.css']
 })
-export class InChargeListComponent extends BasePage implements OnInit {
+export class UsersListComponent extends BasePage implements OnInit {
 
   data: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   data1: any = [];
   columnFilters: any = [];
   totalItems: number = 0;
-  iInCharge?: IInCharge;
+  user?: IUser;
+
   constructor(
     private modalService: BsModalService,
-    private inChargeService: InChargeService
-
+    private usersService: UsersService
   ) {
     super();
     this.settings = {
@@ -33,12 +33,12 @@ export class InChargeListComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         delete: true,
         add: false,
         position: 'right',
       },
-      columns: { ...INCHARGE_COLUMNS },
+      columns: { ...USERS_COLUMNS },
     };
   }
 
@@ -57,17 +57,6 @@ export class InChargeListComponent extends BasePage implements OnInit {
             switch (filter.field) {
               case 'id':
                 searchFilter = SearchFilter.EQ;
-                break;
-              case 'celular':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'alojamiento':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}.nombre`;
-                break;
-              case 'user':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}.email`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -97,7 +86,7 @@ export class InChargeListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.inChargeService.getAll(params).subscribe({
+    this.usersService.getAll(params).subscribe({
       next: response => {
         console.log(response);
         this.data.load(response.data);
@@ -114,15 +103,15 @@ export class InChargeListComponent extends BasePage implements OnInit {
     );
   }
 
-  edit(products: IInCharge) {
-    this.openModal(products);
+  edit(shopping1: IUser) {
+    this.openModal(shopping1);
   }
 
 
-  openModal(products?: IInCharge) {
+  openModal(users?: IUser) {
     let config: ModalOptions = {
       initialState: {
-        products,
+        users,
         callback: (next: boolean) => {
           if (next) this.getAllShopping();
         },
@@ -130,10 +119,10 @@ export class InChargeListComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(InChargeDetailComponent, config);
+    this.modalService.show(UsersDetailComponent, config);
   }
 
-  showDeleteAlert(inCharge: IInCharge) {
+  showDeleteAlert(shopping: IUser) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -141,16 +130,16 @@ export class InChargeListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
 
-        this.delete(inCharge.id);
+        this.delete(shopping.id);
         //Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: string | number) {
-    this.inChargeService.remove(id).subscribe({
+    this.usersService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'ENCARGADO', 'Borrado Correctamente');
+        this.alert('success', 'Ususario', 'Borrado Correctamente');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getAllShopping());
@@ -159,6 +148,5 @@ export class InChargeListComponent extends BasePage implements OnInit {
       },
     });
   }
-
 
 }
