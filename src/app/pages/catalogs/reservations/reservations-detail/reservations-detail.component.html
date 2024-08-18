@@ -1,3 +1,266 @@
-<p>
-  reservations-detail works!
-</p>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? "Editar" : "Nuevo" }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field label="Nombre" [control]="form.get('nombre')">
+            <input type="text" class="form-control" formControlName="nombre" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Paterno" [control]="form.get('paterno')">
+            <input type="text" class="form-control" formControlName="paterno" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Materno" [control]="form.get('materno')">
+            <input type="text" class="form-control" formControlName="materno" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-2">
+          <form-field label="Edad" [control]="form.get('edad')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="edad"
+              maxlength="3"
+              min="1"
+              oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="CI" [control]="form.get('ci')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="ci"
+              maxlength="10"
+              min="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Expedido" [control]="form.get('extencion')">
+            <ng-select
+              formControlName="extencion"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+            >
+              <ng-option value="LP">LP</ng-option>
+              <ng-option value="OR">OR</ng-option>
+              <ng-option value="PT">PT</ng-option>
+              <ng-option value="CBBA">CBBA</ng-option>
+              <ng-option value="CH">CH</ng-option>
+              <ng-option value="TJA">TJA</ng-option>
+              <ng-option value="SCZ">SCZ</ng-option>
+              <ng-option value="BE">BE</ng-option>
+              <ng-option value="PD">PD</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Compañia" [control]="form.get('compania')">
+            <ng-select
+              formControlName="compania"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+            >
+              <ng-option value="LP">Solo</ng-option>
+              <ng-option value="OR">Con Pareja</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field label="Nombre Pareja" [control]="form.get('nombreA')">
+            <input type="text" class="form-control" formControlName="nombreA" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Paterno Pareja" [control]="form.get('paternoA')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="paternoA"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Materno Pareja" [control]="form.get('maternoA')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="maternoA"
+            />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-2">
+          <form-field label="Edad" [control]="form.get('edadA')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="edadA"
+              maxlength="3"
+              min="1"
+              oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="CI" [control]="form.get('ciA')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="ciA"
+              maxlength="10"
+              min="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Expedido" [control]="form.get('extencionA')">
+            <ng-select
+              formControlName="extencionA"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+            >
+              <ng-option value="LP">LP</ng-option>
+              <ng-option value="OR">OR</ng-option>
+              <ng-option value="PT">PT</ng-option>
+              <ng-option value="CBBA">CBBA</ng-option>
+              <ng-option value="CH">CH</ng-option>
+              <ng-option value="TJA">TJA</ng-option>
+              <ng-option value="SCZ">SCZ</ng-option>
+              <ng-option value="BE">BE</ng-option>
+              <ng-option value="PD">PD</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('fecha')" label="Fecha">
+            <input
+              type="text"
+              formControlName="fecha"
+              class="form-control"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY',
+                displayOneMonthRange: true
+              }"
+              [maxDate]="maxDate"
+              (bsValueChange)="validateDate($event)"
+              bsDatepicker
+            />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field label="Hora Entrada" [control]="form.get('horaEntrada')">
+            <input type="text" class="form-control" formControlName="horaEntrada" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Tiempo" [control]="form.get('tiempo')">
+            <input type="text" class="form-control" formControlName="tiempo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Hora Salida" [control]="form.get('horaSalida')">
+            <input type="text" class="form-control" formControlName="horaSalida" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        
+        <div class="col-md-4">
+          <form-field label="Costo Habitación" [control]="form.get('costoHabitacion')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="costoHabitacion"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Costo Extra" [control]="form.get('costoExtra')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="costoExtra"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Total" [control]="form.get('total')">
+            <input type="text" class="form-control" formControlName="total" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('encargadoId')">
+            <ngx-select
+              [form]="form"
+              control="encargadoId"
+              (fetchItems)="getInCharge($event)"
+              [data]="inCharge"
+              bindLabel="nombre"
+              label="Encargado"
+              value="id"
+              (change)="onChangeAccomodation($event)"
+              [readonly]="false"
+            ></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('habitacionId')">
+            <ngx-select
+              [form]="form"
+              control="habitacionId"
+              (fetchItems)="getBedroom($event)"
+              [data]="bedrooms"
+              bindLabel="noHabitacion"
+              label="No. Habitación"
+              value="id"
+              (change)="onChangeProducts($event)"
+              [readonly]="false"
+            ></ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="form.invalid"
+          (confirm)="confirm()"
+        ></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

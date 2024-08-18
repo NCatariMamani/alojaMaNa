@@ -114,15 +114,15 @@ export class InChargeListComponent extends BasePage implements OnInit {
     );
   }
 
-  edit(products: IInCharge) {
-    this.openModal(products);
+  edit(inCharges: IInCharge) {
+    this.openModal(inCharges);
   }
 
 
-  openModal(products?: IInCharge) {
+  openModal(inCharges?: IInCharge) {
     let config: ModalOptions = {
       initialState: {
-        products,
+        inCharges,
         callback: (next: boolean) => {
           if (next) this.getAllShopping();
         },

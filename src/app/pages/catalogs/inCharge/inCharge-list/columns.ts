@@ -1,5 +1,6 @@
 import { DatePipe } from "@angular/common";
 import { IAccommodation } from "src/app/core/models/catalogs/accommodation.model";
+import { IInCharge } from "src/app/core/models/catalogs/inCharge.model";
 import { IUser } from "src/app/core/models/catalogs/users.model";
 import { CustomDateFilterComponent } from "src/app/shared/utils/custom-date-filter";
 
@@ -8,11 +9,12 @@ export const INCHARGE_COLUMNS = {
     id: {
         title: 'ID',
         sort: false,
-        width: '10%',
+        width: '7%',
     },
     nombre: {
         title: 'Nombre',
         sort: false,
+        
     },
     paterno: {
         title: 'Paterno',
@@ -34,7 +36,7 @@ export const INCHARGE_COLUMNS = {
         title: 'Celular',
         sort: false,
     },
-    alojamientos: {
+    alojamiento: {
         title: 'Alojamiento',
         sort: false,
         valuePrepareFunction: (value: IAccommodation) => {
