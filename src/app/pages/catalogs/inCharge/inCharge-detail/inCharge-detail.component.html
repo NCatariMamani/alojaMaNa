@@ -1,3 +1,120 @@
-<p>
-  inCharge-detail works!
-</p>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? "Editar" : "Nuevo" }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field label="Nombre" [control]="form.get('nombre')">
+            <input type="text" class="form-control" formControlName="nombre" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field label="Paterno" [control]="form.get('paterno')">
+            <input type="text" class="form-control" formControlName="paterno" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field label="Materno" [control]="form.get('materno')">
+            <input type="text" class="form-control" formControlName="materno" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="CI" [control]="form.get('ci')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="ci"
+              maxlength="15"
+              min="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Expedido" [control]="form.get('ext')">
+            <ng-select
+              formControlName="ext"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+            >
+              <ng-option value="LP">LP</ng-option>
+              <ng-option value="OR">OR</ng-option>
+              <ng-option value="PT">PT</ng-option>
+              <ng-option value="CBBA">CBBA</ng-option>
+              <ng-option value="CH">CH</ng-option>
+              <ng-option value="TJA">TJA</ng-option>
+              <ng-option value="SCZ">SCZ</ng-option>
+              <ng-option value="BE">BE</ng-option>
+              <ng-option value="PD">PD</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field label="Celular" [control]="form.get('celular')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="celular"
+              maxlength="8"
+              min="1"
+              oninput="if(this.value.length > 8) this.value = this.value.slice(0, 8);"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('alojamientoId')">
+            <ngx-select
+              [form]="form"
+              control="alojamientoId"
+              (fetchItems)="getAccomodation($event)"
+              [data]="accomodations"
+              bindLabel="nombre"
+              label="Alojamiento"
+              value="id"
+              (change)="onChangeAccomodation($event)"
+              [readonly]="false"
+            ></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('userId')">
+            <ngx-select
+              [form]="form"
+              control="userId"
+              (fetchItems)="getUsers($event)"
+              [data]="users"
+              bindLabel="email"
+              label="Usuario"
+              value="id"
+              (change)="onChangeUsers($event)"
+              [readonly]="false"
+            ></ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="form.invalid"
+          (confirm)="confirm()"
+        ></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
