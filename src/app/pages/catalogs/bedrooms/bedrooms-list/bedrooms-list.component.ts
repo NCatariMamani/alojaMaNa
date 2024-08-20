@@ -28,7 +28,7 @@ export class BedroomsListComponent extends BasePage implements OnInit {
   constructor(
     private modalService: BsModalService,
     private accomodationService: AccomodationService,
-    private bedrromsService: BedroomsService
+    private bedroomsService: BedroomsService
 
   ) {
     super();
@@ -82,23 +82,23 @@ export class BedroomsListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getAllShopping();
+          this.getAllBedrooms();
         }
       });
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAllShopping());
+      .subscribe(() => this.getAllBedrooms());
 
   }
 
-  getAllShopping() {
+  getAllBedrooms() {
     this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.bedrromsService.getAll(params).subscribe({
+    this.bedroomsService.getAll(params).subscribe({
       next: response => {
         console.log(response);
         this.data.load(response.data);
@@ -125,7 +125,7 @@ export class BedroomsListComponent extends BasePage implements OnInit {
       initialState: {
         bedroom,
         callback: (next: boolean) => {
-          if (next) this.getAllShopping();
+          if (next) this.getAllBedrooms();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -149,12 +149,12 @@ export class BedroomsListComponent extends BasePage implements OnInit {
   }
 
   delete(id: string | number) {
-    this.bedrromsService.remove(id).subscribe({
+    this.bedroomsService.remove(id).subscribe({
       next: () => {
         this.alert('success', 'Compras', 'Borrado Correctamente');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getAllShopping());
+          .subscribe(() => this.getAllBedrooms());
       }, error: err => {
         this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
       },
