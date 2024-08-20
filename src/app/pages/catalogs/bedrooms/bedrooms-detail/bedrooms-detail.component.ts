@@ -18,11 +18,12 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class BedroomsDetailComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
-  title: string = 'ALOJAMIENTO';
+  title: string = 'HABITACIÓN';
   status: string = 'Nuevo';
   edit: boolean = false;
   accommodation?: IAccommodation;
   bedroom?: IBedroom;
+  idAccom: number = 0;
 
   accomodations = new DefaultSelect();
   
@@ -43,10 +44,11 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       noHabitacion: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)]],
-      preferencias: [null, [Validators.required]],
-      estado: [null, [Validators.required]],
-      alojamientoId: [null,[Validators.required],],
+      preferencias: ['SIMPLE', [Validators.required]],
+      estado: ['LIBRE', [Validators.required]],
+      alojamientoId: [this.idAccom,[Validators.required]],
     });
+    this.form.controls['alojamientoId'].disable();
     if (this.bedroom != null) {
       this.edit = true;
       console.log(this.bedroom);
@@ -55,6 +57,7 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
     setTimeout(() => {
       this.getAccomodation(new ListParams());
     }, 1000);
+    console.log(this.idAccom);
   }
 
 
@@ -64,6 +67,7 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
+    console.log(this.idAccom);
     let body = {
       noHabitacion: Number(this.form.controls['noHabitacion'].getRawValue()),
       preferencias: this.form.controls['preferencias'].getRawValue(),
@@ -118,9 +122,10 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
   }
 
   getAccomodation(params: ListParams) {
-    if (params.text) {
-      params['filter.nombre'] = `$ilike:${params.text}`;
-    }
+    /*if (params.text) {
+      params['filter.alojamientoId'] = `$eq:${this.idAccom}`;
+    }*/
+    params['filter.id'] = `$eq:${this.idAccom}`;
     this.accomodationService.getAll(params).subscribe({
       next: data => {
         this.accomodations = new DefaultSelect(data.data, data.count);

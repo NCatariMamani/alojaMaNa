@@ -28,14 +28,14 @@ export class AuthService {
   constructor(
     private readonly http: HttpClient,
     private readonly jwtService: JwtHelperService
-  ) {}
+  ) { }
 
   get useReportToken(): boolean {
     return this.reportAuthFlag;
   }
 
   setTokenTimer() {
-    const token:any = localStorage.getItem('token');
+    const token: any = localStorage.getItem('token');
     const decodedToken: any = this.jwtService.decodeToken(token);
     const expires = new Date(decodedToken.exp * 1000);
     const tokenCreation = new Date(decodedToken.iat * 1000);
@@ -60,7 +60,7 @@ export class AuthService {
       'Content-Type',
       'application/x-www-form-urlencoded' , { headers }
     );*/
-    let body ={
+    let body = {
       email: email0,
       password: password0
     }
@@ -73,7 +73,7 @@ export class AuthService {
         if (this.isValidJWT(token)) {
           localStorage.setItem('token', response.token);
           //localStorage.setItem('r_token', response.refresh_token);
-        }  
+        }
       })
     );
   }
@@ -180,4 +180,13 @@ export class AuthService {
     let headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.get<any>(pathExtTypeUser, { headers });
   }*/
+
+  getUserInfo(): any {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return null;
+    }
+    const payload = token.split('.')[1];
+    return JSON.parse(atob(payload));
+  }
 }

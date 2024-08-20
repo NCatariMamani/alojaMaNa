@@ -73,9 +73,10 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false"
+              (change)="onChangeCompanion($event)"
             >
-              <ng-option value="LP">Solo</ng-option>
-              <ng-option value="OR">Con Pareja</ng-option>
+              <ng-option value="SOLO">SOLO</ng-option>
+              <ng-option value="CON PAREJA">CON PAREJA</ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -175,9 +176,19 @@
             <input type="text" class="form-control" formControlName="horaEntrada" />
           </form-field>
         </div>
+        
         <div class="col-md-4">
           <form-field label="Tiempo" [control]="form.get('tiempo')">
-            <input type="text" class="form-control" formControlName="tiempo" />
+            <ng-select
+              formControlName="tiempo"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+              (change)="onChangeTime($event)"
+            >
+              <ng-option value="MOMENTANEO">MOMENTANEO</ng-option>
+              <ng-option value="TODA LA NOCHE">TODA LA NOCHE</ng-option>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-4">
@@ -188,7 +199,39 @@
       </div>
 
       <div class="row pt-4">
-        
+        <div class="col-md-6">
+          <form-field [control]="form.get('encargadoId')">
+            <ngx-select
+              [form]="form"
+              control="encargadoId"
+              (fetchItems)="getInCharge($event)"
+              [data]="inCharge"
+              bindLabel="idUser"
+              label="Encargado"
+              value="id"
+              (change)="onChangeInCharge($event)"
+              [readonly]="false"
+            ></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('habitacionId')">
+            <ngx-select
+              [form]="form"
+              control="habitacionId"
+              (fetchItems)="getBedroom($event)"
+              [data]="bedrooms"
+              bindLabel="noHabPref"
+              label="No. Habitación"
+              value="id"
+              (change)="onChangeBedroom($event)"
+              [readonly]="false"
+            ></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
         <div class="col-md-4">
           <form-field label="Costo Habitación" [control]="form.get('costoHabitacion')">
             <input
@@ -213,38 +256,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-4">
-        <div class="col-md-6">
-          <form-field [control]="form.get('encargadoId')">
-            <ngx-select
-              [form]="form"
-              control="encargadoId"
-              (fetchItems)="getInCharge($event)"
-              [data]="inCharge"
-              bindLabel="nombre"
-              label="Encargado"
-              value="id"
-              (change)="onChangeAccomodation($event)"
-              [readonly]="false"
-            ></ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('habitacionId')">
-            <ngx-select
-              [form]="form"
-              control="habitacionId"
-              (fetchItems)="getBedroom($event)"
-              [data]="bedrooms"
-              bindLabel="noHabitacion"
-              label="No. Habitación"
-              value="id"
-              (change)="onChangeProducts($event)"
-              [readonly]="false"
-            ></ngx-select>
-          </form-field>
-        </div>
-      </div>
+      
     </form>
   </div>
   <div footer>
