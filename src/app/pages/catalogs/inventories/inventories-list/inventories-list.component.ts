@@ -83,17 +83,17 @@ export class InventoriesListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getAllShopping();
+          this.getAllInventories();
         }
       });
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAllShopping());
+      .subscribe(() => this.getAllInventories());
 
   }
 
-  getAllShopping() {
+  getAllInventories() {
     this.loading = true;
     let params = {
       ...this.params.getValue(),
@@ -126,7 +126,7 @@ export class InventoriesListComponent extends BasePage implements OnInit {
       initialState: {
         inventories,
         callback: (next: boolean) => {
-          if (next) this.getAllShopping();
+          if (next) this.getAllInventories();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -155,7 +155,7 @@ export class InventoriesListComponent extends BasePage implements OnInit {
         this.alert('success', 'Inventario', 'Borrado Correctamente');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getAllShopping());
+          .subscribe(() => this.getAllInventories());
       }, error: err => {
         this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
       },

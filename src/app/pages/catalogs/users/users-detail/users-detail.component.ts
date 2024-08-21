@@ -66,7 +66,8 @@ export class UsersDetailComponent extends BasePage implements OnInit {
         this.handleSuccess(),
         this.loading = false
       }, error: err =>  {
-        this.loading = false
+        this.loading = false;
+        this.alert('error', this.title, `${err}`);
       }
     }
     );
@@ -93,6 +94,7 @@ export class UsersDetailComponent extends BasePage implements OnInit {
           },
           error: error => {
             this.loading = false;
+            this.alert('error', this.title, `${error}`);
           }
         }
 
