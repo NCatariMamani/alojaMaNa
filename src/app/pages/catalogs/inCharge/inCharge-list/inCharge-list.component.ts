@@ -81,17 +81,17 @@ export class InChargeListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getAllShopping();
+          this.getAllInCharge();
         }
       });
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAllShopping());
+      .subscribe(() => this.getAllInCharge());
 
   }
 
-  getAllShopping() {
+  getAllInCharge() {
     this.loading = true;
     let params = {
       ...this.params.getValue(),
@@ -124,7 +124,7 @@ export class InChargeListComponent extends BasePage implements OnInit {
       initialState: {
         inCharges,
         callback: (next: boolean) => {
-          if (next) this.getAllShopping();
+          if (next) this.getAllInCharge();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -153,7 +153,7 @@ export class InChargeListComponent extends BasePage implements OnInit {
         this.alert('success', 'ENCARGADO', 'Borrado Correctamente');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getAllShopping());
+          .subscribe(() => this.getAllInCharge());
       }, error: err => {
         this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
       },

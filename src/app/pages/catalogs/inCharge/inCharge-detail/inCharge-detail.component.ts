@@ -25,6 +25,7 @@ export class InChargeDetailComponent extends BasePage implements OnInit {
   editDate?: Date;
   maxDate: Date = new Date();
   inCharges?: IInCharge;
+  user: number = 0;
 
   accomodations = new DefaultSelect();
   users = new DefaultSelect();
@@ -53,8 +54,9 @@ export class InChargeDetailComponent extends BasePage implements OnInit {
       ext: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       celular: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       alojamientoId: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      userId: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]]
+      userId: [this.user, [Validators.required, Validators.pattern(STRING_PATTERN)]]
     });
+    this.form.controls['userId'].disable();
     if (this.inCharges != null) {
       this.edit = true;
       this.form.patchValue(this.inCharges);

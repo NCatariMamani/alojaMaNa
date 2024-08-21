@@ -26,6 +26,7 @@ export class InventoriesDetailComponent extends BasePage implements OnInit {
   inventories?: IInventories;
   editDate?: Date;
   maxDate: Date = new Date();
+  idAccom: number = 0;
 
   accomodations = new DefaultSelect();
 
@@ -46,12 +47,13 @@ export class InventoriesDetailComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       fecha: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      alojamientoId: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      alojamientoId: [this.idAccom, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       descripcion: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ]
     });
+    this.form.controls['alojamientoId'].disable();
     if (this.inventories != null) {
       this.edit = true;
       const formattedDate = this.datePipe.transform(this.inventories.fecha, 'dd/MM/yyyy');
@@ -130,9 +132,10 @@ export class InventoriesDetailComponent extends BasePage implements OnInit {
   }
 
   getAccomodation(params: ListParams) {
-    if (params.text) {
+    /*if (params.text) {
       params['filter.nombre'] = `$ilike:${params.text}`;
-    }
+    }*/
+      params['filter.id'] = `$eq:${this.idAccom}`;
     this.accomodationService.getAll(params).subscribe({
       next: data => {
         this.accomodations = new DefaultSelect(data.data, data.count);
