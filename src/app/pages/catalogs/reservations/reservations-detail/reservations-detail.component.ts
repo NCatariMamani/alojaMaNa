@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -20,7 +20,7 @@ import { IInCharge } from 'src/app/core/models/catalogs/inCharge.model';
   styleUrls: ['./reservations-detail.component.css']
 })
 export class ReservationsDetailComponent extends BasePage implements OnInit {
-  reservarions?: IReservations;
+  reservations?: IReservations;
 
   form: FormGroup = new FormGroup({});
   title: string = 'RESERVACIÓN';
@@ -36,7 +36,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   editDate?: Date;
   maxDate: Date = new Date();
 
-  bedrooms = new DefaultSelect();
+  bedrooms = new DefaultSelect<IBedroom>();
   inCharge = new DefaultSelect<IInCharge>();
 
   prefe?: string;
@@ -48,7 +48,8 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     private reservationsService: ReservationsService,
     private bedroomsService: BedroomsService,
     private inChargeService: InChargeService,
-    private authService: AuthService
+    private authService: AuthService,
+    private currencyPipe: CurrencyPipe
   ) {
     super();
   }
@@ -99,12 +100,13 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     this.form.controls['habitacionId'].disable();
     this.form.controls['costoExtra'].disable();
 
-    if (this.reservarions != null) {
+    if (this.reservations != null) {
       this.edit = true;
-      const localDate = new Date(this.reservarions.fecha);
+      const localDate = new Date(this.reservations.fecha);
       const formattedDate = this.datePipe.transform(new Date(localDate.getTime() + localDate.getTimezoneOffset() * 60000), 'dd/MM/yyyy');
-      this.form.patchValue(this.reservarions);
+      this.form.patchValue(this.reservations);
       this.form.controls['fecha'].setValue(formattedDate);
+      this.form.controls['habitacionId'].enable();
     } else {
       const date = new Date();
       const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
@@ -144,6 +146,10 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     this.edit ? this.update() : this.create();
   }
 
+  formatToBolivianCurrency(value: number): string | null {
+    return this.currencyPipe.transform(value, 'Bs ', 'symbol', '1.2-2');
+  }
+
   create() {
     this.loading = true;
     const dateString = this.form.controls['fecha'].getRawValue();
@@ -151,7 +157,6 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     const date = new Date(Date.UTC(year, month - 1, day));
     const isoString = date.toISOString();
 
-    console.log(isoString);
     let body = {
       nombre: this.form.controls['nombre'].getRawValue(),
       paterno: this.form.controls['paterno'].getRawValue(),
@@ -170,9 +175,9 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       horaSalida: this.form.controls['horaSalida'].getRawValue(),
       tiempo: this.form.controls['tiempo'].getRawValue(),
       compania: this.form.controls['compania'].getRawValue(),
-      costoHabitacion: parseFloat(this.form.controls['costoHabitacion'].getRawValue()),
+      costoHabitacion: this.form.controls['costoHabitacion'].getRawValue(),
       costoExtra: parseFloat(this.form.controls['costoExtra'].getRawValue()),
-      total: parseFloat(this.form.controls['total'].getRawValue()),
+      total: this.form.controls['total'].getRawValue(),
       habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
       encargadoId: Number(this.form.controls['encargadoId'].getRawValue()),
     }
@@ -197,7 +202,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   update() {
-    if (this.reservarions) {
+    if (this.reservations) {
       this.loading = true;
       const dateString = this.form.controls['fecha'].getRawValue();
       const [day, month, year] = dateString.split("/").map(Number);
@@ -221,14 +226,14 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
         horaSalida: this.form.controls['horaSalida'].getRawValue(),
         tiempo: this.form.controls['tiempo'].getRawValue(),
         compania: this.form.controls['compania'].getRawValue(),
-        costoHabitacion: parseFloat(this.form.controls['costoHabitacion'].getRawValue()),
+        costoHabitacion: this.form.controls['costoHabitacion'].getRawValue(),
         costoExtra: parseFloat(this.form.controls['costoExtra'].getRawValue()),
-        total: parseFloat(this.form.controls['total'].getRawValue()),
+        total: this.form.controls['total'].getRawValue(),
         habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
         encargadoId: Number(this.form.controls['encargadoId'].getRawValue()),
       }
       this.reservationsService
-        .update(this.reservarions.id, body)
+        .update(this.reservations.id, body)
         .subscribe({
           next: response => {
             this.loading = false;
@@ -271,17 +276,21 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     console.log(event);
     this.prefe = event.preferencias;
     if (event.preferencias == 'SIMPLE' && this.form.controls['tiempo'].value == 'MOMENTANEO') {
-      this.form.controls['costoHabitacion'].setValue(30);
-      this.form.controls['total'].setValue(30);
+      const formatCos = this.formatToBolivianCurrency(30);
+      this.form.controls['costoHabitacion'].setValue(formatCos);
+      this.form.controls['total'].setValue(formatCos);
     } else if (event.preferencias == 'SIMPLE' && this.form.controls['tiempo'].value == 'TODA LA NOCHE') {
-      this.form.controls['costoHabitacion'].setValue(60);
-      this.form.controls['total'].setValue(60);
+      const formatCos1 = this.formatToBolivianCurrency(60);
+      this.form.controls['costoHabitacion'].setValue(formatCos1);
+      this.form.controls['total'].setValue(formatCos1);
     } else if (event.preferencias == 'BAÑO PRIVADO' && this.form.controls['tiempo'].value == 'MOMENTANEO') {
-      this.form.controls['costoHabitacion'].setValue(40);
-      this.form.controls['total'].setValue(40);
+      const formatCost2 = this.formatToBolivianCurrency(40);
+      this.form.controls['costoHabitacion'].setValue(formatCost2);
+      this.form.controls['total'].setValue(formatCost2);
     } else {
-      this.form.controls['costoHabitacion'].setValue(70);
-      this.form.controls['total'].setValue(70);
+      const formatCost3 = this.formatToBolivianCurrency(70);
+      this.form.controls['costoHabitacion'].setValue(formatCost3);
+      this.form.controls['total'].setValue(formatCost3);
     }
   }
 
@@ -344,17 +353,21 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       this.form.controls['horaSalida'].setValue(time);
     }
     if (this.prefe == 'SIMPLE' && event == 'MOMENTANEO') {
-      this.form.controls['costoHabitacion'].setValue(30);
-      this.form.controls['total'].setValue(30);
+      const formatCostBob = this.formatToBolivianCurrency(30);
+      this.form.controls['costoHabitacion'].setValue(formatCostBob);
+      this.form.controls['total'].setValue(formatCostBob);
     } else if (this.prefe == 'SIMPLE' && event == 'TODA LA NOCHE') {
-      this.form.controls['costoHabitacion'].setValue(60);
-      this.form.controls['total'].setValue(60);
+      const formatCostBob1 = this.formatToBolivianCurrency(60);
+      this.form.controls['costoHabitacion'].setValue(formatCostBob1);
+      this.form.controls['total'].setValue(formatCostBob1);
     } else if (this.prefe == 'BAÑO PRIVADO' && event == 'MOMENTANEO') {
-      this.form.controls['costoHabitacion'].setValue(40);
-      this.form.controls['total'].setValue(40);
+      const formatCostBob2 = this.formatToBolivianCurrency(40);
+      this.form.controls['costoHabitacion'].setValue(formatCostBob2);
+      this.form.controls['total'].setValue(formatCostBob2);
     } else {
-      this.form.controls['costoHabitacion'].setValue(70);
-      this.form.controls['total'].setValue(70);
+      const formatCostBob3 = this.formatToBolivianCurrency(70);
+      this.form.controls['costoHabitacion'].setValue(formatCostBob3);
+      this.form.controls['total'].setValue(formatCostBob3);
     }
   }
 

@@ -18,6 +18,7 @@
           </button>
         </div>
         <app-columns-select
+          [defaultColumns]="11"
           [(settings)]="settings"
           [leftList]="true"
         ></app-columns-select>
@@ -32,7 +33,7 @@
               [settings]="settings"
               [source]="data"
               (edit)="edit($event.data)"
-            (delete)="showDeleteAlert($event.data)"
+              (delete)="showDeleteAlert($event.data)"
             ></ng2-smart-table>
           </div>
           <app-pagination
@@ -44,4 +45,3 @@
     </div>
   </div>
 </app-card>
-

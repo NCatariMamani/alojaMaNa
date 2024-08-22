@@ -6,6 +6,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ReservationsDetailComponent } from './reservations-detail/reservations-detail.component';
 import { ReservationsListComponent } from './reservations-list/reservations-list.component';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { ReservationsModalComponent } from './reservations-modal/reservations-modal.component';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { TimepickerModule } from 'ngx-bootstrap/timepicker';
   ],
   declarations: [
     ReservationsDetailComponent,
-    ReservationsListComponent
+    ReservationsListComponent,
+    ReservationsModalComponent
   ]
 })
 export class ReservationsModule { }

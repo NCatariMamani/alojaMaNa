@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -44,6 +44,7 @@ export function tokenGetter() {
     AuthService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DatePipe,
+    CurrencyPipe
   ],
   bootstrap: [AppComponent]
 })
