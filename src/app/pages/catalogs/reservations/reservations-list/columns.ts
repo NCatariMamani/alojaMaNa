@@ -5,12 +5,26 @@ import { IInCharge } from "src/app/core/models/catalogs/inCharge.model";
 import { IProducts } from "src/app/core/models/catalogs/products.model";
 import { CustomDateFilterComponent } from "src/app/shared/utils/custom-date-filter";
 
-export const RESERVATIONS_COLUMNS = {
-    id: {
-        title: 'ID',
+export const RESERVATIONS_COLUMNS = { 
+    habitaciones: {
+        title: 'Habitación',
         sort: false,
-        width: '10%',
-    },
+        width: '6%',
+        valuePrepareFunction: (value: IBedroom) => {
+            return value?.noHabitacion;
+        },
+        filterFunction(cell?: any, search?: string): boolean {
+            let column = cell.noHabitacion;
+            if (typeof search !== 'string') {
+                return true;
+            }
+            if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+                return true;
+            } else {
+                return false;
+            }
+        },
+    },  
     nombre: {
         title: 'Nombre',
         sort: false,
@@ -18,6 +32,53 @@ export const RESERVATIONS_COLUMNS = {
     paterno: {
         title: 'Paterno',
         sort: false,
+    },
+    horaEntrada: {
+        title: 'Hora Entrada',
+        sort: false,
+    },
+    horaSalida: {
+        title: 'Hora Salida',
+        sort: false,
+    },
+    tiempo: {
+        title: 'Tiempo',
+        sort: false,
+    },
+    costoHabitacion: {
+        title: 'Costo Habitación',
+        sort: false,
+    },
+    costoExtra: {
+        title: 'Costo Extra',
+        sort: false,
+    },
+    total: {
+        title: 'Total',
+        sort: false,
+    },
+    
+    encargados: {
+        title: 'Encargado',
+        sort: false,
+        valuePrepareFunction: (value: IInCharge) => {
+            return value?.nombre;
+        },
+        filterFunction(cell?: any, search?: string): boolean {
+            let column = `${cell.nombre} ${cell.paterno} ${cell.materno}`;
+            if (typeof search !== 'string') {
+                return true;
+            }
+            if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+                return true;
+            } else {
+                return false;
+            }
+        },
+    },id: {
+        title: 'ID',
+        sort: false,
+        width: '10%',
     },
     materno: {
         title: 'Materno',
@@ -71,69 +132,10 @@ export const RESERVATIONS_COLUMNS = {
             type: 'custom',
             component: CustomDateFilterComponent,
           },
-    },
-    horaEntrada: {
-        title: 'Hora Entrada',
-        sort: false,
-    },
-    horaSalida: {
-        title: 'Hora Salida',
-        sort: false,
-    },
-    tiempo: {
-        title: 'Tiempo',
-        sort: false,
-    },
-    compania: {
+    },compania: {
         title: 'Compañia',
         sort: false,
     },
-    costoHabitacion: {
-        title: 'Costo Habitación',
-        sort: false,
-    },
-    costoExtra: {
-        title: 'Costo Extra',
-        sort: false,
-    },
-    total: {
-        title: 'Total',
-        sort: false,
-    },
-    habitaciones: {
-        title: 'Habitación',
-        sort: false,
-        valuePrepareFunction: (value: IBedroom) => {
-            return value?.noHabitacion;
-        },
-        filterFunction(cell?: any, search?: string): boolean {
-            let column = cell.noHabitacion;
-            if (typeof search !== 'string') {
-                return true;
-            }
-            if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
-                return true;
-            } else {
-                return false;
-            }
-        },
-    },
-    encargados: {
-        title: 'Encargado',
-        sort: false,
-        valuePrepareFunction: (value: IInCharge) => {
-            return value?.nombre;
-        },
-        filterFunction(cell?: any, search?: string): boolean {
-            let column = `${cell.nombre} ${cell.paterno} ${cell.materno}`;
-            if (typeof search !== 'string') {
-                return true;
-            }
-            if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
-                return true;
-            } else {
-                return false;
-            }
-        },
-    }
+
+    
 };

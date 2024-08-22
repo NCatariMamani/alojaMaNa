@@ -8,6 +8,10 @@ import { RESERVATIONS_COLUMNS } from './columns';
 import { ReservationsService } from 'src/app/core/services/catalogs/reservations.service';
 import { IReservations } from 'src/app/core/models/catalogs/reservations.model';
 import { ReservationsDetailComponent } from '../reservations-detail/reservations-detail.component';
+import { ButtonColumnComponent } from 'src/app/shared/components/button-column/button-column.component';
+import { ButtonColumnAddComponent } from 'src/app/shared/components/button-column/button-column-add.component';
+import { ButtonColumnDeleteComponent } from 'src/app/shared/components/button-column/button-column-delete.component';
+import { ReservationsModalComponent } from '../reservations-modal/reservations-modal.component';
 
 @Component({
   selector: 'app-reservations-list',
@@ -39,7 +43,34 @@ export class ReservationsListComponent extends BasePage implements OnInit {
         add: false,
         position: 'right',
       },
-      columns: { ...RESERVATIONS_COLUMNS },
+      columns: { 
+        officialConclusion: {
+          title: 'Aumento',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnAddComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              this.increase(row);
+            });
+          },
+        },  
+        officialConclusion1: {
+          title: 'Venta',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              this.sales(row);
+            });
+          },
+        }, 
+        ...RESERVATIONS_COLUMNS },
     };
   }
 
@@ -84,6 +115,29 @@ export class ReservationsListComponent extends BasePage implements OnInit {
 
   }
 
+  increase(event: any){
+    console.log(event);
+    this.openModalIncrease(event);
+  }
+
+  openModalIncrease(reservations?: IReservations) {
+    let config: ModalOptions = {
+      initialState: {
+        reservations,
+        callback: (next: boolean) => {
+          if (next) this.getAllShopping();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ReservationsModalComponent, config);
+  }
+
+  sales(event: any){
+    console.log(event);
+  }
+
   getAllShopping() {
     this.loading = true;
     let params = {
@@ -107,15 +161,15 @@ export class ReservationsListComponent extends BasePage implements OnInit {
     );
   }
 
-  edit(reservarions: IReservations) {
-    this.openModal(reservarions);
+  edit(reservations: IReservations) {
+    this.openModal(reservations);
   }
 
 
-  openModal(reservarions?: IReservations) {
+  openModal(reservations?: IReservations) {
     let config: ModalOptions = {
       initialState: {
-        reservarions,
+        reservations,
         callback: (next: boolean) => {
           if (next) this.getAllShopping();
         },

@@ -24,6 +24,9 @@ import { ConfirmButtonComponent } from './components/confirm-button/confirm-butt
 import { CustomDateFilterComponent } from './utils/custom-date-filter';
 import { SelectComponent } from './components/select/select.component';
 import { CurrencyComponent } from './components/currency/currency.component';
+import { ButtonColumnAddComponent } from './components/button-column/button-column-add.component';
+import { ButtonColumnDeleteComponent } from './components/button-column/button-column-delete.component';
+import { ButtonColumnComponent } from './components/button-column/button-column.component';
 
 export const customCurrencyMaskConfig = {
   align: 'right',
@@ -48,7 +51,10 @@ export const customCurrencyMaskConfig = {
     ConfirmButtonComponent,
     CustomDateFilterComponent,
     SelectComponent,
-    CurrencyComponent
+    CurrencyComponent,
+    ButtonColumnAddComponent,
+    ButtonColumnDeleteComponent,
+    ButtonColumnComponent
   ],
   imports: [
     CommonModule,
@@ -79,7 +85,10 @@ export const customCurrencyMaskConfig = {
     ConfirmButtonComponent,
     ReactiveFormsModule,
     SelectComponent,
-    CurrencyComponent
+    CurrencyComponent,
+    ButtonColumnAddComponent,
+    ButtonColumnDeleteComponent,
+    ButtonColumnComponent
   ],
   providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })

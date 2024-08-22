@@ -1,0 +1,115 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? "Editar" : "Nuevo" }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form" (ngSubmit)="confirm()">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field label="Aumentar Tiempo" [control]="form.get('aumentar')">
+            <ng-select
+              formControlName="aumentar"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+              (change)="onChange($event)"
+            >
+              <ng-option value="1H">1 HORA</ng-option>
+              <ng-option value="2H">2 HORAS</ng-option>
+              <ng-option value="TN">TODA LA NOCHE</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Hora Entrada" [control]="form.get('horaEntrada')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="horaEntrada"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Hora Salida" [control]="form.get('horaSalida')">
+            <input
+              [ngClass]="{
+                'bg-info1': validation === '1H',
+                'bg-info2': validation === '2H',
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H',
+                'bg-info5': validation === '5H',
+                'bg-info6': validation === 'TN'
+              }"
+              type="text"
+              class="form-control"
+              formControlName="horaSalida"
+            />
+          </form-field>
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            label="Costo Habitacion"
+            [control]="form.get('costoHabitacion')"
+          >
+            <input
+              [ngClass]="{
+                'bg-info1': validation === '1H',
+                'bg-info2': validation === '2H',
+                'bg-info6': validation === 'TN'
+              }"
+              type="text"
+              class="form-control"
+              formControlName="costoHabitacion"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Costo Extra" [control]="form.get('costoExtra')">
+            <input
+              [ngClass]="{
+                'bg-info1': validation === '1H',
+                'bg-info2': validation === '2H',
+                'bg-info6': validation === 'TN'
+              }"
+              type="text"
+              class="form-control"
+              formControlName="costoExtra"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Total" [control]="form.get('total')">
+            <input
+              [ngClass]="{
+                'bg-info1': validation === '1H',
+                'bg-info2': validation === '2H',
+                'bg-info6': validation === 'TN'
+              }"
+              type="text"
+              class="form-control"
+              formControlName="total"
+            />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="form.invalid"
+          (confirm)="confirm()"
+        ></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
