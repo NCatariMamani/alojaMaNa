@@ -23,6 +23,8 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
   maxDate: Date = new Date();
   validation?: string;
   timeOutput?: string;
+  time?: string;
+  extra?:string;
 
 
   constructor(
@@ -57,12 +59,14 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
     if (this.reservations != null) {
       this.edit = true;
       this.timeOutput = this.reservations.horaSalida;
+      this.time = this.reservations.tiempo;
+      this.extra = this.reservations.costoExtra;
       this.form.patchValue(this.reservations);
     }
 
   }
 
-  formatToBolivianCurrency(value: number): string | null {
+  formatToBolivianCurrency(value?: number): string | null{
     return this.currencyPipe.transform(value, 'Bs ', 'symbol', '1.2-2');
   }
 
@@ -86,15 +90,15 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
   update() {
     if (this.reservations) {
       this.loading = true;
-      const moneda = this.form.controls['total'].getRawValue();
-      const format = this.formatToBolivianCurrency(moneda);
-      console.log(format);
       let body = {
         horaSalida: this.form.controls['horaSalida'].getRawValue(),
-        costoExtra: parseFloat(this.form.controls['costoExtra'].getRawValue()),
-        total: parseFloat(this.form.controls['total'].getRawValue())
+        costoExtra: this.form.controls['costoExtra'].getRawValue(),
+        total: this.form.controls['total'].getRawValue(),
+        tiempo: this.time
       }
-      /*this.reservationsService
+
+      console.log(body);
+      this.reservationsService
         .update(this.reservations.id, body)
         .subscribe({
           next: response => {
@@ -106,7 +110,7 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
           }
         }
 
-        );*/
+        );
     }
   }
 
@@ -122,28 +126,45 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
       //const valueExt = this.form.controls['costoExtra'].value;
       switch (event) {
         case '1H':
-          const costo = this.formatToBolivianCurrency(10);
-          this.form.controls['costoExtra'].setValue(costo);
-          const valueExt = this.form.controls['costoExtra'].value;
-          if(this.timeOutput){
-            const formatTime = this.addHoursToTime(this.timeOutput,1);
-            this.form.controls['horaSalida'].setValue(formatTime);
-          }          
+          console.log(this.extra);
+          if(this.extra){
+            const value = 'Bs 10.00';
+            const costTot1 = this.addCurrency(value,this.extra);
+            const setCost = this.formatToBolivianCurrency(costTot1);
+            this.form.controls['costoExtra'].setValue(setCost);
+          }else{
+            const costo = this.formatToBolivianCurrency(10);
+            this.form.controls['costoExtra'].setValue(costo);
+          }
+          const valueExt = this.form.controls['costoExtra'].value;        
           const costTot = this.addCurrency(valueCost,valueExt);
           const total = this.formatToBolivianCurrency(costTot);
           this.form.controls['total'].setValue(total);
+          if(this.timeOutput){
+            const formatTime = this.addHoursToTime(this.timeOutput,1);
+            this.form.controls['horaSalida'].setValue(formatTime);
+          }  
+          this.time = this.reservations?.tiempo;
           break;
         case '2H':
-          const costo1 = this.formatToBolivianCurrency(20);
-          this.form.controls['costoExtra'].setValue(costo1);
+          if(this.extra){
+            const value = 'Bs 20.00';
+            const costTot2 = this.addCurrency(value,this.extra);
+            const setCost2 = this.formatToBolivianCurrency(costTot2);
+            this.form.controls['costoExtra'].setValue(setCost2);
+          }else{
+            const costo1 = this.formatToBolivianCurrency(20);
+            this.form.controls['costoExtra'].setValue(costo1);
+          }
           const valueExt1 = this.form.controls['costoExtra'].value;
+          const costTot1 = this.addCurrency(valueCost,valueExt1);
+          const total1 = this.formatToBolivianCurrency(costTot1);
+          this.form.controls['total'].setValue(total1);
           if(this.timeOutput){
             const formatTime = this.addHoursToTime(this.timeOutput,2);
             this.form.controls['horaSalida'].setValue(formatTime);
           }
-          const costTot1 = this.addCurrency(valueCost,valueExt1);
-          const total1 = this.formatToBolivianCurrency(costTot1);
-          this.form.controls['total'].setValue(total1);
+          this.time = this.reservations?.tiempo;
           break;
         default:
           const costo2 = this.formatToBolivianCurrency(30);
@@ -154,6 +175,7 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
           const costTot2 = this.addCurrency(valueCost,valueExt2);
           const total2 = this.formatToBolivianCurrency(costTot2);
           this.form.controls['total'].setValue(total2);
+          this.time = 'TODA LA NOCHE';
           break;
       }
     }
@@ -161,10 +183,10 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
   }
 
   addCurrency(value: string, value1: string): number {
-    const numericAmount1 = parseFloat(value.replace('Bs ', ''));
-    const numericAmount2 = parseFloat(value1.replace('Bs ', ''));
-    const total = numericAmount1 + numericAmount2;
-    return total;
+      const numericAmount1 = parseFloat(value.replace('Bs ', ''));
+      const numericAmount2 = parseFloat(value1.replace('Bs ', ''));
+      const total = numericAmount1 + numericAmount2;
+      return total;
   }
 
   addHoursToTime(timeString: string, hoursToAdd: number): string {

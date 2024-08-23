@@ -13,6 +13,8 @@ import { DOUBLE_POSITIVE_PATTERN, NUMBERS_PATTERN, STRING_PATTERN } from 'src/ap
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { IInCharge } from 'src/app/core/models/catalogs/inCharge.model';
+import { AccomodationService } from 'src/app/core/services/catalogs/accomodation.service';
+import { IAccommodation } from 'src/app/core/models/catalogs/accommodation.model';
 
 @Component({
   selector: 'app-reservations-detail',
@@ -38,6 +40,9 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
 
   bedrooms = new DefaultSelect<IBedroom>();
   inCharge = new DefaultSelect<IInCharge>();
+  accomodations = new DefaultSelect<IAccommodation>();
+
+  idInCharge: any;
 
   prefe?: string;
 
@@ -49,7 +54,8 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     private bedroomsService: BedroomsService,
     private inChargeService: InChargeService,
     private authService: AuthService,
-    private currencyPipe: CurrencyPipe
+    private currencyPipe: CurrencyPipe,
+    private accomodationService: AccomodationService
   ) {
     super();
   }
@@ -65,13 +71,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       nombre: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       paterno: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       materno: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      edad: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       ci: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       extencion: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       nombreA: [null, [Validators.pattern(STRING_PATTERN)]],
       paternoA: [null, [Validators.pattern(STRING_PATTERN)]],
       maternoA: [null, [Validators.pattern(STRING_PATTERN)]],
-      edadA: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ciA: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       extencionA: [null, [Validators.pattern(STRING_PATTERN)]],
       fecha: [null, [Validators.required]],
@@ -84,12 +88,12 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       total: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       habitacionId: [null, [Validators.required]],
       encargadoId: [this.infoInCharge, [Validators.required]],
+      alojamientoId: [null, [Validators.required]]
     });
 
     this.form.controls['nombreA'].disable();
     this.form.controls['paternoA'].disable();
     this.form.controls['maternoA'].disable();
-    this.form.controls['edadA'].disable();
     this.form.controls['ciA'].disable();
     this.form.controls['extencionA'].disable();
     this.form.controls['fecha'].disable();
@@ -117,15 +121,34 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     setTimeout(() => {
       this.getBedroom(new ListParams());
       this.getInCharge(new ListParams());
+      this.getAccomodation(new ListParams());
     }, 1000);
 
   }
 
-  getInCharges() {
+  async getInCharges() {
     const info = this.authService.getUserInfo();
     this.infoInCharge = info.id;
-    console.log(this.infoInCharge);
-    //this.getInCharge(new ListParams());
+    /*console.log(this.infoInCharge);
+    let inCharge1:any = await this.validInCharge(info.id);
+    this.idInCharge = inCharge1[0].alojamientoId;
+    console.log(this.idInCharge);*/
+  }
+
+  async validInCharge(idUser: number) {
+    const params = new ListParams();
+    params['filter.userId'] = `$eq:${idUser}`;
+    return new Promise((resolve, reject) => {
+      this.inChargeService.getAll(params).subscribe({
+        next: response => {
+          const data = response.data;
+          resolve(data);
+        },
+        error: err => {
+          resolve(0);
+        },
+      });
+    });
   }
 
 
@@ -161,13 +184,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       nombre: this.form.controls['nombre'].getRawValue(),
       paterno: this.form.controls['paterno'].getRawValue(),
       materno: this.form.controls['materno'].getRawValue(),
-      edad: Number(this.form.controls['edad'].getRawValue()),
       ci: Number(this.form.controls['ci'].getRawValue()),
       extencion: this.form.controls['extencion'].getRawValue(),
       nombreA: this.form.controls['nombreA'].getRawValue(),
       paternoA: this.form.controls['paternoA'].getRawValue(),
       maternoA: this.form.controls['maternoA'].getRawValue(),
-      edadA: Number(this.form.controls['edadA'].getRawValue()),
       ciA: Number(this.form.controls['ciA'].getRawValue()),
       extencionA: this.form.controls['extencionA'].getRawValue(),
       fecha: isoString,
@@ -180,6 +201,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       total: this.form.controls['total'].getRawValue(),
       habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
       encargadoId: Number(this.form.controls['encargadoId'].getRawValue()),
+      alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue())
     }
     this.reservationsService.create(body).subscribe({
       next: resp => {
@@ -231,6 +253,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
         total: this.form.controls['total'].getRawValue(),
         habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
         encargadoId: Number(this.form.controls['encargadoId'].getRawValue()),
+        alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue())
       }
       this.reservationsService
         .update(this.reservations.id, body)
@@ -385,6 +408,26 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     hours = hours ? hours : 12; // Si es 0, lo cambiamos a 12
 
     return `${hours}:${minutes} ${ampm}`;
+  }
+
+  async getAccomodation(params: ListParams) {
+    let inCharge1:any = await this.validInCharge(this.infoInCharge);
+    console.log(inCharge1[0].alojamientoId);
+    const idAccom = inCharge1[0].alojamientoId
+    params['filter.id'] = `$eq:${idAccom}`;
+    this.accomodationService.getAll(params).subscribe({
+      next: data => {
+        this.accomodations = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.accomodations = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  onChangeAccomodation(event: any){
+    console.log(event);
   }
 
 
