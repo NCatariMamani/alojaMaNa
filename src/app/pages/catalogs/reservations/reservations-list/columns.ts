@@ -84,10 +84,6 @@ export const RESERVATIONS_COLUMNS = {
         title: 'Materno',
         sort: false,
     },
-    edad: {
-        title: 'Edad',
-        sort: false,
-    },
     ci: {
         title: 'CI',
         sort: false,
@@ -106,10 +102,6 @@ export const RESERVATIONS_COLUMNS = {
     },
     maternoA: {
         title: 'Materno Pareja',
-        sort: false,
-    },
-    edadA: {
-        title: 'Edad Pareja',
         sort: false,
     },
     ciA: {
@@ -136,6 +128,22 @@ export const RESERVATIONS_COLUMNS = {
         title: 'Compañia',
         sort: false,
     },
-
-    
+    /*alojamientos: {
+        title: 'Nombre de Alojamiento',
+        sort: false,
+        valuePrepareFunction: (value: IAccommodation) => {
+            return value?.nombre;
+        },
+        filterFunction(cell?: any, search?: string): boolean {
+            let column = cell.nombre;
+            if (typeof search !== 'string') {
+                return true;
+            }
+            if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+                return true;
+            } else {
+                return false;
+            }
+        },
+    },*/
 };

@@ -12,6 +12,8 @@ import { ButtonColumnComponent } from 'src/app/shared/components/button-column/b
 import { ButtonColumnAddComponent } from 'src/app/shared/components/button-column/button-column-add.component';
 import { ButtonColumnDeleteComponent } from 'src/app/shared/components/button-column/button-column-delete.component';
 import { ReservationsModalComponent } from '../reservations-modal/reservations-modal.component';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { InChargeService } from 'src/app/core/services/catalogs/inCharge.service';
 
 @Component({
   selector: 'app-reservations-list',
@@ -25,12 +27,16 @@ export class ReservationsListComponent extends BasePage implements OnInit {
   data1: any = [];
   columnFilters: any = [];
   totalItems: number = 0;
+  infoUser: number = 0;
+  idInCharge: any;
 
   reservarions?: IReservations;
 
   constructor(
     private modalService: BsModalService,
-    private reservationsService: ReservationsService
+    private reservationsService: ReservationsService,
+    private authService: AuthService,
+    private inChargeService: InChargeService
   ) {
     super();
     this.settings = {
@@ -75,6 +81,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
+    this.getUser();
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -105,14 +112,35 @@ export class ReservationsListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getAllShopping();
+          this.getAllReservations();
         }
       });
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAllShopping());
+      .subscribe(() => this.getAllReservations());
 
+
+  }
+
+  getUser(){
+    const info = this.authService.getUserInfo();
+    this.infoUser = info.id;
+  }
+
+  async validInCharge(idUser: number) {
+    const params = new ListParams();
+    params['filter.userId'] = `$eq:${idUser}`;
+    return new Promise((resolve, reject) => {
+      this.inChargeService.getAll(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: err => {
+          resolve(0);
+        },
+      });
+    });
   }
 
   increase(event: any){
@@ -125,7 +153,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
       initialState: {
         reservations,
         callback: (next: boolean) => {
-          if (next) this.getAllShopping();
+          if (next) this.getAllReservations();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -138,12 +166,16 @@ export class ReservationsListComponent extends BasePage implements OnInit {
     console.log(event);
   }
 
-  getAllShopping() {
+  async getAllReservations() {
     this.loading = true;
+    let inCharge: any = await this.validInCharge(this.infoUser);
+    this.idInCharge = inCharge.data[0].id;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    console.log(this.idInCharge);
+    params['filter.encargadoId'] = `$eq:${this.idInCharge}`;
     this.reservationsService.getAll(params).subscribe({
       next: response => {
         console.log(response);
@@ -171,7 +203,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
       initialState: {
         reservations,
         callback: (next: boolean) => {
-          if (next) this.getAllShopping();
+          if (next) this.getAllReservations();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -200,7 +232,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
         this.alert('success', 'RESERVACIÓN', 'Borrado Correctamente');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getAllShopping());
+          .subscribe(() => this.getAllReservations());
       }, error: err => {
         this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
       },

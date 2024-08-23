@@ -22,19 +22,7 @@
         </div>
       </div>
       <div class="row pt-4">
-        <div class="col-md-2">
-          <form-field label="Edad" [control]="form.get('edad')">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="edad"
-              maxlength="3"
-              min="1"
-              oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);"
-            />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field label="CI" [control]="form.get('ci')">
             <input
               type="number"
@@ -66,7 +54,7 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field label="Compañia" [control]="form.get('compania')">
             <ng-select
               formControlName="compania"
@@ -78,6 +66,20 @@
               <ng-option value="SOLO">SOLO</ng-option>
               <ng-option value="CON PAREJA">CON PAREJA</ng-option>
             </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('alojamientoId')">
+            <ngx-select
+              [form]="form"
+              control="alojamientoId"
+              (fetchItems)="getAccomodation($event)"
+              [data]="accomodations"
+              bindLabel="nombre"
+              label="Nombre del Alojamiento"
+              value="id"
+              (change)="onChangeAccomodation($event)"
+              [readonly]="false"></ngx-select>
           </form-field>
         </div>
       </div>
@@ -108,19 +110,7 @@
       </div>
 
       <div class="row pt-4">
-        <div class="col-md-2">
-          <form-field label="Edad" [control]="form.get('edadA')">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="edadA"
-              maxlength="3"
-              min="1"
-              oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);"
-            />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field label="CI" [control]="form.get('ciA')">
             <input
               type="number"
@@ -152,7 +142,7 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field [control]="form.get('fecha')" label="Fecha">
             <input
               type="text"
