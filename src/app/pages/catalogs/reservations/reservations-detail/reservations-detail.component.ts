@@ -109,8 +109,10 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       const localDate = new Date(this.reservations.fecha);
       const formattedDate = this.datePipe.transform(new Date(localDate.getTime() + localDate.getTimezoneOffset() * 60000), 'dd/MM/yyyy');
       this.form.patchValue(this.reservations);
+      this.form.controls['encargadoId'].setValue(this.reservations.encargadoId);
       this.form.controls['fecha'].setValue(formattedDate);
       this.form.controls['habitacionId'].enable();
+      
     } else {
       const date = new Date();
       const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
@@ -202,17 +204,30 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
       encargadoId: Number(this.form.controls['encargadoId'].getRawValue()),
       alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue())
+    };
+    let body1 = {
+      estado: 'OCUPADO'
     }
+
     this.reservationsService.create(body).subscribe({
       next: resp => {
-        this.handleSuccess(),
-          this.loading = false
+        this.bedroomsService.update(this.form.controls['habitacionId'].getRawValue(), body1).subscribe({
+          next: data =>{
+            this.handleSuccess(),
+            this.loading = false
+          },error: err => {
+            this.loading = false
+          }
+        });
+        
       }, error: err => {
         this.loading = false
       }
     }
     );
   }
+
+  
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
@@ -234,13 +249,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
         nombre: this.form.controls['nombre'].getRawValue(),
         paterno: this.form.controls['paterno'].getRawValue(),
         materno: this.form.controls['materno'].getRawValue(),
-        edad: Number(this.form.controls['edad'].getRawValue()),
         ci: Number(this.form.controls['ci'].getRawValue()),
         extencion: this.form.controls['extencion'].getRawValue(),
         nombreA: this.form.controls['nombreA'].getRawValue(),
         paternoA: this.form.controls['paternoA'].getRawValue(),
         maternoA: this.form.controls['maternoA'].getRawValue(),
-        edadA: Number(this.form.controls['edadA'].getRawValue()),
         ciA: Number(this.form.controls['ciA'].getRawValue()),
         extencionA: this.form.controls['extencionA'].getRawValue(),
         fecha: isoString,
@@ -325,7 +338,9 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   getInCharge(params: ListParams) {
-    params['filter.userId'] = `$eq:${this.infoInCharge}`;
+    if(this.infoInCharge || this.infoInCharge != 0){
+      params['filter.userId'] = `$eq:${this.infoInCharge}`;
+    }
     this.inChargeService.getAll(params).subscribe({
       next: data => {
         this.result2 = data.data.map(async (item: any) => {

@@ -7,11 +7,11 @@ import { CustomDateFilterComponent } from "src/app/shared/utils/custom-date-filt
 
 export const RESERVATIONS_COLUMNS = { 
     habitaciones: {
-        title: 'Habitación',
+        title: 'No. Habitación',
         sort: false,
         width: '6%',
         valuePrepareFunction: (value: IBedroom) => {
-            return value?.noHabitacion;
+            return `${value?.noHabitacion} ${value?.preferencias}`;
         },
         filterFunction(cell?: any, search?: string): boolean {
             let column = cell.noHabitacion;
@@ -62,7 +62,7 @@ export const RESERVATIONS_COLUMNS = {
         title: 'Encargado',
         sort: false,
         valuePrepareFunction: (value: IInCharge) => {
-            return value?.nombre;
+            return `${value?.nombre} ${value?.paterno} ${value?.materno}`;
         },
         filterFunction(cell?: any, search?: string): boolean {
             let column = `${cell.nombre} ${cell.paterno} ${cell.materno}`;

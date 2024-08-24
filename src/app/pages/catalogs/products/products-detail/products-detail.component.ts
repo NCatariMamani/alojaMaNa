@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -23,6 +23,9 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
   products?: IProducts;
   editDate?: Date;
   maxDate: Date = new Date();
+  monto?:number;
+  currencyFormat?: string = '';
+  precio: number = 0;
 
   accomodations = new DefaultSelect();
 
@@ -30,7 +33,8 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private productsService: ProductsService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private currencyPipe: CurrencyPipe
   ) {
     super();
   }
@@ -42,7 +46,7 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       nombre: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      precio: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
+      precio: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
     if (this.products != null) {
       this.edit = true;
@@ -60,7 +64,7 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
     this.loading = true;
     let body = {
       nombre: this.form.controls['nombre'].getRawValue(),
-      precio: parseFloat(this.form.controls['precio'].getRawValue())
+      precio: this.form.controls['precio'].getRawValue()
     }
     this.productsService.create(body).subscribe({
       next: resp => {
@@ -109,5 +113,26 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
+  onMontoChange(event: string): void {
+    // Eliminar cualquier carácter no numérico o de punto decimal
+    if(event){
+      const numericValue = parseFloat(event.replace(/[^0-9.]/g, ''));
+      this.monto = isNaN(numericValue) ? 0 : numericValue;
+    }
+  }
+
+  updateCurrency(event: any){
+    const inputElement = event.target as HTMLInputElement;
+    const valor = Number(inputElement.value);
+    console.log(valor, event.data);
+    this.form.controls['precio'].setValue(this.formatToBolivianCurrency(valor));
+  }
+  formatToBolivianCurrency(value?: number): string | null{
+    return this.currencyPipe.transform(value, 'Bs ', 'symbol', '1.2-2');
+  }
+
+  showHistory(event: any){
+    console.log(event);
+  }
 
 }

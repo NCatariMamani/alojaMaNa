@@ -14,6 +14,8 @@ import { ButtonColumnDeleteComponent } from 'src/app/shared/components/button-co
 import { ReservationsModalComponent } from '../reservations-modal/reservations-modal.component';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { InChargeService } from 'src/app/core/services/catalogs/inCharge.service';
+import { ButtonColumnOutputComponent } from 'src/app/shared/components/button-column/button-column-output.component';
+import { SalesListComponent } from '../../sales/sales-list/sales-list.component';
 
 @Component({
   selector: 'app-reservations-list',
@@ -51,7 +53,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
       },
       columns: { 
         officialConclusion: {
-          title: 'Aumento',
+          title: 'Añadir Horas',
           width: '5%',
           type: 'custom',
           sort: false,
@@ -76,6 +78,19 @@ export class ReservationsListComponent extends BasePage implements OnInit {
             });
           },
         }, 
+        officialConclusion2: {
+          title: 'Salida',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnOutputComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              this.output(row);
+            });
+          },
+        },
         ...RESERVATIONS_COLUMNS },
     };
   }
@@ -143,7 +158,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
     });
   }
 
-  increase(event: any){
+  increase(event: IReservations){
     console.log(event);
     this.openModalIncrease(event);
   }
@@ -162,20 +177,40 @@ export class ReservationsListComponent extends BasePage implements OnInit {
     this.modalService.show(ReservationsModalComponent, config);
   }
 
-  sales(event: any){
+  sales(event: IReservations){
+    console.log(event);
+    this.openModalSales(event);
+  }
+
+  openModalSales(reservations?: IReservations) {
+    let config: ModalOptions = {
+      initialState: {
+        reservations,
+        callback: (next: boolean) => {
+          if (next) this.getAllReservations();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(SalesListComponent, config);
+  }
+
+
+  output(event: any){
     console.log(event);
   }
 
   async getAllReservations() {
     this.loading = true;
     let inCharge: any = await this.validInCharge(this.infoUser);
-    this.idInCharge = inCharge.data[0].id;
+    this.idInCharge = inCharge.data[0].alojamientoId;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
     console.log(this.idInCharge);
-    params['filter.encargadoId'] = `$eq:${this.idInCharge}`;
+    params['filter.alojamientoId'] = `$eq:${this.idInCharge}`;
     this.reservationsService.getAll(params).subscribe({
       next: response => {
         console.log(response);
