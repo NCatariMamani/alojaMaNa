@@ -20,6 +20,8 @@
               type="text"
               class="form-control"
               formControlName="precio"
+              (change)="updateCurrency($event)"
+              (dblclick)="showHistory($event)"
             />
           </form-field>
         </div>
