@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field [control]="form.get('alojamientoId')">
             <ngx-select
               [form]="form"
@@ -16,10 +16,11 @@
               label="Nombre del Alojamiento"
               value="id"
               (change)="onChangeAccomodation($event)"
-              [readonly]="false"></ngx-select>
+              [readonly]="false"
+            ></ngx-select>
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field [control]="form.get('fecha')" label="Fecha">
             <input
               type="text"
@@ -31,11 +32,34 @@
               }"
               [maxDate]="maxDate"
               (bsValueChange)="validateDate($event)"
-              bsDatepicker />
-          </form-field>  
+              bsDatepicker
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Descripción" [control]="form.get('descripcion')">
+            <!--<input
+              type="text"
+              class="form-control"
+              formControlName="descripcion"
+            />-->
+            <input
+              type="text"
+              formControlName="descripcion"
+              class="form-control"
+              [bsConfig]="{
+                dateInputFormat: 'MMMM',
+                minMode: 'month',
+                adaptivePosition: true 
+              }"
+              [maxDate]="maxDate"
+              (bsValueChange)="validateDate($event)"
+              bsDatepicker
+            />
+          </form-field>
         </div>
       </div>
-      <div class="row">
+      <!--<div class="row">
         <div class="col-md-12 pt-4">
           <form-field label="Descripción" [control]="form.get('descripcion')">
             <input
@@ -45,7 +69,7 @@
             />
           </form-field>
         </div>
-      </div>
+      </div>-->
     </form>
   </div>
   <div footer>
@@ -65,4 +89,3 @@
     </div>
   </div>
 </app-modal>
-

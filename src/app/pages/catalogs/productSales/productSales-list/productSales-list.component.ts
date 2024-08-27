@@ -79,17 +79,17 @@ export class ProductSalesListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getAllSales();
+          this.getAllProductSales();
         }
       });
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAllSales());
+      .subscribe(() => this.getAllProductSales());
 
   }
 
-  getAllSales() {
+  getAllProductSales() {
     this.loading = true;
     let params = {
       ...this.params.getValue(),
@@ -122,7 +122,7 @@ export class ProductSalesListComponent extends BasePage implements OnInit {
       initialState: {
         shopping,
         callback: (next: boolean) => {
-          if (next) this.getAllSales();
+          if (next) this.getAllProductSales();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -151,7 +151,7 @@ export class ProductSalesListComponent extends BasePage implements OnInit {
         this.alert('success', 'Compras', 'Borrado Correctamente');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getAllSales());
+          .subscribe(() => this.getAllProductSales());
       }, error: err => {
         this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
       },

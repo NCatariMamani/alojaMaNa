@@ -20,7 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class SalesDetailComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
-  title: string = 'HABITACIÓN';
+  title: string = 'VENTA';
   status: string = 'Nuevo';
   edit: boolean = false;
   reservations?: IReservations;
