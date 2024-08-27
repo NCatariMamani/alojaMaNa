@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -14,9 +14,15 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthService } from './common/services/authentication/auth.service';
 import { AuthInterceptor } from './auth.interceptor';
 
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+
 export function tokenGetter() {
   return localStorage.getItem('token');
 }
+
+registerLocaleData(localeEs, 'es-ES');
+
 
 @NgModule({
   declarations: [
@@ -44,7 +50,8 @@ export function tokenGetter() {
     AuthService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DatePipe,
-    CurrencyPipe
+    CurrencyPipe,
+    { provide: LOCALE_ID, useValue: 'es-ES' }
   ],
   bootstrap: [AppComponent]
 })

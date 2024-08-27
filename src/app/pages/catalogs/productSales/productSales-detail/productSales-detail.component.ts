@@ -27,7 +27,7 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
   productSales?: IProductSales;
   editDate?: Date;
   maxDate: Date = new Date();
-  idSales: number = 0;
+  idSale: number = 0;
 
   reservations = new DefaultSelect();
   products = new DefaultSelect();
@@ -55,15 +55,15 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       productoId: [null, [Validators.required]],
-      ventaId: [null, [Validators.required]],
+      ventaId: [this.idSale, [Validators.required]],
     });
     if (this.productSales != null) {
       this.edit = true;
       this.form.patchValue(this.productSales);
     }
-    if(this.sales){
-      this.idSales = this.sales.id;
-    }
+    /*if(this.sales){
+      this.idSale = this.sales.id;
+    }*/
     setTimeout(() => {
       this.getSales(new ListParams());
       this.getProducts(new ListParams());
@@ -81,7 +81,7 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
     
     let body = {
       productoId: Number(this.form.controls['productoId'].getRawValue()),
-      alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue())
+      ventaId: Number(this.form.controls['ventaId'].getRawValue())
     }
     this.productSalesService.create(body).subscribe({
       next: resp => {
@@ -108,7 +108,7 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
       this.loading = true;   
       let body = {
         productoId: Number(this.form.controls['productoId'].getRawValue()),
-        alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue())
+        ventaId: Number(this.form.controls['ventaId'].getRawValue())
       }
       this.productSalesService
         .update(this.productSales.id, body)
