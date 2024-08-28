@@ -14,6 +14,7 @@ import { BedroomsDetailComponent } from '../../bedrooms/bedrooms-detail/bedrooms
 import { InventoriesService } from 'src/app/core/services/catalogs/inventories.service';
 import { IInventories } from 'src/app/core/models/catalogs/inventories.model';
 import { InventoriesDetailComponent } from '../../inventories/inventories-detail/inventories-detail.component';
+import { ProductInventoryListComponent } from '../../productInventory/productInventory-list/productInventory-list.component';
 
 @Component({
   selector: 'app-accommodation-list',
@@ -429,6 +430,33 @@ export class AccommodationListComponent extends BasePage implements OnInit {
         this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
       },
     });
+  }
+
+
+  rowsSelected1(event: IInventories){
+    console.log(event);
+    this.openModal4(event);
+  }
+
+
+  openModal4(inventories?: any) {
+    console.log(inventories.data);
+    const idInventory = inventories.data?.id;
+    const validButton = true;
+    const validProduct = true;
+    let config: ModalOptions = {
+      initialState: {
+        idInventory,
+        validButton,
+        validProduct,
+        callback: (next: boolean) => {
+          if (next) this.getAllInventories();
+        },
+      },
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ProductInventoryListComponent, config);
   }
 
 }

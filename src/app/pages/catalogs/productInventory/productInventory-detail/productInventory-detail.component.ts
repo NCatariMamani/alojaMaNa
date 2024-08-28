@@ -26,6 +26,8 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
   editDate?: Date;
   maxDate: Date = new Date();
   productInventory?: IProductInventory;
+  idInven?: number;
+  result: any;
 
   accomodations = new DefaultSelect();
   products = new DefaultSelect();
@@ -36,7 +38,7 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
     private accomodationService: AccomodationService,
     private productService: ProductsService,
     private datePipe: DatePipe,
-    private productInventoryService: ProductInventoryService 
+    private productInventoryService: ProductInventoryService
   ) {
     super();
   }
@@ -49,23 +51,28 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
     this.form = this.fb.group({
       cantidad: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       entrada: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      salida: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      salida: [0, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       stock: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       fecha: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       productoId:  [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      alojamientoId: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      //alojamientoId: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
     });
+    this.form.controls['fecha'].disable();
     if (this.productInventory != null) {
       this.edit = true;
       const formattedDate = this.datePipe.transform(this.productInventory.fecha, 'dd/MM/yyyy');
       console.log(formattedDate);
       this.form.patchValue(this.productInventory);
       this.form.controls['fecha'].setValue(formattedDate);
+    }else{
+      const date = new Date();
+      this.form.controls['fecha'].setValue(date);
     }
     setTimeout(() => {
       this.getAccomodation(new ListParams());
       this.getProducts(new ListParams());
     }, 1000);
+    console.log(this.idInven);
   }
 
 
@@ -82,12 +89,26 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
       stock: Number(this.form.controls['stock'].getRawValue()),
       fecha: this.form.controls['fecha'].getRawValue(),
       productoId: Number(this.form.controls['productoId'].getRawValue()),
-      alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue()),
+      inventarioId: this.idInven,
     }
     this.productInventoryService.create(body).subscribe({
-      next: resp => {
-        this.handleSuccess(),
-        this.loading = false
+      next: resp => { 
+        let body1 = {
+          estado: 'OCUPADO'
+        };
+        this.productService.update(Number(this.form.controls['productoId'].getRawValue()), body1)
+        .subscribe({
+          next: response => {
+            this.loading = false;
+            this.handleSuccess()
+          },
+          error: error => {
+            this.loading = false;
+          }
+        }
+        );
+        /*this.handleSuccess(),
+        this.loading = false*/
       }, error: err =>  {
         this.loading = false
       }
@@ -117,7 +138,7 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
         stock: Number(this.form.controls['stock'].getRawValue()),
         fecha: this.editDate,
         productoId: Number(this.form.controls['productoId'].getRawValue()),
-        alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue()),
+        inventarioId: this.idInven
       }
       this.productInventoryService
         .update(this.productInventory.id, body)
@@ -171,8 +192,12 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
     if (params.text) {
       params['filter.nombre'] = `$ilike:${params.text}`;
     }
+    //params['filter.estado'] = `$ilike:LIBRE`;
     this.productService.getAll(params).subscribe({
       next: data => {
+        this.result = data.data.map(async (item: any) => {
+          item['name'] = item.nombre +' - '+ item.precio;
+        });
         this.products = new DefaultSelect(data.data, data.count);
       },
       error: error => {
@@ -184,6 +209,17 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
 
   onChangeProducts(event: any){
     console.log(event);
+  }
+
+
+  onChangeCant(event: any){
+    if(event){
+      const inputElement = event.target as HTMLInputElement;
+      const valor = Number(inputElement.value);
+      console.log(valor);
+      this.form.controls['entrada'].setValue(valor);
+      this.form.controls['stock'].setValue(valor);
+    }
   }
 
 

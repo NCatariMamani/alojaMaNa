@@ -46,7 +46,7 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       nombre: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      precio: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      precio: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]]
     });
     if (this.products != null) {
       this.edit = true;
@@ -64,7 +64,8 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
     this.loading = true;
     let body = {
       nombre: this.form.controls['nombre'].getRawValue(),
-      precio: this.form.controls['precio'].getRawValue()
+      precio: this.form.controls['precio'].getRawValue(),
+      estado: 'LIBRE'
     }
     this.productsService.create(body).subscribe({
       next: resp => {
@@ -91,7 +92,8 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
       this.loading = true;   
       let body = {
         nombre: this.form.controls['nombre'].getRawValue(),
-        precio: parseFloat(this.form.controls['precio'].getRawValue())
+        precio:this.form.controls['precio'].getRawValue(),
+        estado: 'LIBRE'
       }
       this.productsService
         .update(this.products.id, body)
