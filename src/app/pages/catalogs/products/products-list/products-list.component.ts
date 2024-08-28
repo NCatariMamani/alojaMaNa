@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { ProductsService } from 'src/app/core/services/catalogs/products.service';
@@ -21,10 +21,12 @@ export class ProductsListComponent extends BasePage implements OnInit {
   data1: any = [];
   columnFilters: any = [];
   totalItems: number = 0;
+  validButton: boolean = false;
 
   constructor(
     private modalService: BsModalService,
-    private productsService: ProductsService
+    private productsService: ProductsService,
+    private modalRef: BsModalRef
 
   ) {
     super();
@@ -150,6 +152,10 @@ export class ProductsListComponent extends BasePage implements OnInit {
         this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
       },
     });
+  }
+
+  close() {
+    this.modalRef.hide();
   }
 
 }

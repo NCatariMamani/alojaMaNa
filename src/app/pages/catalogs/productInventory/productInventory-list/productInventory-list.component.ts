@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { IAccommodation } from 'src/app/core/models/catalogs/accommodation.model';
@@ -12,6 +12,7 @@ import { PRODUCTINVENTORY_COLUMNS } from './columns';
 import { ProductInventoryService } from 'src/app/core/services/catalogs/productInventory.service';
 import { ProductInventoryDetailComponent } from '../productInventory-detail/productInventory-detail.component';
 import { IProductInventory } from 'src/app/core/models/catalogs/productInventory.model';
+import { ProductsListComponent } from '../../products/products-list/products-list.component';
 
 @Component({
   selector: 'app-productInventory-list',
@@ -27,10 +28,14 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   accommodation?: IAccommodation;
   products?: IProducts;
+  idInventory?: number;
+  validButton: boolean = false;
+  validProduct: boolean = false;
 
   constructor(
     private modalService: BsModalService,
-    private productInventoryService: ProductInventoryService
+    private productInventoryService: ProductInventoryService,
+    private modalRef: BsModalRef
   ) {
     super();
     this.settings = {
@@ -95,22 +100,25 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getAllShopping();
+          this.getAllProductInventory();
         }
       });
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAllShopping());
+      .subscribe(() => this.getAllProductInventory());
 
   }
 
-  getAllShopping() {
+  getAllProductInventory() {
     this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    if(this.idInventory){
+      params['filter.inventarioId'] = `$eq:${this.idInventory}`;
+    }
     this.productInventoryService.getAll(params).subscribe({
       next: response => {
         console.log(response);
@@ -134,11 +142,14 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
 
 
   openModal(productInventory?: IProductInventory) {
+    const idInven = this.idInventory;
+    console.log(idInven);
     let config: ModalOptions = {
       initialState: {
         productInventory,
+        idInven,
         callback: (next: boolean) => {
-          if (next) this.getAllShopping();
+          if (next) this.getAllProductInventory();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -167,11 +178,31 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
         this.alert('success', 'Inventario', 'Borrado Correctamente');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getAllShopping());
+          .subscribe(() => this.getAllProductInventory());
       }, error: err => {
         this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
       },
     });
   }
+
+  close() {
+    this.modalRef.hide();
+  }
+
+  openModal1(productInventory?: IProductInventory) {
+    const validButton = true;
+    let config: ModalOptions = {
+      initialState: {
+        validButton,
+        callback: (next: boolean) => {
+          if (next) this.getAllProductInventory();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ProductsListComponent, config);
+  }
+
 
 }

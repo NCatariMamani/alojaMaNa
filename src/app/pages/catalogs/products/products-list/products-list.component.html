@@ -44,3 +44,13 @@
     </div>
   </div>
 </app-card>
+
+<div footer *ngIf="validButton">
+  <div class="d-flex justify-content-center">
+    <div class="m-3">
+      <button type="button" class="btn btn-danger active" (click)="close()">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>

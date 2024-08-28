@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-6">
+        <!--<div class="col-md-6">
           <form-field [control]="form.get('alojamientoId')">
             <ngx-select
               [form]="form"
@@ -19,7 +19,7 @@
               [readonly]="false"
             ></ngx-select>
           </form-field>
-        </div>
+        </div>-->
         <div class="col-md-6">
           <form-field [control]="form.get('productoId')">
             <ngx-select
@@ -27,8 +27,8 @@
               control="productoId"
               (fetchItems)="getProducts($event)"
               [data]="products"
-              bindLabel="nombre"
-              label="Nombre del Alojamiento"
+              bindLabel="name"
+              label="Nombre del Producto"
               value="id"
               (change)="onChangeProducts($event)"
               [readonly]="false"
@@ -59,6 +59,7 @@
               type="text"
               class="form-control"
               formControlName="cantidad"
+              (change)="onChangeCant($event)"
             />
           </form-field>
         </div>

@@ -122,6 +122,7 @@
                   [source]="data3"
                   (edit)="edit3($event.data)"
                 (delete)="showDeleteAlert3($event.data)"
+                (userRowSelect)="rowsSelected1($event)"
                 ></ng2-smart-table>
               </div>
               <app-pagination
