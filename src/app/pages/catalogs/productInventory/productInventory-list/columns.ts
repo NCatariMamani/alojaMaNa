@@ -9,6 +9,24 @@ export const PRODUCTINVENTORY_COLUMNS = {
         sort: false,
         width: '7%',
     },
+    productos: {
+        title: 'Producto',
+        sort: false,
+        valuePrepareFunction: (value: IProducts) => {
+            return value?.nombre;
+        },
+        filterFunction(cell?: any, search?: string): boolean {
+            let column = cell.nombre;
+            if (typeof search !== 'string') {
+                return true;
+            }
+            if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+                return true;
+            } else {
+                return false;
+            }
+        },
+    },
     cantidad: {
         title: 'Cantidad',
         sort: false,
@@ -56,22 +74,5 @@ export const PRODUCTINVENTORY_COLUMNS = {
             }
         },
     },
-    productos: {
-        title: 'Producto',
-        sort: false,
-        valuePrepareFunction: (value: IProducts) => {
-            return value?.nombre;
-        },
-        filterFunction(cell?: any, search?: string): boolean {
-            let column = cell.nombre;
-            if (typeof search !== 'string') {
-                return true;
-            }
-            if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
-                return true;
-            } else {
-                return false;
-            }
-        },
-    }
+    
 };
