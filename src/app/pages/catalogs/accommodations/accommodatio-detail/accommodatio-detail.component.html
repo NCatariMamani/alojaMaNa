@@ -25,7 +25,7 @@
             </ng-select>
           </form-field>
         </div>-->
-        <div class="col-md-6">
+        <div class="col-md-5">
           <form-field label="Nombre de Alojamimento" [control]="form.get('nombre')">
             <input
               type="text"
@@ -34,13 +34,34 @@
             />
           </form-field>
         </div>
-        <div class="col-md-6">
-          <form-field label="No. Habitaciones" [control]="form.get('noHabitaciones')">
+        <div class="col-md-2">
+          <form-field label="No. Habitaciónes" [control]="form.get('noHabitaciones')">
             <input
               type="text"
               class="form-control"
               formControlName="noHabitaciones"
             />
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <form-field
+            label="Departamento"
+            [control]="form.get('departamento')">
+            <ng-select
+              formControlName="departamento"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="LP">LA PAZ</ng-option>
+              <ng-option value="OR">ORURO</ng-option>
+              <ng-option value="PT">POTOSI</ng-option>
+              <ng-option value="CBBA">COCHABAMBA</ng-option>
+              <ng-option value="CH">CHUQUISACA</ng-option>
+              <ng-option value="TJA">TARIJA</ng-option>
+              <ng-option value="SCZ">SANTA CRUZ</ng-option>
+              <ng-option value="BE">BENI</ng-option>
+              <ng-option value="PD">PANDO</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>

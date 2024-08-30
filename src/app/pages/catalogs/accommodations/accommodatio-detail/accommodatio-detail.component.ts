@@ -38,6 +38,7 @@ export class AccommodatioDetailComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
+      departamento: [null, [Validators.required]]
     });
     if (this.accommodation != null) {
       this.edit = true;
@@ -57,6 +58,7 @@ export class AccommodatioDetailComponent extends BasePage implements OnInit {
       nombre: this.form.controls['nombre'].getRawValue(),
       noHabitaciones: Number(this.form.controls['noHabitaciones'].getRawValue()),
       direccion: this.form.controls['direccion'].getRawValue(),
+      departamento: this.form.controls['departamento'].getRawValue()
     }
     this.accomodationService.create(body).subscribe({
       next: resp => {
@@ -87,8 +89,8 @@ export class AccommodatioDetailComponent extends BasePage implements OnInit {
         nombre: this.form.controls['nombre'].getRawValue(),
         noHabitaciones: Number(this.form.controls['noHabitaciones'].getRawValue()),
         direccion: this.form.controls['direccion'].getRawValue(),
+        departamento: this.form.controls['departamento'].getRawValue()
       }
-
       this.accomodationService
         .update(this.accommodation.id, body)
         .subscribe({
@@ -105,10 +107,6 @@ export class AccommodatioDetailComponent extends BasePage implements OnInit {
     }
 
   }
-
-
-
-
 
   close() {
     this.modalRef.hide();
