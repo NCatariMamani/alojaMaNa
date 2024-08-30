@@ -24,6 +24,7 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
   accommodation?: IAccommodation;
   bedroom?: IBedroom;
   idAccom: number = 0;
+  noHabi?: number;
 
   accomodations = new DefaultSelect();
   

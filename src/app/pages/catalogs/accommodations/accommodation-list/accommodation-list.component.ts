@@ -37,7 +37,9 @@ export class AccommodationListComponent extends BasePage implements OnInit {
   totalItems3: number = 0;
   accommodation?: IAccommodation;
   idAccom: number = 0;
+  noHab?: number;
   rowSelect: any;
+  valueButton: boolean = false;
   bedrooms: boolean = false;
   settings2 = { ...this.settings };
   settings3 = { ...this.settings };
@@ -157,6 +159,8 @@ export class AccommodationListComponent extends BasePage implements OnInit {
     if (event) {
       this.bedrooms = true;
       this.idAccom = event.data.id;
+      this.noHab = event.data.noHabitaciones;
+      console.log(this.noHab);
       this.params2.getValue()[
         'filter.alojamientoId'
       ] = `${SearchFilter.EQ}:${this.rowSelect.id}`;
@@ -256,10 +260,18 @@ export class AccommodationListComponent extends BasePage implements OnInit {
     };
     this.bedroomsService.getAll(params).subscribe({
       next: response => {
-        console.log(response);
+        console.log(this.noHab);
         this.data2.load(response.data);
         this.data2.refresh();
         this.totalItems2 = response.count;
+        if(this.noHab){
+          if(this.totalItems2 < this.noHab){
+            this.valueButton = true;
+          }else{
+            this.valueButton = false;
+          }
+        }
+        
         this.loading = false;
       },
       error: error => {
@@ -322,10 +334,12 @@ export class AccommodationListComponent extends BasePage implements OnInit {
 
   openModal2(bedroom?: IBedroom) {
     const idAccom = this.idAccom;
+    const noHabi = this.noHab;
     let config: ModalOptions = {
       initialState: {
         idAccom,
         bedroom,
+        noHabi,
         callback: (next: boolean) => {
           if (next) this.getBeddroms();
         },
