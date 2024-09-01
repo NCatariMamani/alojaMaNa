@@ -26,23 +26,23 @@ export const ACCOMMODATIONS_COLUMNS = {
         type: 'html',
         valuePrepareFunction: (value: string) => {
             if (value == 'LP')
-              return '<strong><span class="badge badge-pill bg-disable-success">LA PAZ</span></strong>';
+              return '<strong><span class="badge badge-pill badge-soft-info">LA PAZ</span></strong>';
             if (value == 'OR')
               return '<strong><span class="badge badge-pill badge-soft-pink">ORURO</span></strong>';
             if (value == 'PT')
-                return '<strong><span class="badge badge-pill badge-soft-info">POTOSI</span></strong>';
+                return '<strong><span class="badge badge-pill bg-info0">POTOSI</span></strong>';
             if (value == 'CBBA')
-                return '<strong><span class="badge badge-pill badge-soft-info">COCHABAMBA</span></strong>';
+                return '<strong><span class="badge badge-pill bg-info1">COCHABAMBA</span></strong>';
             if (value == 'CH')
-                return '<strong><span class="badge badge-pill badge-soft-info">CHUQUISACA</span></strong>';
+                return '<strong><span class="badge badge-pill bg-info2">CHUQUISACA</span></strong>';
             if (value == 'TJA')
-                return '<strong><span class="badge badge-pill badge-soft-info">TARIJA</span></strong>';
+                return '<strong><span class="badge badge-pill bg-info3">TARIJA</span></strong>';
             if (value == 'SCZ')
-                return '<strong><span class="badge badge-pill badge-soft-info">SANTA CRUZ</span></strong>';
+                return '<strong><span class="badge badge-pill bg-info4">SANTA CRUZ</span></strong>';
             if (value == 'BE')
-                return '<strong><span class="badge badge-pill badge-soft-info">BENI</span></strong>';
+                return '<strong><span class="badge badge-pill bg-info5">BENI</span></strong>';
             if (value == 'PD')
-                return '<strong><span class="badge badge-pill badge-soft-info">PANDO</span></strong>';
+                return '<strong><span class="badge badge-pill bg-info6">PANDO</span></strong>';
             return value;
           },
           filter: {

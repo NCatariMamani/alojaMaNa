@@ -23,7 +23,7 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
   products?: IProducts;
   editDate?: Date;
   maxDate: Date = new Date();
-  monto?:number;
+  monto?: number;
   currencyFormat?: string = '';
   precio: number = 0;
 
@@ -42,17 +42,20 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
   ngOnInit() {
     this.prepareForm();
   }
-  
+
   private prepareForm() {
     this.form = this.fb.group({
       nombre: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      precio: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]]
+      precio: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      departamento: [null, [Validators.required]],
+      estado: ['SR', [Validators.required]]
     });
     if (this.products != null) {
       this.edit = true;
+      this.form.controls['estado'].disable();
       this.form.patchValue(this.products);
     }
-    
+
   }
 
 
@@ -65,13 +68,14 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
     let body = {
       nombre: this.form.controls['nombre'].getRawValue(),
       precio: this.form.controls['precio'].getRawValue(),
-      estado: 'LIBRE'
+      estado: this.form.controls['estado'].getRawValue(),
+      departamento: this.form.controls['departamento'].getRawValue()
     }
     this.productsService.create(body).subscribe({
       next: resp => {
         this.handleSuccess(),
-        this.loading = false
-      }, error: err =>  {
+          this.loading = false
+      }, error: err => {
         this.loading = false
       }
     }
@@ -89,11 +93,12 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
 
   update() {
     if (this.products) {
-      this.loading = true;   
+      this.loading = true;
       let body = {
         nombre: this.form.controls['nombre'].getRawValue(),
-        precio:this.form.controls['precio'].getRawValue(),
-        estado: 'LIBRE'
+        precio: this.form.controls['precio'].getRawValue(),
+        estado: this.form.controls['estado'].getRawValue(),
+        departamento: this.form.controls['departamento'].getRawValue()
       }
       this.productsService
         .update(this.products.id, body)
@@ -117,23 +122,23 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
 
   onMontoChange(event: string): void {
     // Eliminar cualquier carácter no numérico o de punto decimal
-    if(event){
+    if (event) {
       const numericValue = parseFloat(event.replace(/[^0-9.]/g, ''));
       this.monto = isNaN(numericValue) ? 0 : numericValue;
     }
   }
 
-  updateCurrency(event: any){
+  updateCurrency(event: any) {
     const inputElement = event.target as HTMLInputElement;
     const valor = Number(inputElement.value);
     console.log(valor, event.data);
     this.form.controls['precio'].setValue(this.formatToBolivianCurrency(valor));
   }
-  formatToBolivianCurrency(value?: number): string | null{
+  formatToBolivianCurrency(value?: number): string | null {
     return this.currencyPipe.transform(value, 'Bs ', 'symbol', '1.2-2');
   }
 
-  showHistory(event: any){
+  showHistory(event: any) {
     console.log(event);
   }
 

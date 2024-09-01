@@ -27,6 +27,7 @@ export class InventoriesDetailComponent extends BasePage implements OnInit {
   editDate?: Date;
   maxDate: Date = new Date();
   idAccom: number = 0;
+  
 
   accomodations = new DefaultSelect();
 
