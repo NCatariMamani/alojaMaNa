@@ -458,11 +458,13 @@ export class AccommodationListComponent extends BasePage implements OnInit {
     const idInventory = inventories.data?.id;
     const validButton = true;
     const validProduct = true;
+    const departmen = this.rowSelect.departamento;
     let config: ModalOptions = {
       initialState: {
         idInventory,
         validButton,
         validProduct,
+        departmen,
         callback: (next: boolean) => {
           if (next) this.getAllInventories();
         },

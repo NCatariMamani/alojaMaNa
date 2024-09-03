@@ -28,7 +28,7 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
   productInventory?: IProductInventory;
   idInven?: number;
   result: any;
-  departament?: string;
+  depa?: string;
 
   accomodations = new DefaultSelect();
   products = new DefaultSelect();
@@ -194,6 +194,9 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
       params['filter.nombre'] = `$ilike:${params.text}`;
     }
     params['filter.estado'] = `$ilike:SR`;
+    if(this.depa){
+      params['filter.departamento'] = `$ilike:${this.depa}`;
+    }
     this.productService.getAll(params).subscribe({
       next: data => {
         this.result = data.data.map(async (item: any) => {

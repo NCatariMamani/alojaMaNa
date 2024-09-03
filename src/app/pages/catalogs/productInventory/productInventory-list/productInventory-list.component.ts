@@ -31,6 +31,7 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
   idInventory?: number;
   validButton: boolean = false;
   validProduct: boolean = false;
+  departmen?: string;
 
   constructor(
     private modalService: BsModalService,
@@ -143,11 +144,13 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
 
   openModal(productInventory?: IProductInventory) {
     const idInven = this.idInventory;
+    const depa = this.departmen;
     console.log(idInven);
     let config: ModalOptions = {
       initialState: {
         productInventory,
         idInven,
+        depa,
         callback: (next: boolean) => {
           if (next) this.getAllProductInventory();
         },
