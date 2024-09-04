@@ -60,7 +60,7 @@ export const PRODUCTS_COLUMNS = {
           },
     },
     estado: {
-        title: 'Precio',
+        title: 'Estado',
         sort: false,
         type: 'html',
         valuePrepareFunction: (value: string) => {

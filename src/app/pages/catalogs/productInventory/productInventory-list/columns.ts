@@ -30,18 +30,22 @@ export const PRODUCTINVENTORY_COLUMNS = {
     cantidad: {
         title: 'Cantidad',
         sort: false,
+        width: '10%',
     },
     entrada: {
         title: 'Entrada',
         sort: false,
+        width: '10%',
     },
     salida: {
         title: 'Salida',
         sort: false,
+        width: '10%',
     },
     stock: {
         title: 'Stock',
         sort: false,
+        width: '10%',
     },
     fecha: {
         title: 'Fecha',
