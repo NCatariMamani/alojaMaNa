@@ -13,6 +13,8 @@ import { ProductInventoryService } from 'src/app/core/services/catalogs/productI
 import { ProductInventoryDetailComponent } from '../productInventory-detail/productInventory-detail.component';
 import { IProductInventory } from 'src/app/core/models/catalogs/productInventory.model';
 import { ProductsListComponent } from '../../products/products-list/products-list.component';
+import { ButtonColumnInputComponent } from 'src/app/shared/components/button-column/button-column-input.component';
+import { ButtonColumnOutputComponent } from 'src/app/shared/components/button-column/button-column-output.component';
 
 @Component({
   selector: 'app-productInventory-list',
@@ -36,7 +38,8 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
   constructor(
     private modalService: BsModalService,
     private productInventoryService: ProductInventoryService,
-    private modalRef: BsModalRef
+    private modalRef: BsModalRef,
+    private productService: ProductsService
   ) {
     super();
     this.settings = {
@@ -44,13 +47,47 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         delete: true,
         add: false,
         position: 'right',
       },
-      columns: { ...PRODUCTINVENTORY_COLUMNS },
+      columns: {
+        input: {
+          title: 'Entrada',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnInputComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              this.input(row);
+            });
+          },
+        },
+        output: {
+          title: 'Salida',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          filter: false,
+          renderComponent: ButtonColumnOutputComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              this.output(row);
+            });
+          },
+        },  ...PRODUCTINVENTORY_COLUMNS },
     };
+  }
+
+  input(row: any){
+    console.log(row);
+  }
+
+  output(row: any){
+    console.log(row);
   }
 
   ngOnInit() {
@@ -117,7 +154,7 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    if(this.idInventory){
+    if (this.idInventory) {
       params['filter.inventarioId'] = `$eq:${this.idInventory}`;
     }
     this.productInventoryService.getAll(params).subscribe({
@@ -169,19 +206,34 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
 
-        this.delete(productInventory.id);
+        this.delete(productInventory.id,productInventory);
         //Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
-  delete(id: string | number) {
+  delete(id: string | number,productInventory: IProductInventory) {
     this.productInventoryService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Inventario', 'Borrado Correctamente');
-        this.params
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getAllProductInventory());
+        this.alert('success', 'PRODUCTO INVENTARIO', 'Borrado Correctamente');
+        let body1 = {
+          estado: 'SR'
+        };
+        this.productService.update(Number(productInventory.productoId), body1)
+          .subscribe({
+            next: response => {
+              this.loading = false;
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getAllProductInventory());
+            },
+            error: error => {
+              this.loading = false;
+            }
+          }
+          );
+
+
       }, error: err => {
         this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
       },

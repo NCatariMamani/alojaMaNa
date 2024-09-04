@@ -51,7 +51,7 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
   private prepareForm() {
     this.form = this.fb.group({
       cantidad: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      entrada: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      entrada: [0, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       salida: [0, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       stock: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       fecha: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
@@ -59,6 +59,9 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
       //alojamientoId: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
     });
     this.form.controls['fecha'].disable();
+    this.form.controls['entrada'].disable();
+    this.form.controls['salida'].disable();
+    this.form.controls['stock'].disable();
     if (this.productInventory != null) {
       this.edit = true;
       const formattedDate = this.datePipe.transform(this.productInventory.fecha, 'dd/MM/yyyy');
@@ -95,7 +98,7 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
     this.productInventoryService.create(body).subscribe({
       next: resp => { 
         let body1 = {
-          estado: 'OCUPADO'
+          estado: 'R'
         };
         this.productService.update(Number(this.form.controls['productoId'].getRawValue()), body1)
         .subscribe({
@@ -221,7 +224,7 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
       const inputElement = event.target as HTMLInputElement;
       const valor = Number(inputElement.value);
       console.log(valor);
-      this.form.controls['entrada'].setValue(valor);
+      this.form.controls['entrada'].setValue(0);
       this.form.controls['stock'].setValue(valor);
     }
   }

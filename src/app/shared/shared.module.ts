@@ -28,6 +28,7 @@ import { ButtonColumnAddComponent } from './components/button-column/button-colu
 import { ButtonColumnDeleteComponent } from './components/button-column/button-column-delete.component';
 import { ButtonColumnComponent } from './components/button-column/button-column.component';
 import { ButtonColumnOutputComponent } from './components/button-column/button-column-output.component';
+import { ButtonColumnInputComponent } from './components/button-column/button-column-input.component';
 
 export const customCurrencyMaskConfig = {
   align: 'right',
@@ -56,7 +57,8 @@ export const customCurrencyMaskConfig = {
     ButtonColumnAddComponent,
     ButtonColumnDeleteComponent,
     ButtonColumnComponent,
-    ButtonColumnOutputComponent
+    ButtonColumnOutputComponent,
+    ButtonColumnInputComponent
   ],
   imports: [
     CommonModule,
@@ -91,7 +93,8 @@ export const customCurrencyMaskConfig = {
     ButtonColumnAddComponent,
     ButtonColumnDeleteComponent,
     ButtonColumnComponent,
-    ButtonColumnOutputComponent
+    ButtonColumnOutputComponent,
+    ButtonColumnInputComponent
   ],
   providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })

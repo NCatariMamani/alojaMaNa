@@ -3,8 +3,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 @Component({
   selector: 'app-button',
   template: `
-     <button class="btn btn-primary btn-sm active" (click)="onClick1()">
-      <i class="fas fa-hand-point-right" aria-hidden="true"></i>
+     <button class="btn btn-success btn-sm active" (click)="onClick1()">
+      <i class="fas fa-hand-point-left" aria-hidden="true"></i>
     </button> 
    <!-- <i
       class="fa fa-eye"
@@ -13,7 +13,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       style="color: #9D2449;"></i>-->
   `,
 })
-export class ButtonColumnOutputComponent {
+export class ButtonColumnInputComponent {
   @Input() label?: string;
   @Input() disabled?: boolean;
   @Input() rowData: any;
