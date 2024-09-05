@@ -6,6 +6,7 @@ export interface IProductInventory {
     cantidad: number;
     entrada: number;
     salida: number;
+    stock: number;
     fecha: string;
     hora: string;
     productoId: string;
