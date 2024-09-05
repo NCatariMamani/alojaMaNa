@@ -6,6 +6,8 @@ export interface IProducts {
     id: number;
     nombre: string;
     precio: string;
+    estado: string;
+    departamento: string;
     productoCompras: IProductShopping[];
     productoInventarios: IAccommodation[];
     productoVentas: IProductSales [];

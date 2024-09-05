@@ -15,6 +15,8 @@ import { IProductInventory } from 'src/app/core/models/catalogs/productInventory
 import { ProductsListComponent } from '../../products/products-list/products-list.component';
 import { ButtonColumnInputComponent } from 'src/app/shared/components/button-column/button-column-input.component';
 import { ButtonColumnOutputComponent } from 'src/app/shared/components/button-column/button-column-output.component';
+import { InputModalComponent } from '../input-modal/input-modal.component';
+import { OutputModalComponent } from '../output-modal/output-modal.component';
 
 @Component({
   selector: 'app-productInventory-list',
@@ -84,10 +86,41 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
 
   input(row: any){
     console.log(row);
+    this.openModalInput(row);
+  }
+
+  openModalInput(productInventory?: IProductInventory) {
+    let config: ModalOptions = {
+      initialState: {
+        productInventory,
+        callback: (next: boolean) => {
+          if (next) this.getAllProductInventory();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(InputModalComponent, config);
   }
 
   output(row: any){
     console.log(row);
+    this.openModalOutput(row);
+  }
+
+  openModalOutput(productInventory?: IProductInventory) {
+
+    let config: ModalOptions = {
+      initialState: {
+        productInventory,
+        callback: (next: boolean) => {
+          if (next) this.getAllProductInventory();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(OutputModalComponent, config);
   }
 
   ngOnInit() {
