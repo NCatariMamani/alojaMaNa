@@ -17,6 +17,7 @@ import { ButtonColumnInputComponent } from 'src/app/shared/components/button-col
 import { ButtonColumnOutputComponent } from 'src/app/shared/components/button-column/button-column-output.component';
 import { InputModalComponent } from '../input-modal/input-modal.component';
 import { OutputModalComponent } from '../output-modal/output-modal.component';
+import { InputListComponent } from '../input-list/input-list.component';
 
 @Component({
   selector: 'app-productInventory-list',
@@ -80,13 +81,26 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
               this.output(row);
             });
           },
-        },  ...PRODUCTINVENTORY_COLUMNS },
+        }, ...PRODUCTINVENTORY_COLUMNS
+      },
     };
   }
 
-  input(row: any){
+  input(row: any) {
     console.log(row);
-    this.openModalInput(row);
+    this.alertQuestion(
+      'info',
+      '¿Desea añadir nuevo registro o solo ver?',
+      '',
+      'Nuevo',
+      'Ver'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openModalInput(row);
+      }else{
+        this.openModalInputList(row);
+      }
+    });
   }
 
   openModalInput(productInventory?: IProductInventory) {
@@ -103,7 +117,21 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
     this.modalService.show(InputModalComponent, config);
   }
 
-  output(row: any){
+  openModalInputList(productInventory?: IProductInventory) {
+    let config: ModalOptions = {
+      initialState: {
+        productInventory,
+        callback: (next: boolean) => {
+          if (next) this.getAllProductInventory();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(InputListComponent, config);
+  }
+
+  output(row: any) {
     console.log(row);
     this.openModalOutput(row);
   }
@@ -238,14 +266,13 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-
-        this.delete(productInventory.id,productInventory);
+        this.delete(productInventory.id, productInventory);
         //Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
-  delete(id: string | number,productInventory: IProductInventory) {
+  delete(id: string | number, productInventory: IProductInventory) {
     this.productInventoryService.remove(id).subscribe({
       next: () => {
         this.alert('success', 'PRODUCTO INVENTARIO', 'Borrado Correctamente');

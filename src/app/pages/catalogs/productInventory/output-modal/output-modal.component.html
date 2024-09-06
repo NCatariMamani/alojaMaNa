@@ -5,52 +5,38 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <!--<div class="col-md-6">
-          <form-field [control]="form.get('alojamientoId')">
-            <ngx-select
-              [form]="form"
-              control="alojamientoId"
-              (fetchItems)="getAccomodation($event)"
-              [data]="accomodations"
-              bindLabel="nombre"
-              label="Nombre del Alojamiento"
-              value="id"
-              (change)="onChangeAccomodation($event)"
-              [readonly]="false"
-            ></ngx-select>
-          </form-field>
-        </div>-->
         <div class="col-md-6">
-          <form-field [control]="form.get('productoId')">
-            <ngx-select
-              [form]="form"
-              control="productoId"
-              (fetchItems)="getProducts($event)"
-              [data]="products"
-              bindLabel="name"
-              label="Nombre del Producto"
-              value="id"
-              (change)="onChangeProducts($event)"
-              [readonly]="false"
-            ></ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field label="Salida" [control]="form.get('salida')">
+          <form-field label="Descripción" [control]="form.get('descripcion')">
             <input
               type="text"
               class="form-control"
-              formControlName="salida"
+              formControlName="descripcion"
               (change)="onChangeCant($event)"
             />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field label="Stock" [control]="form.get('stock')">
+          <form-field label="Fecha" [control]="form.get('fecha')">
+            <input
+              type="text"
+              formControlName="fecha"
+              class="form-control"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY',
+                displayOneMonthRange: true
+              }"
+              [maxDate]="maxDate"
+              (bsValueChange)="validateDate($event)"
+              bsDatepicker
+            />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Cantidad" [control]="form.get('cantidad')">
             <input
               type="text"
               class="form-control"
-              formControlName="stock"
+              formControlName="cantidad"
             />
           </form-field>
         </div>

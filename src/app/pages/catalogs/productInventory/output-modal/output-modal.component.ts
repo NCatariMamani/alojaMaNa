@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProductInventory } from 'src/app/core/models/catalogs/productInventory.model';
 import { IProducts } from 'src/app/core/models/catalogs/products.model';
+import { OutputService } from 'src/app/core/services/catalogs/output.service';
 import { ProductInventoryService } from 'src/app/core/services/catalogs/productInventory.service';
 import { ProductsService } from 'src/app/core/services/catalogs/products.service';
 import { BasePage } from 'src/app/core/shared';
@@ -27,7 +28,7 @@ export class OutputModalComponent extends BasePage implements OnInit {
   idInven?: number;
   result: any;
   depa?: string;
-  stockOut?: number;
+  proInId?: number;
 
   accomodations = new DefaultSelect();
   products = new DefaultSelect<IProducts>();
@@ -36,7 +37,8 @@ export class OutputModalComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private productService: ProductsService,
-    private productInventoryService: ProductInventoryService
+    private productInventoryService: ProductInventoryService,
+    private outputService: OutputService
   ) {
     super();
   }
@@ -45,30 +47,50 @@ export class OutputModalComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
   
-  private prepareForm() {
+  async prepareForm() {
     this.form = this.fb.group({
-      salida: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      stock: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      productoId:  [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      //alojamientoId: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      cantidad: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      descripcion: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      fecha:  [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      productoInventarioId: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
     });
-    this.form.controls['stock'].disable();
-    this.form.controls['productoId'].disable();
+    const date = new Date();
+    this.form.controls['fecha'].setValue(date);
+    this.form.controls['fecha'].disable();
     if (this.productInventory != null) {
       this.edit = true;
-      this.stockOut = this.productInventory.stock;
-      this.form.patchValue(this.productInventory);
+      this.proInId = this.productInventory.id;
+      let product = this.productInventory.productoId;
+      let descPrduct:any = await this.getProduct(Number(product));
+      console.log(descPrduct[0].nombre);
+      this.form.controls['descripcion'].setValue(descPrduct[0].nombre);
+      this.form.controls['descripcion'].disable();
     }
-    setTimeout(() => {
-      //this.getAccomodation(new ListParams());
-      this.getProducts(new ListParams());
-    }, 100);
   }
 
 
   confirm() {
-    //this.edit ? this.update() : this.create();
+    this.edit ? this.update() : this.create();
     this.update();
+  }
+
+  create() {
+    this.loading = true;
+    let body = {
+      cantidad: this.form.controls['cantidad'].getRawValue(),
+      descripcion: this.form.controls['descripcion'].getRawValue(),
+      fecha: this.form.controls['fecha'].getRawValue(),
+      productoInventarioId: Number(this.form.controls['productoInventarioId'].getRawValue()),
+    }
+    this.outputService.create(body).subscribe({
+      next: resp => {
+        this.handleSuccess(),
+          this.loading = false
+      }, error: err => {
+        this.loading = false
+      }
+    }
+    );
   }
 
 
@@ -120,25 +142,19 @@ export class OutputModalComponent extends BasePage implements OnInit {
     }
   }
 
-  getProducts(params: ListParams) {
-    /*if (params.text) {
-      params['filter.nombre'] = `$ilike:${params.text}`;
-    }
-    params['filter.estado'] = `$ilike:SR`;
-    if(this.depa){
-      params['filter.departamento'] = `$ilike:${this.depa}`;
-    }*/
-    this.productService.getAll(params).subscribe({
-      next: data => {
-        this.result = data.data.map(async (item: any) => {
-          item['name'] = item.nombre +' - '+ item.precio;
-        });
-        this.products = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        this.products = new DefaultSelect();
-        this.loading = false;
-      },
+  async getProduct(idProduct: number) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${idProduct}`;
+    return new Promise((resolve, reject) => {
+      this.productService.getAll(params).subscribe({
+        next: response => {
+          const data = response.data;
+          resolve(data);
+        },
+        error: err => {
+          resolve(0);
+        },
+      });
     });
   }
 
@@ -148,18 +164,7 @@ export class OutputModalComponent extends BasePage implements OnInit {
 
 
   onChangeCant(event: any){
-    if(event){
-      const inputElement = event.target as HTMLInputElement;
-      const valor = Number(inputElement.value);
-      const totStock =  Number(this.stockOut) - valor;
-      if(valor > Number(this.stockOut)){
-        this.alert('error', 'NO EXISTE', `La cantidad suficiente`);
-        return;
-      }else{
-        console.log(totStock);
-        this.form.controls['stock'].setValue(totStock);
-      }
-    }
+    
   }
 
 
