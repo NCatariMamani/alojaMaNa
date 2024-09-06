@@ -79,10 +79,10 @@ export class InputModalComponent extends BasePage implements OnInit {
     const input = this.productInventory?.stock
     this.inputService.create(body).subscribe({
       next: resp => {
-        let body1 = {
+        /*let body1 = {
           entrada: ,
           stock: 
-        }
+        }*/
         this.productInventoryService
         .update(Number(this.proInId), body)
         .subscribe({
