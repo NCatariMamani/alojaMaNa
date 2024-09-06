@@ -7,6 +7,8 @@ import { ProductInventoryListComponent } from './productInventory-list/productIn
 import { ProductInventoryDetailComponent } from './productInventory-detail/productInventory-detail.component';
 import { OutputModalComponent } from './output-modal/output-modal.component';
 import { InputModalComponent } from './input-modal/input-modal.component';
+import { InputListComponent } from './input-list/input-list.component';
+import { OutputListComponent } from './output-list/output-list.component';
 
 @NgModule({
   imports: [
@@ -19,7 +21,9 @@ import { InputModalComponent } from './input-modal/input-modal.component';
     ProductInventoryListComponent,
     ProductInventoryDetailComponent,
     InputModalComponent,
-    OutputModalComponent
+    OutputModalComponent,
+    InputListComponent,
+    OutputListComponent
   ]
 })
 export class ProductInventoryModule { }
