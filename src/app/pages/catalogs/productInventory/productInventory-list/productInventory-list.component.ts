@@ -18,6 +18,7 @@ import { ButtonColumnOutputComponent } from 'src/app/shared/components/button-co
 import { InputModalComponent } from '../input-modal/input-modal.component';
 import { OutputModalComponent } from '../output-modal/output-modal.component';
 import { InputListComponent } from '../input-list/input-list.component';
+import { OutputListComponent } from '../output-list/output-list.component';
 
 @Component({
   selector: 'app-productInventory-list',
@@ -132,12 +133,23 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
   }
 
   output(row: any) {
-    console.log(row);
-    this.openModalOutput(row);
+    this.alertQuestion(
+      'info',
+      '¿Desea añadir nuevo registro o solo ver?',
+      '',
+      'Nuevo',
+      'Ver'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openModalOutput(row);
+      }else{
+        this.openModalOutputList(row);
+      }
+    });
+
   }
 
   openModalOutput(productInventory?: IProductInventory) {
-
     let config: ModalOptions = {
       initialState: {
         productInventory,
@@ -149,6 +161,20 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(OutputModalComponent, config);
+  }
+
+  openModalOutputList(productInventory?: IProductInventory) {
+    let config: ModalOptions = {
+      initialState: {
+        productInventory,
+        callback: (next: boolean) => {
+          if (next) this.getAllProductInventory();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(OutputListComponent, config);
   }
 
   ngOnInit() {

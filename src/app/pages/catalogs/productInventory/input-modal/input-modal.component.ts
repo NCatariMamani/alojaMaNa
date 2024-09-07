@@ -40,22 +40,22 @@ export class InputModalComponent extends BasePage implements OnInit {
   ngOnInit() {
     this.prepareForm();
   }
-  
+
   async prepareForm() {
     this.form = this.fb.group({
       cantidad: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       descripcion: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      fecha:  [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      productoInventarioId: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      fecha: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      //productoInventarioId: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
     });
     const date = new Date();
     this.form.controls['fecha'].setValue(date);
     this.form.controls['fecha'].disable();
     if (this.productInventory != null) {
-      this.edit = true;
+      //this.edit = true;
       this.proInId = this.productInventory.id;
       let product = this.productInventory.productoId;
-      let descPrduct:any = await this.getProduct(Number(product));
+      let descPrduct: any = await this.getProduct(Number(product));
       console.log(descPrduct[0].nombre);
       this.form.controls['descripcion'].setValue(descPrduct[0].nombre);
       this.form.controls['descripcion'].disable();
@@ -65,39 +65,37 @@ export class InputModalComponent extends BasePage implements OnInit {
 
   confirm() {
     this.edit ? this.update() : this.create();
-    this.update();
   }
 
   create() {
     this.loading = true;
     let body = {
-      cantidad: this.form.controls['cantidad'].getRawValue(),
+      cantidad: Number(this.form.controls['cantidad'].getRawValue()),
       descripcion: this.form.controls['descripcion'].getRawValue(),
       fecha: this.form.controls['fecha'].getRawValue(),
       productoInventarioId: Number(this.proInId),
     }
-    const input = this.productInventory?.stock
+    const stock = Number(this.productInventory?.stock) + Number(this.form.controls['cantidad'].getRawValue());
+    const input = Number(this.productInventory?.entrada) + Number(this.form.controls['cantidad'].getRawValue());
+
     this.inputService.create(body).subscribe({
       next: resp => {
-        /*let body1 = {
-          entrada: ,
-          stock: 
-        }*/
-        this.productInventoryService
-        .update(Number(this.proInId), body)
-        .subscribe({
-          next: response => {
-            this.loading = false;
-            this.handleSuccess()
-          },
-          error: error => {
-            this.loading = false;
-          }
+        let body1 = {
+          entrada: input,
+          stock: stock
         }
-
-        );
-        this.handleSuccess(),
-          this.loading = false
+        this.productInventoryService
+          .update(Number(this.proInId), body1)
+          .subscribe({
+            next: response => {
+              this.loading = false;
+              this.handleSuccess()
+            },
+            error: error => {
+              this.loading = false;
+            }
+          }
+          );
       }, error: err => {
         this.loading = false
       }
@@ -119,7 +117,7 @@ export class InputModalComponent extends BasePage implements OnInit {
 
   update() {
     if (this.productInventory) {
-      this.loading = true;    
+      this.loading = true;
       let body = {
         salida: Number(this.form.controls['salida'].getRawValue()),
         stock: Number(this.form.controls['stock'].getRawValue()),
@@ -144,12 +142,12 @@ export class InputModalComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  onChangeAccomodation(event: any){
+  onChangeAccomodation(event: any) {
     console.log(event);
   }
 
-  validateDate(event: any){
-    if(event){
+  validateDate(event: any) {
+    if (event) {
       this.editDate = event;
     }
   }
@@ -170,13 +168,13 @@ export class InputModalComponent extends BasePage implements OnInit {
     });
   }
 
-  onChangeProducts(event: any){
+  onChangeProducts(event: any) {
     console.log(event);
   }
 
 
-  onChangeCant(event: any){
-    
+  onChangeCant(event: any) {
+
   }
 
 }

@@ -52,13 +52,12 @@ export class OutputModalComponent extends BasePage implements OnInit {
       cantidad: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       descripcion: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       fecha:  [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      productoInventarioId: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
     });
     const date = new Date();
     this.form.controls['fecha'].setValue(date);
     this.form.controls['fecha'].disable();
     if (this.productInventory != null) {
-      this.edit = true;
+      //this.edit = true;
       this.proInId = this.productInventory.id;
       let product = this.productInventory.productoId;
       let descPrduct:any = await this.getProduct(Number(product));
@@ -71,21 +70,47 @@ export class OutputModalComponent extends BasePage implements OnInit {
 
   confirm() {
     this.edit ? this.update() : this.create();
-    this.update();
   }
 
   create() {
     this.loading = true;
     let body = {
-      cantidad: this.form.controls['cantidad'].getRawValue(),
+      cantidad: Number(this.form.controls['cantidad'].getRawValue()),
       descripcion: this.form.controls['descripcion'].getRawValue(),
       fecha: this.form.controls['fecha'].getRawValue(),
-      productoInventarioId: Number(this.form.controls['productoInventarioId'].getRawValue()),
+      productoInventarioId: Number(this.proInId),
+    }
+    let stock: number;
+    let output: number;
+    if(Number(this.form.controls['cantidad'].getRawValue()) < Number(this.productInventory?.stock)){
+      stock = Number(this.productInventory?.stock) - Number(this.form.controls['cantidad'].getRawValue());
+      output = Number(this.productInventory?.salida) + Number(this.form.controls['cantidad'].getRawValue());
+    } else if(Number(this.form.controls['cantidad'].getRawValue()) === Number(this.productInventory?.stock)){
+      this.alert('info', 'Ultimos productos en Stock "RECARGAR"', '');
+      stock = Number(this.productInventory?.stock) - Number(this.form.controls['cantidad'].getRawValue());
+      output = Number(this.productInventory?.salida) + Number(this.form.controls['cantidad'].getRawValue());
+    } else {
+      this.alert('error', `Exediste la cantidad en Stock: ${this.productInventory?.stock}`, '');
+      return;
     }
     this.outputService.create(body).subscribe({
       next: resp => {
-        this.handleSuccess(),
-          this.loading = false
+        let body1 = {
+          salida: output,
+          stock: stock
+        }
+        this.productInventoryService
+          .update(Number(this.proInId), body1)
+          .subscribe({
+            next: response => {
+              this.loading = false;
+              this.handleSuccess()
+            },
+            error: error => {
+              this.loading = false;
+            }
+          }
+          );
       }, error: err => {
         this.loading = false
       }
