@@ -42,9 +42,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   inCharge = new DefaultSelect<IInCharge>();
   accomodations = new DefaultSelect<IAccommodation>();
 
-  idInCharge: any;
+  idInCharge?: number;
 
   prefe?: string;
+
+  inCharge1: any;
 
   constructor(
     private modalRef: BsModalRef,
@@ -66,7 +68,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    console.log(this.infoInCharge);
+    console.log(this.infoInCharge,this.idInCharge, this.inCharge1);
     this.form = this.fb.group({
       nombre: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       paterno: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
@@ -88,7 +90,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       total: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       habitacionId: [null, [Validators.required]],
       encargadoId: [this.infoInCharge, [Validators.required]],
-      alojamientoId: [null, [Validators.required]]
+      alojamientoId: [this.idInCharge, [Validators.required]]
     });
 
     this.form.controls['nombreA'].disable();
@@ -131,10 +133,10 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   async getInCharges() {
     const info = this.authService.getUserInfo();
     this.infoInCharge = info.id;
-    /*console.log(this.infoInCharge);
-    let inCharge1:any = await this.validInCharge(info.id);
-    this.idInCharge = inCharge1[0].alojamientoId;
-    console.log(this.idInCharge);*/
+    console.log(this.infoInCharge);
+    this.inCharge1 = await this.validInCharge(info.id);
+    this.idInCharge = this.inCharge1[0].alojamientoId;
+    console.log(this.idInCharge);
   }
 
   async validInCharge(idUser: number) {
