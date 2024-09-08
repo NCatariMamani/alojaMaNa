@@ -1,6 +1,6 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IBedroom } from 'src/app/core/models/catalogs/bedrooms.model';
@@ -60,6 +60,13 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     private accomodationService: AccomodationService
   ) {
     super();
+    this.form = this.fb.group({
+      alojamientoId: [null, Validators.required],
+    });
+  }
+
+  get alojaId() {
+    return this.form.get('alojamientoId') as FormControl;
   }
 
   ngOnInit() {
@@ -68,7 +75,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    console.log(this.infoInCharge,this.idInCharge, this.inCharge1);
+    //console.log(this.infoInCharge,this.idInCharge, this.inCharge1);
     this.form = this.fb.group({
       nombre: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       paterno: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
@@ -90,7 +97,8 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       total: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       habitacionId: [null, [Validators.required]],
       encargadoId: [this.infoInCharge, [Validators.required]],
-      alojamientoId: [this.idInCharge, [Validators.required]]
+      alojamientoId: [null, [Validators.required]]
+      //this.idInCharge
     });
 
     this.form.controls['nombreA'].disable();
@@ -103,8 +111,10 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     this.form.controls['horaSalida'].disable();
     this.form.controls['costoHabitacion'].disable();
     this.form.controls['total'].disable();
-    this.form.controls['habitacionId'].disable();
+    //this.form.controls['habitacionId'].disable();
     this.form.controls['costoExtra'].disable();
+    this.form.controls['encargadoId'].disable();
+    this.form.controls['alojamientoId'].disable();
 
     if (this.reservations != null) {
       this.edit = true;
@@ -114,7 +124,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       this.form.controls['encargadoId'].setValue(this.reservations.encargadoId);
       this.form.controls['fecha'].setValue(formattedDate);
       this.form.controls['habitacionId'].enable();
-      
+
     } else {
       const date = new Date();
       const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
@@ -126,7 +136,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       this.getBedroom(new ListParams());
       this.getInCharge(new ListParams());
       this.getAccomodation(new ListParams());
-    }, 1000);
+    }, 100);
 
   }
 
@@ -135,9 +145,10 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     this.infoInCharge = info.id;
     console.log(this.infoInCharge);
     this.inCharge1 = await this.validInCharge(info.id);
-    this.idInCharge = this.inCharge1[0].alojamientoId;
-    console.log(this.idInCharge);
-  }
+    const idCharge = this.inCharge1[0].alojamientoId;
+    this.alojaId.setValue(idCharge);
+    //console.log(this.idInCharge);
+  } 
 
   async validInCharge(idUser: number) {
     const params = new ListParams();
@@ -214,14 +225,14 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     this.reservationsService.create(body).subscribe({
       next: resp => {
         this.bedroomsService.update(this.form.controls['habitacionId'].getRawValue(), body1).subscribe({
-          next: data =>{
+          next: data => {
             this.handleSuccess(),
-            this.loading = false
-          },error: err => {
+              this.loading = false
+          }, error: err => {
             this.loading = false
           }
         });
-        
+
       }, error: err => {
         this.loading = false
       }
@@ -229,7 +240,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     );
   }
 
-  
+
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
@@ -296,6 +307,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     }*/
     params['filter.alojamientoId'] = `$eq:${this.idAccom}`;
     params['filter.estado'] = `$ilike:LIBRE`;
+    console.log(this.idAccom);
     this.bedroomsService.getAll(params).subscribe({
       next: data => {
         this.result = data.data.map(async (item: any) => {
@@ -340,7 +352,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   getInCharge(params: ListParams) {
-    if(this.infoInCharge || this.infoInCharge != 0){
+    if (this.infoInCharge || this.infoInCharge != 0) {
       params['filter.userId'] = `$eq:${this.infoInCharge}`;
     }
     this.inChargeService.getAll(params).subscribe({
@@ -428,10 +440,13 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   async getAccomodation(params: ListParams) {
-    let inCharge1:any = await this.validInCharge(this.infoInCharge);
-    console.log(inCharge1[0].alojamientoId);
-    const idAccom = inCharge1[0].alojamientoId
-    params['filter.id'] = `$eq:${idAccom}`;
+    console.log(this.infoInCharge);
+    let inCharge1: any = await this.validInCharge(this.infoInCharge);
+    if(inCharge1){
+      console.log(inCharge1);
+      /*const idAccom = inCharge1[0].alojamientoId
+      params['filter.id'] = `$eq:${idAccom}`;*/
+    } 
     this.accomodationService.getAll(params).subscribe({
       next: data => {
         this.accomodations = new DefaultSelect(data.data, data.count);
@@ -443,7 +458,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     });
   }
 
-  onChangeAccomodation(event: any){
+  onChangeAccomodation(event: any) {
     console.log(event);
   }
 
