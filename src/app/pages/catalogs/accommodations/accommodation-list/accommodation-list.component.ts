@@ -265,7 +265,7 @@ export class AccommodationListComponent extends BasePage implements OnInit {
         this.data2.refresh();
         this.totalItems2 = response.count;
         if(this.noHab){
-          if(this.totalItems2 < this.noHab){
+          if(this.totalItems2 < this.noHab + 1){
             this.valueButton = true;
           }else{
             this.valueButton = false;

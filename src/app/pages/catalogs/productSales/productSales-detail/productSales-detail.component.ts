@@ -51,12 +51,13 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
   ngOnInit() {
     this.prepareForm();
   }
-  
+
   private prepareForm() {
     this.form = this.fb.group({
       productoId: [null, [Validators.required]],
       ventaId: [this.idSale, [Validators.required]],
     });
+    this.form.controls['ventaId'].disable();
     if (this.productSales != null) {
       this.edit = true;
       this.form.patchValue(this.productSales);
@@ -67,8 +68,8 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
     setTimeout(() => {
       this.getSales(new ListParams());
       this.getProducts(new ListParams());
-    }, 1000);
-    
+    }, 100);
+
   }
 
 
@@ -78,7 +79,7 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    
+
     let body = {
       productoId: Number(this.form.controls['productoId'].getRawValue()),
       ventaId: Number(this.form.controls['ventaId'].getRawValue())
@@ -86,8 +87,8 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
     this.productSalesService.create(body).subscribe({
       next: resp => {
         this.handleSuccess(),
-        this.loading = false
-      }, error: err =>  {
+          this.loading = false
+      }, error: err => {
         this.loading = false
       }
     }
@@ -105,7 +106,7 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
 
   update() {
     if (this.productSales) {
-      this.loading = true;   
+      this.loading = true;
       let body = {
         productoId: Number(this.form.controls['productoId'].getRawValue()),
         ventaId: Number(this.form.controls['ventaId'].getRawValue())
@@ -137,7 +138,9 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
     this.salesService.getAll(params).subscribe({
       next: data => {
         this.result = data.data.map(async (item: any) => {
-          item['idSales'] = item.id + ' - ' + item.fecha;
+          const localDate = new Date(item.fecha);
+          const formattedDate = this.datePipe.transform(new Date(localDate.getTime() + localDate.getTimezoneOffset() * 60000), 'dd/MM/yyyy');
+          item['idSales'] = item.id + ' - ' + formattedDate;
         });
         this.reservations = new DefaultSelect(data.data, data.count);
       },
@@ -148,13 +151,13 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
     });
   }
 
-  onChangeReservations(event: any){
+  onChangeReservations(event: any) {
     console.log(event);
   }
 
 
-  validateDate(event: any){
-    if(event){
+  validateDate(event: any) {
+    if (event) {
       this.editDate = event;
     }
   }
@@ -177,7 +180,7 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
     });
   }
 
-  onChangeProducts(event: any){
+  onChangeProducts(event: any) {
     console.log(event);
   }
 

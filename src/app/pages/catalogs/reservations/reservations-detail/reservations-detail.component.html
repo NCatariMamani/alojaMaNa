@@ -54,6 +54,21 @@
             </ng-select>
           </form-field>
         </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('alojamientoId')">
+            <ngx-select
+              [form]="form"
+              control="alojamientoId"
+              (fetchItems)="getAccomodation($event)"
+              [data]="accomodations"
+              bindLabel="nombre"
+              label="Nombre del Alojamiento"
+              value="id"
+              (change)="onChangeAccomodation($event)"
+              [readonly]="false"
+            ></ngx-select>
+          </form-field>
+        </div>
         <div class="col-md-3">
           <form-field label="Compañia" [control]="form.get('compania')">
             <ng-select
@@ -68,22 +83,8 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('alojamientoId')">
-            <ngx-select
-              [form]="form"
-              control="alojamientoId"
-              (fetchItems)="getAccomodation($event)"
-              [data]="accomodations"
-              bindLabel="nombre"
-              label="Nombre del Alojamiento"
-              value="id"
-              (change)="onChangeAccomodation($event)"
-              [readonly]="false"></ngx-select>
-          </form-field>
-        </div>
       </div>
-      <div class="row pt-4">
+      <div class="row pt-4" *ngIf="couple">
         <div class="col-md-4">
           <form-field label="Nombre Pareja" [control]="form.get('nombreA')">
             <input type="text" class="form-control" formControlName="nombreA" />
@@ -109,7 +110,7 @@
         </div>
       </div>
 
-      <div class="row pt-4">
+      <div class="row pt-4" *ngIf="couple">
         <div class="col-md-3">
           <form-field label="CI" [control]="form.get('ciA')">
             <input
@@ -142,6 +143,8 @@
             </ng-select>
           </form-field>
         </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-3">
           <form-field [control]="form.get('fecha')" label="Fecha">
             <input
@@ -158,16 +161,16 @@
             />
           </form-field>
         </div>
-      </div>
-
-      <div class="row pt-4">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field label="Hora Entrada" [control]="form.get('horaEntrada')">
-            <input type="text" class="form-control" formControlName="horaEntrada" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="horaEntrada"
+            />
           </form-field>
         </div>
-        
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field label="Tiempo" [control]="form.get('tiempo')">
             <ng-select
               formControlName="tiempo"
@@ -181,13 +184,16 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field label="Hora Salida" [control]="form.get('horaSalida')">
-            <input type="text" class="form-control" formControlName="horaSalida" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="horaSalida"
+            />
           </form-field>
         </div>
       </div>
-
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field [control]="form.get('encargadoId')">
@@ -223,7 +229,10 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <form-field label="Costo Habitación" [control]="form.get('costoHabitacion')">
+          <form-field
+            label="Costo Habitación"
+            [control]="form.get('costoHabitacion')"
+          >
             <input
               type="text"
               class="form-control"
@@ -246,7 +255,39 @@
           </form-field>
         </div>
       </div>
-      
+      <div class="row pt-4">  
+        <div class="col-md-4">
+          <form-field label="Monto Entregado" [control]="form.get('montoEntregado')">
+            <ng-select
+              formControlName="montoEntregado"
+              [searchable]="true"
+              class="form-control"
+              [clearable]="false"
+              (change)="onChangeMoney($event)"
+            >
+              <ng-option value="40,00 Bs">40,00 Bs</ng-option>
+              <ng-option value="50,00 Bs">50,00 Bs</ng-option>
+              <ng-option value="60,00 Bs">60,00 Bs</ng-option>
+              <ng-option value="70,00 Bs">70,00 Bs</ng-option>
+              <ng-option value="80,00 Bs">80,00 Bs</ng-option>
+              <ng-option value="90,00 Bs">90,00 Bs</ng-option>
+              <ng-option value="100,00 Bs">100,00 Bs</ng-option>
+              <ng-option value="150,00 Bs">150,00 Bs</ng-option>
+              <ng-option value="200,00 Bs">200,00 Bs</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Cambio" [control]="form.get('cambio')">
+            <input type="text" class="form-control" formControlName="cambio" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Estado Cambio" [control]="form.get('estadoCambio')">
+            <input type="text" class="form-control" formControlName="estadoCambio" />
+          </form-field>
+        </div>
+      </div>
     </form>
   </div>
   <div footer>

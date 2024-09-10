@@ -57,7 +57,7 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
     }
     setTimeout(() => {
       this.getAccomodation(new ListParams());
-    }, 1000);
+    }, 100);
     console.log(this.idAccom);
   }
 

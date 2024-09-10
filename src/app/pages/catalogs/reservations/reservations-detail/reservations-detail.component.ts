@@ -47,6 +47,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   prefe?: string;
 
   inCharge1: any;
+  couple: boolean = false;
 
   constructor(
     private modalRef: BsModalRef,
@@ -95,8 +96,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       costoHabitacion: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       costoExtra: [null, [Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       total: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
+      montoEntregado: [null, [Validators.required]],
+      cambio: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
+      estadoCambio: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       habitacionId: [null, [Validators.required]],
-      encargadoId: [this.infoInCharge, [Validators.required]],
+      encargadoId: [null, [Validators.required]],
       alojamientoId: [null, [Validators.required]]
       //this.idInCharge
     });
@@ -111,10 +115,12 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     this.form.controls['horaSalida'].disable();
     this.form.controls['costoHabitacion'].disable();
     this.form.controls['total'].disable();
-    //this.form.controls['habitacionId'].disable();
+    this.form.controls['habitacionId'].disable();
     this.form.controls['costoExtra'].disable();
-    this.form.controls['encargadoId'].disable();
+    //this.form.controls['encargadoId'].disable();
     this.form.controls['alojamientoId'].disable();
+    this.form.controls['cambio'].disable();
+    this.form.controls['estadoCambio'].disable();
 
     if (this.reservations != null) {
       this.edit = true;
@@ -148,7 +154,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     const idCharge = this.inCharge1[0].alojamientoId;
     this.alojaId.setValue(idCharge);
     //console.log(this.idInCharge);
-  } 
+  }
 
   async validInCharge(idUser: number) {
     const params = new ListParams();
@@ -302,11 +308,18 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   getBedroom(params: ListParams) {
-    /*if (params.text) {
-      params['filter.nombre'] = `$ilike:${params.text}`;
-    }*/
     params['filter.alojamientoId'] = `$eq:${this.idAccom}`;
     params['filter.estado'] = `$ilike:LIBRE`;
+    if (params.text) {
+      const valid = Number(params.text);
+      if (!isNaN(valid)) {
+        // Si es un número
+        params['filter.noHabitacion'] = `$eq:${params.text}`;
+      } else {
+        // Si es un string
+        params['filter.preferencias'] = `$ilike:${params.text}`;
+      }
+    }
     console.log(this.idAccom);
     this.bedroomsService.getAll(params).subscribe({
       next: data => {
@@ -380,17 +393,17 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   onChangeCompanion(event: any) {
     console.log(event);
     if (event == 'CON PAREJA') {
+      this.couple = true;
       this.form.controls['nombreA'].enable();
       this.form.controls['paternoA'].enable();
       this.form.controls['maternoA'].enable();
-      this.form.controls['edadA'].enable();
       this.form.controls['ciA'].enable();
       this.form.controls['extencionA'].enable();
     } else {
+      this.couple = false;
       this.form.controls['nombreA'].disable();
       this.form.controls['paternoA'].disable();
       this.form.controls['maternoA'].disable();
-      this.form.controls['edadA'].disable();
       this.form.controls['ciA'].disable();
       this.form.controls['extencionA'].disable();
     }
@@ -442,11 +455,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   async getAccomodation(params: ListParams) {
     console.log(this.infoInCharge);
     let inCharge1: any = await this.validInCharge(this.infoInCharge);
-    if(inCharge1){
+    if (inCharge1) {
       console.log(inCharge1);
       /*const idAccom = inCharge1[0].alojamientoId
       params['filter.id'] = `$eq:${idAccom}`;*/
-    } 
+    }
     this.accomodationService.getAll(params).subscribe({
       next: data => {
         this.accomodations = new DefaultSelect(data.data, data.count);
@@ -462,6 +475,9 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     console.log(event);
   }
 
+  onChangeMoney(event: any){
+    console.log(event);
+  }
 
 
 
