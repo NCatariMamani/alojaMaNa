@@ -255,9 +255,12 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-4">  
+      <div class="row pt-4">
         <div class="col-md-4">
-          <form-field label="Monto Entregado" [control]="form.get('montoEntregado')">
+          <form-field
+            label="Monto Entregado"
+            [control]="form.get('montoEntregado')"
+          >
             <ng-select
               formControlName="montoEntregado"
               [searchable]="true"
@@ -265,6 +268,7 @@
               [clearable]="false"
               (change)="onChangeMoney($event)"
             >
+              <ng-option value="30,00 Bs">30,00 Bs</ng-option>
               <ng-option value="40,00 Bs">40,00 Bs</ng-option>
               <ng-option value="50,00 Bs">50,00 Bs</ng-option>
               <ng-option value="60,00 Bs">60,00 Bs</ng-option>
@@ -283,8 +287,19 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field label="Estado Cambio" [control]="form.get('estadoCambio')">
-            <input type="text" class="form-control" formControlName="estadoCambio" />
+          <form-field
+            label="Estado Cambio"
+            [control]="form.get('estadoCambio')"
+          >
+            <ng-select
+              formControlName="estadoCambio"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+            >
+              <ng-option value="P">PENDIENTE</ng-option>
+              <ng-option value="E">ENTREGADO</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>

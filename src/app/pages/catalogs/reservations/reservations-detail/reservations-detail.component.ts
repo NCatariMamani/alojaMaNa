@@ -98,7 +98,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       total: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       montoEntregado: [null, [Validators.required]],
       cambio: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
-      estadoCambio: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
+      estadoCambio: ['P', [Validators.required]],
       habitacionId: [null, [Validators.required]],
       encargadoId: [null, [Validators.required]],
       alojamientoId: [null, [Validators.required]]
@@ -121,6 +121,8 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     this.form.controls['alojamientoId'].disable();
     this.form.controls['cambio'].disable();
     this.form.controls['estadoCambio'].disable();
+    this.form.controls['montoEntregado'].disable();
+
 
     if (this.reservations != null) {
       this.edit = true;
@@ -129,8 +131,12 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       this.form.patchValue(this.reservations);
       this.form.controls['encargadoId'].setValue(this.reservations.encargadoId);
       this.form.controls['fecha'].setValue(formattedDate);
-      this.form.controls['habitacionId'].enable();
-
+      this.form.controls['habitacionId'].disable();
+      this.form.controls['encargadoId'].disable();
+      this.form.controls['tiempo'].disable();
+      this.form.controls['compania'].disable();
+      this.form.controls['habitacionId'].setValue(this.reservations.habitacionId);
+      console.log(this.reservations.habitacionId);
     } else {
       const date = new Date();
       const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
@@ -217,8 +223,10 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       horaSalida: this.form.controls['horaSalida'].getRawValue(),
       tiempo: this.form.controls['tiempo'].getRawValue(),
       compania: this.form.controls['compania'].getRawValue(),
+      montoEntregado: this.form.controls['montoEntregado'].getRawValue(),
+      cambio: this.form.controls['cambio'].getRawValue(),
+      estadoCambio: this.form.controls['estadoCambio'].getRawValue(),
       costoHabitacion: this.form.controls['costoHabitacion'].getRawValue(),
-      costoExtra: parseFloat(this.form.controls['costoExtra'].getRawValue()),
       total: this.form.controls['total'].getRawValue(),
       habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
       encargadoId: Number(this.form.controls['encargadoId'].getRawValue()),
@@ -275,17 +283,20 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
         maternoA: this.form.controls['maternoA'].getRawValue(),
         ciA: Number(this.form.controls['ciA'].getRawValue()),
         extencionA: this.form.controls['extencionA'].getRawValue(),
-        fecha: isoString,
+        compania: this.form.controls['compania'].getRawValue(),
+        /*fecha: isoString,
         horaEntrada: this.form.controls['horaEntrada'].getRawValue(),
         horaSalida: this.form.controls['horaSalida'].getRawValue(),
         tiempo: this.form.controls['tiempo'].getRawValue(),
         compania: this.form.controls['compania'].getRawValue(),
+        montoEntregado: this.form.controls['montoEntregado'].getRawValue(),
+        cambio: this.form.controls['cambio'].getRawValue(),
+        estadoCambio: this.form.controls['estadoCambio'].getRawValue(),
         costoHabitacion: this.form.controls['costoHabitacion'].getRawValue(),
-        costoExtra: parseFloat(this.form.controls['costoExtra'].getRawValue()),
         total: this.form.controls['total'].getRawValue(),
         habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
         encargadoId: Number(this.form.controls['encargadoId'].getRawValue()),
-        alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue())
+        alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue())*/
       }
       this.reservationsService
         .update(this.reservations.id, body)
@@ -342,18 +353,26 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       const formatCos = this.formatToBolivianCurrency(30);
       this.form.controls['costoHabitacion'].setValue(formatCos);
       this.form.controls['total'].setValue(formatCos);
+      this.form.controls['montoEntregado'].enable();
+      this.form.controls['estadoCambio'].enable();
     } else if (event.preferencias == 'SIMPLE' && this.form.controls['tiempo'].value == 'TODA LA NOCHE') {
       const formatCos1 = this.formatToBolivianCurrency(60);
       this.form.controls['costoHabitacion'].setValue(formatCos1);
       this.form.controls['total'].setValue(formatCos1);
+      this.form.controls['montoEntregado'].enable();
+      this.form.controls['estadoCambio'].enable();
     } else if (event.preferencias == 'BAÑO PRIVADO' && this.form.controls['tiempo'].value == 'MOMENTANEO') {
       const formatCost2 = this.formatToBolivianCurrency(40);
       this.form.controls['costoHabitacion'].setValue(formatCost2);
       this.form.controls['total'].setValue(formatCost2);
+      this.form.controls['montoEntregado'].enable();
+      this.form.controls['estadoCambio'].enable();
     } else {
       const formatCost3 = this.formatToBolivianCurrency(70);
       this.form.controls['costoHabitacion'].setValue(formatCost3);
       this.form.controls['total'].setValue(formatCost3);
+      this.form.controls['montoEntregado'].enable();
+      this.form.controls['estadoCambio'].enable();
     }
   }
 
@@ -475,8 +494,32 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     console.log(event);
   }
 
-  onChangeMoney(event: any){
-    console.log(event);
+  onChangeMoney(event: any) {
+    const monto = parseInt(event);
+    const total = parseInt(this.form.controls['total'].value);
+    console.log(monto, total);
+    if (monto > total) {
+      const cambio = monto - total;
+      console.log(cambio);
+      const money = this.formatToBolivianCurrency(cambio);
+      this.form.controls['cambio'].setValue(money);
+      this.form.controls['estadoCambio'].enable();
+      this.form.controls['estadoCambio'].setValue('P');
+    } else if (monto === total) {
+      const money0 = this.formatToBolivianCurrency(0);
+      this.form.controls['cambio'].setValue(money0);
+      this.form.controls['estadoCambio'].disable();
+      this.form.controls['estadoCambio'].setValue('E');
+    }
+    else {
+      this.alert('warning', `El monto ${event} debe ser mayor al total`, ``);
+      this.form.controls['montoEntregado'].setValue('');
+      return;
+    }
+  }
+
+  convertirMonedaACifra(valor: string): number {
+    return parseFloat(valor.replace(' Bs', '').replace(',', '.'));
   }
 
 

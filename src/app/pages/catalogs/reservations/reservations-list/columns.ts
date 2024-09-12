@@ -57,6 +57,32 @@ export const RESERVATIONS_COLUMNS = {
         title: 'Total',
         sort: false,
     },
+    cambio: {
+        title: 'Cambio',
+        sort: false,
+    },
+    estadoCambio: {
+        title: 'Estado de Cambio',
+        sort: false,
+        type: 'html',
+        valuePrepareFunction: (value: string) => {
+            if (value == 'E')
+              return '<strong><span class="badge badge-pill bg-disable-success">ENTREGADO</span></strong>';
+            if (value == 'P')
+              return '<strong><span class="badge badge-pill badge-soft-pink">PENDIENTE</span></strong>';
+            return value;
+          },
+          filter: {
+            type: 'list',
+            config: {
+              selectText: 'Seleccionar',
+              list: [
+                { value: 'E', title: 'ENTREGADO' },
+                { value: 'P', title: 'PENDIENTE' }
+              ],
+            },
+          },
+    },
     
     encargados: {
         title: 'Encargado',
