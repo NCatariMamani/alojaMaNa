@@ -15,6 +15,8 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { IInCharge } from 'src/app/core/models/catalogs/inCharge.model';
 import { AccomodationService } from 'src/app/core/services/catalogs/accomodation.service';
 import { IAccommodation } from 'src/app/core/models/catalogs/accommodation.model';
+import { CustomersService } from 'src/app/core/services/catalogs/customers.service';
+import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
 
 @Component({
   selector: 'app-reservations-detail',
@@ -41,6 +43,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   bedrooms = new DefaultSelect<IBedroom>();
   inCharge = new DefaultSelect<IInCharge>();
   accomodations = new DefaultSelect<IAccommodation>();
+  customers = new DefaultSelect<ICustomer>();
 
   idInCharge?: number;
 
@@ -58,7 +61,8 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     private inChargeService: InChargeService,
     private authService: AuthService,
     private currencyPipe: CurrencyPipe,
-    private accomodationService: AccomodationService
+    private accomodationService: AccomodationService,
+    private customersService: CustomersService
   ) {
     super();
     this.form = this.fb.group({
@@ -101,7 +105,8 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       estadoCambio: ['P', [Validators.required]],
       habitacionId: [null, [Validators.required]],
       encargadoId: [null, [Validators.required]],
-      alojamientoId: [null, [Validators.required]]
+      alojamientoId: [null, [Validators.required]],
+      customer: [null,[Validators.required]]
       //this.idInCharge
     });
 
@@ -148,6 +153,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       this.getBedroom(new ListParams());
       this.getInCharge(new ListParams());
       this.getAccomodation(new ListParams());
+      this.getCustomer(new ListParams());
     }, 100);
 
   }
@@ -406,6 +412,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       this.idAccom = event.alojamientoId;
       this.form.controls['habitacionId'].enable();
       this.getBedroom(new ListParams);
+      this.getCustomer(new ListParams);
     }
   }
 
@@ -488,6 +495,37 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  getCustomer(params: ListParams) {
+    params['filter.alojamientoId'] = `$eq:${this.idAccom}`;
+    if (params.text) {
+      const valid = Number(params.text);
+      if (!isNaN(valid)) {
+        // Si es un número
+        params['filter.id'] = `$eq:${params.text}`;
+      } else {
+        // Si es un string
+        params['filter.nombre'] = `$ilike:${params.text}`;
+      }
+    }
+    console.log(this.idAccom);
+    this.customersService.getAll(params).subscribe({
+      next: data => {
+        this.result = data.data.map(async (item: any) => {
+          item['idName'] = item.id + ' - ' + item.nombre + ' ' + item.paterno+ ' ' + item.materno;
+        });
+        this.customers = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.customers = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  onChangeCustomer(event: any){
+    console.log(event);
   }
 
   onChangeAccomodation(event: any) {

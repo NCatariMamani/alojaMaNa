@@ -5,6 +5,23 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="form.get('customer')">
+            <ngx-select
+              [form]="form"
+              control="customer"
+              (fetchItems)="getCustomer($event)"
+              [data]="customers"
+              bindLabel="idName"
+              label="Cliente"
+              value="id"
+              (change)="onChangeCustomer($event)"
+              [readonly]="false"
+            ></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-4">
           <form-field label="Nombre" [control]="form.get('nombre')">
             <input type="text" class="form-control" formControlName="nombre" />
