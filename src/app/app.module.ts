@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
-import { FullModule } from './layouts/full/full.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ContentComponent } from './layouts/content/content.component';
 import { LoadingComponent } from './shared/components/loading/loading.component';
@@ -16,6 +15,7 @@ import { AuthInterceptor } from './auth.interceptor';
 
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
+import { FullModule } from './layouts/full/full.module';
 
 export function tokenGetter() {
   return localStorage.getItem('token');

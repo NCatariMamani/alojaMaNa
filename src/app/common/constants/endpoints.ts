@@ -14,5 +14,6 @@ export enum ENDPOINT_LINKS {
     ProductoVentas = 'catalog/productoVentas',
     Entradas = 'catalog/entradas',
     Salidas = 'catalog/salidas',
+    Clientes = 'catalog/clientes',
   }
   
