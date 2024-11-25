@@ -65,11 +65,11 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<T>(`${fullRoute}`);
   }
 
-  getById02(route: string, params: ListParams): Observable<IListResponse<T>> {
+  getById02(route: string, id: number | string, params: ListParams): Observable<IListResponse<T>> {
     const fullRoute = this.buildRoute(route);
 
     const httpParams = new HttpParams({ fromObject: params as any });
-    return this.httpClient.get<IListResponse<T>>(fullRoute, {
+    return this.httpClient.get<IListResponse<T>>(`${fullRoute}/${id}`, {
       params: httpParams,
     });
   }

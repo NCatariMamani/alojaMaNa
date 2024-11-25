@@ -1,6 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { IAccommodation } from "src/app/core/models/catalogs/accommodation.model";
 import { IBedroom } from "src/app/core/models/catalogs/bedrooms.model";
+import { ICustomer } from "src/app/core/models/catalogs/customer.model";
 import { IInCharge } from "src/app/core/models/catalogs/inCharge.model";
 import { IProducts } from "src/app/core/models/catalogs/products.model";
 import { CustomDateFilterComponent } from "src/app/shared/utils/custom-date-filter";
@@ -24,17 +25,31 @@ export const RESERVATIONS_COLUMNS = {
                 return false;
             }
         },
-    },  
-    nombre: {
-        title: 'Nombre',
+    }, 
+    clientes: {
+        title: 'Cliente',
         sort: false,
-    },
-    paterno: {
-        title: 'Paterno',
-        sort: false,
+        valuePrepareFunction: (value: ICustomer) => {
+            return `${value?.nombre} ${value?.paterno} ${value?.materno} ${value?.ci} ${value?.extencion}`;
+        },
+        filterFunction(cell?: any, search?: string): boolean {
+            let column = `${cell.nombre} ${cell.paterno} ${cell.materno} ${cell?.ci} ${cell?.extencion}`;
+            if (typeof search !== 'string') {
+                return true;
+            }
+            if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+                return true;
+            } else {
+                return false;
+            }
+        },
     },
     horaEntrada: {
         title: 'Hora Entrada',
+        sort: false,
+    },
+    horaProgramada: {
+        title: 'Hora Programada',
         sort: false,
     },
     horaSalida: {
@@ -105,38 +120,6 @@ export const RESERVATIONS_COLUMNS = {
         title: 'ID',
         sort: false,
         width: '10%',
-    },
-    materno: {
-        title: 'Materno',
-        sort: false,
-    },
-    ci: {
-        title: 'CI',
-        sort: false,
-    },
-    extencion: {
-        title: 'Extención',
-        sort: false,
-    },
-    nombreA: {
-        title: 'Nombre Pareja',
-        sort: false,
-    },
-    paternoA: {
-        title: 'Paterno Pareja',
-        sort: false,
-    },
-    maternoA: {
-        title: 'Materno Pareja',
-        sort: false,
-    },
-    ciA: {
-        title: 'Ci Pareja',
-        sort: false,
-    },
-    extencionA: {
-        title: 'Ectención Pareja',
-        sort: false,
     },
     fecha: {
         title: 'Fecha',

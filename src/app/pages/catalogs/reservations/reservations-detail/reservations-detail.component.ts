@@ -1,7 +1,7 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IBedroom } from 'src/app/core/models/catalogs/bedrooms.model';
 import { IReservations } from 'src/app/core/models/catalogs/reservations.model';
@@ -17,6 +17,7 @@ import { AccomodationService } from 'src/app/core/services/catalogs/accomodation
 import { IAccommodation } from 'src/app/core/models/catalogs/accommodation.model';
 import { CustomersService } from 'src/app/core/services/catalogs/customers.service';
 import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
+import { CustomersDetailComponent } from '../../customers/customers-detail/customers-detail.component';
 
 @Component({
   selector: 'app-reservations-detail',
@@ -52,6 +53,13 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   inCharge1: any;
   couple: boolean = false;
 
+  name?: string;
+  pather?: string;
+  mather?: string;
+  ci?: number;
+  extencion?: string;
+
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -62,7 +70,8 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private currencyPipe: CurrencyPipe,
     private accomodationService: AccomodationService,
-    private customersService: CustomersService
+    private customersService: CustomersService,
+    private modalService: BsModalService
   ) {
     super();
     this.form = this.fb.group({
@@ -74,6 +83,18 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     return this.form.get('alojamientoId') as FormControl;
   }
 
+  get inChargeId() {
+    return this.form.get('encargadoId') as FormControl;
+  }
+
+  get cliente() {
+    return this.form.get('clienteId') as FormControl;
+  }
+
+  get habitaId() {
+    return this.form.get('habitacionId') as FormControl;
+  }
+
   ngOnInit() {
     this.getInCharges();
     this.prepareForm();
@@ -82,19 +103,9 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   private prepareForm() {
     //console.log(this.infoInCharge,this.idInCharge, this.inCharge1);
     this.form = this.fb.group({
-      nombre: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      paterno: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      materno: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      ci: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      extencion: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      nombreA: [null, [Validators.pattern(STRING_PATTERN)]],
-      paternoA: [null, [Validators.pattern(STRING_PATTERN)]],
-      maternoA: [null, [Validators.pattern(STRING_PATTERN)]],
-      ciA: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      extencionA: [null, [Validators.pattern(STRING_PATTERN)]],
       fecha: [null, [Validators.required]],
       horaEntrada: [null, [Validators.required]],
-      horaSalida: [null, [Validators.required]],
+      horaProgramada: [null, [Validators.required]],
       tiempo: ['MOMENTANEO', [Validators.required]],
       compania: ['SOLO', [Validators.required]],
       costoHabitacion: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
@@ -106,23 +117,18 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       habitacionId: [null, [Validators.required]],
       encargadoId: [null, [Validators.required]],
       alojamientoId: [null, [Validators.required]],
-      customer: [null,[Validators.required]]
-      //this.idInCharge
+      clienteId: [null, [Validators.required]]
+      //
     });
 
-    this.form.controls['nombreA'].disable();
-    this.form.controls['paternoA'].disable();
-    this.form.controls['maternoA'].disable();
-    this.form.controls['ciA'].disable();
-    this.form.controls['extencionA'].disable();
     this.form.controls['fecha'].disable();
     this.form.controls['horaEntrada'].disable();
-    this.form.controls['horaSalida'].disable();
+    this.form.controls['horaProgramada'].disable();
     this.form.controls['costoHabitacion'].disable();
     this.form.controls['total'].disable();
-    this.form.controls['habitacionId'].disable();
+    this.form.controls['compania'].disable();
     this.form.controls['costoExtra'].disable();
-    //this.form.controls['encargadoId'].disable();
+    this.form.controls['encargadoId'].disable();
     this.form.controls['alojamientoId'].disable();
     this.form.controls['cambio'].disable();
     this.form.controls['estadoCambio'].disable();
@@ -134,20 +140,22 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       const localDate = new Date(this.reservations.fecha);
       const formattedDate = this.datePipe.transform(new Date(localDate.getTime() + localDate.getTimezoneOffset() * 60000), 'dd/MM/yyyy');
       this.form.patchValue(this.reservations);
-      this.form.controls['encargadoId'].setValue(this.reservations.encargadoId);
+      this.cliente.setValue(this.reservations.clienteId);
+      this.habitaId.setValue(this.reservations.habitacionId);
+      //this.form.controls['encargadoId'].setValue();
       this.form.controls['fecha'].setValue(formattedDate);
       this.form.controls['habitacionId'].disable();
       this.form.controls['encargadoId'].disable();
       this.form.controls['tiempo'].disable();
       this.form.controls['compania'].disable();
-      this.form.controls['habitacionId'].setValue(this.reservations.habitacionId);
+      //this.form.controls['habitacionId'].setValue(this.reservations.habitacionId);
       console.log(this.reservations.habitacionId);
     } else {
       const date = new Date();
       const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
       this.form.controls['fecha'].setValue(formattedDate);
       this.form.controls['horaEntrada'].setValue(this.getCurrentFormattedTime());
-      this.form.controls['horaSalida'].setValue(this.getTimeTwo());
+      this.form.controls['horaProgramada'].setValue(this.getTimeTwo());
     }
     setTimeout(() => {
       this.getBedroom(new ListParams());
@@ -163,9 +171,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     this.infoInCharge = info.id;
     console.log(this.infoInCharge);
     this.inCharge1 = await this.validInCharge(info.id);
-    const idCharge = this.inCharge1[0].alojamientoId;
-    this.alojaId.setValue(idCharge);
-    //console.log(this.idInCharge);
+    this.idAccom = this.inCharge1[0].alojamientoId;
+    const idInCharge = this.inCharge1[0].id;
+    this.alojaId.setValue(this.idAccom);
+    this.inChargeId.setValue(idInCharge);
+    console.log(this.inCharge1);
   }
 
   async validInCharge(idUser: number) {
@@ -214,19 +224,9 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     const isoString = date.toISOString();
 
     let body = {
-      nombre: this.form.controls['nombre'].getRawValue(),
-      paterno: this.form.controls['paterno'].getRawValue(),
-      materno: this.form.controls['materno'].getRawValue(),
-      ci: Number(this.form.controls['ci'].getRawValue()),
-      extencion: this.form.controls['extencion'].getRawValue(),
-      nombreA: this.form.controls['nombreA'].getRawValue(),
-      paternoA: this.form.controls['paternoA'].getRawValue(),
-      maternoA: this.form.controls['maternoA'].getRawValue(),
-      ciA: Number(this.form.controls['ciA'].getRawValue()),
-      extencionA: this.form.controls['extencionA'].getRawValue(),
       fecha: isoString,
       horaEntrada: this.form.controls['horaEntrada'].getRawValue(),
-      horaSalida: this.form.controls['horaSalida'].getRawValue(),
+      horaProgramada: this.form.controls['horaProgramada'].getRawValue(),
       tiempo: this.form.controls['tiempo'].getRawValue(),
       compania: this.form.controls['compania'].getRawValue(),
       montoEntregado: this.form.controls['montoEntregado'].getRawValue(),
@@ -234,6 +234,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       estadoCambio: this.form.controls['estadoCambio'].getRawValue(),
       costoHabitacion: this.form.controls['costoHabitacion'].getRawValue(),
       total: this.form.controls['total'].getRawValue(),
+      clienteId: this.form.controls['clienteId'].getRawValue(),
       habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
       encargadoId: Number(this.form.controls['encargadoId'].getRawValue()),
       alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue())
@@ -279,22 +280,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       const date = new Date(Date.UTC(year, month - 1, day));
       const isoString = date.toISOString();
       let body = {
-        nombre: this.form.controls['nombre'].getRawValue(),
-        paterno: this.form.controls['paterno'].getRawValue(),
-        materno: this.form.controls['materno'].getRawValue(),
-        ci: Number(this.form.controls['ci'].getRawValue()),
-        extencion: this.form.controls['extencion'].getRawValue(),
-        nombreA: this.form.controls['nombreA'].getRawValue(),
-        paternoA: this.form.controls['paternoA'].getRawValue(),
-        maternoA: this.form.controls['maternoA'].getRawValue(),
-        ciA: Number(this.form.controls['ciA'].getRawValue()),
-        extencionA: this.form.controls['extencionA'].getRawValue(),
         compania: this.form.controls['compania'].getRawValue(),
-        /*fecha: isoString,
+        fecha: isoString,
         horaEntrada: this.form.controls['horaEntrada'].getRawValue(),
-        horaSalida: this.form.controls['horaSalida'].getRawValue(),
+        horaProgramada: this.form.controls['horaProgramada'].getRawValue(),
         tiempo: this.form.controls['tiempo'].getRawValue(),
-        compania: this.form.controls['compania'].getRawValue(),
         montoEntregado: this.form.controls['montoEntregado'].getRawValue(),
         cambio: this.form.controls['cambio'].getRawValue(),
         estadoCambio: this.form.controls['estadoCambio'].getRawValue(),
@@ -302,7 +292,8 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
         total: this.form.controls['total'].getRawValue(),
         habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
         encargadoId: Number(this.form.controls['encargadoId'].getRawValue()),
-        alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue())*/
+        alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue()),
+        clienteId: this.form.controls['clienteId'].getRawValue(),
       }
       this.reservationsService
         .update(this.reservations.id, body)
@@ -325,20 +316,23 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   getBedroom(params: ListParams) {
-    params['filter.alojamientoId'] = `$eq:${this.idAccom}`;
-    params['filter.estado'] = `$ilike:LIBRE`;
+    if (!this.reservations) {
+      params['filter.estado'] = `$ilike:LIBRE`;
+    }
     if (params.text) {
       const valid = Number(params.text);
       if (!isNaN(valid)) {
-        // Si es un número
         params['filter.noHabitacion'] = `$eq:${params.text}`;
       } else {
-        // Si es un string
         params['filter.preferencias'] = `$ilike:${params.text}`;
       }
     }
-    console.log(this.idAccom);
-    this.bedroomsService.getAll(params).subscribe({
+
+    const info = this.authService.getUserInfo();
+    this.infoInCharge = info.id;
+    console.log(info.id);
+
+    this.bedroomsService.getAllHabUserById(info.id, params).subscribe({
       next: data => {
         this.result = data.data.map(async (item: any) => {
           item['noHabPref'] = item.noHabitacion + ' - ' + item.preferencias + ' ' + item.estado;
@@ -390,13 +384,10 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   getInCharge(params: ListParams) {
-    if (this.infoInCharge || this.infoInCharge != 0) {
-      params['filter.userId'] = `$eq:${this.infoInCharge}`;
-    }
-    this.inChargeService.getAll(params).subscribe({
+    this.inChargeService.getAllHabUserById(this.infoInCharge, params).subscribe({
       next: data => {
         this.result2 = data.data.map(async (item: any) => {
-          item['idUser'] = item.id + ' - ' + item.nombre + item.paterno + ' ' + item.materno;
+          item['idUser'] = item.id + ' - ' + item.nombre + ' ' + item.paterno + ' ' + item.materno;
         });
         this.inCharge = new DefaultSelect(data.data, data.count);
       },
@@ -438,10 +429,10 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   onChangeTime(event: any) {
     console.log(event);
     if (event == 'MOMENTANEO') {
-      this.form.controls['horaSalida'].setValue(this.getTimeTwo());
+      this.form.controls['horaProgramada'].setValue(this.getTimeTwo());
     } else if (event == 'TODA LA NOCHE') {
       const time = '12:00 pm';
-      this.form.controls['horaSalida'].setValue(time);
+      this.form.controls['horaProgramada'].setValue(time);
     }
     if (this.prefe == 'SIMPLE' && event == 'MOMENTANEO') {
       const formatCostBob = this.formatToBolivianCurrency(30);
@@ -463,19 +454,35 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   getTimeTwo(): string {
-    const date = new Date();
-
+    const date = this.addHoursToTime(this.form.controls['horaEntrada'].value, 2);
+    console.log(date);
+    //SUMAR 15 MINUTOS
+    date.setMinutes(date.getMinutes() + 10);
     // Sumar 2 horas a la hora actual
-    date.setHours(date.getHours() + 2);
-
+    //date.setHours(date.getHours() + 2);
     let hours = date.getHours();
+    console.log(hours);
     const minutes = date.getMinutes().toString().padStart(2, '0');
     const ampm = hours >= 12 ? 'pm' : 'am';
-
     hours = hours % 12;
     hours = hours ? hours : 12; // Si es 0, lo cambiamos a 12
-
     return `${hours}:${minutes} ${ampm}`;
+  }
+
+  addHoursToTime(time: string, hoursToAdd: number): Date {
+    // Convertir el tiempo de string a un objeto Date
+    const [timeString, meridiem] = time.split(" ");
+    const [hour, minute] = timeString.split(":").map(Number);
+    // Ajustar la hora según AM/PM
+    let hour24 = meridiem.toLowerCase() === "pm" && hour !== 12 ? hour + 12 : hour;
+    hour24 = meridiem.toLowerCase() === "am" && hour === 12 ? 0 : hour24;
+    // Crear la fecha actual con la hora especificada
+    const date = new Date();
+    date.setHours(hour24, minute, 0, 0);
+    // Sumar las horas especificadas
+    date.setHours(date.getHours() + hoursToAdd);
+
+    return date;
   }
 
   async getAccomodation(params: ListParams) {
@@ -498,22 +505,23 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   getCustomer(params: ListParams) {
-    params['filter.alojamientoId'] = `$eq:${this.idAccom}`;
+    //params['filter.alojamientoId'] = `$eq:${this.idAccom}`;
     if (params.text) {
       const valid = Number(params.text);
       if (!isNaN(valid)) {
         // Si es un número
-        params['filter.id'] = `$eq:${params.text}`;
+        params['filter.ci'] = `$eq:${params.text}`;
       } else {
         // Si es un string
         params['filter.nombre'] = `$ilike:${params.text}`;
       }
     }
     console.log(this.idAccom);
-    this.customersService.getAll(params).subscribe({
+
+    this.customersService.getAllAlojaClientesById(this.idAccom, params).subscribe({
       next: data => {
         this.result = data.data.map(async (item: any) => {
-          item['idName'] = item.id + ' - ' + item.nombre + ' ' + item.paterno+ ' ' + item.materno;
+          item['idName'] = item.nombre + ' ' + item.paterno + ' ' + item.materno + ' ' + item.ci + ' ' + item.extencion;
         });
         this.customers = new DefaultSelect(data.data, data.count);
       },
@@ -524,7 +532,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     });
   }
 
-  onChangeCustomer(event: any){
+  onChangeCustomer(event: any) {
     console.log(event);
   }
 
@@ -558,6 +566,21 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
 
   convertirMonedaACifra(valor: string): number {
     return parseFloat(valor.replace(' Bs', '').replace(',', '.'));
+  }
+
+  openModal() {
+    const idAloja = this.idAccom;
+    let config: ModalOptions = {
+      initialState: {
+        idAloja,
+        callback: (next: boolean) => {
+          if (next) this.getCustomer(new ListParams());
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(CustomersDetailComponent, config);
   }
 
 

@@ -16,7 +16,8 @@ export const SALES_COLUMNS = {
         title: 'Nombre de la Reservación',
         sort: false,
         valuePrepareFunction: (value: IReservations) => {
-            return `${value?.nombre} ${value?.paterno} ${value?.materno}`;
+            //return `${value?.nombre} ${value?.paterno} ${value?.materno}`;
+            return 'test';
         },
         filterFunction(cell?: any, search?: string): boolean {
             let column = cell.nombre;

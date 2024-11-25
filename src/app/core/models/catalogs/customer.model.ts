@@ -1,4 +1,5 @@
 import { IAccommodation } from "./accommodation.model";
+import { IReservations } from "./reservations.model";
 
 export interface ICustomer {
     id: number;
@@ -7,6 +8,7 @@ export interface ICustomer {
     materno: string;
     ci: number;
     extencion: string;
+    reservaciones: IReservations[];
     alojamientoId: number;
     alojamientos: IAccommodation[];
  }

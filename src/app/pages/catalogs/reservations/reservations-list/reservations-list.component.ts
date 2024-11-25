@@ -51,7 +51,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
         add: false,
         position: 'right',
       },
-      columns: { 
+      columns: {
         officialConclusion: {
           title: 'Añadir Horas',
           width: '5%',
@@ -64,7 +64,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
               this.increase(row);
             });
           },
-        },  
+        },
         officialConclusion1: {
           title: 'Venta',
           width: '5%',
@@ -77,7 +77,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
               this.sales(row);
             });
           },
-        }, 
+        },
         officialConclusion2: {
           title: 'Salida',
           width: '5%',
@@ -91,7 +91,8 @@ export class ReservationsListComponent extends BasePage implements OnInit {
             });
           },
         },
-        ...RESERVATIONS_COLUMNS },
+        ...RESERVATIONS_COLUMNS
+      },
     };
   }
 
@@ -114,6 +115,10 @@ export class ReservationsListComponent extends BasePage implements OnInit {
                 break;
               case 'precio':
                 searchFilter = SearchFilter.EQ;
+                break;
+              case 'clientes':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.nombre`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -138,7 +143,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
 
   }
 
-  getUser(){
+  getUser() {
     const info = this.authService.getUserInfo();
     this.infoUser = info.id;
   }
@@ -158,7 +163,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
     });
   }
 
-  increase(event: IReservations){
+  increase(event: IReservations) {
     console.log(event);
     this.openModalIncrease(event);
   }
@@ -177,7 +182,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
     this.modalService.show(ReservationsModalComponent, config);
   }
 
-  sales(event: IReservations){
+  sales(event: IReservations) {
     console.log(event);
     this.openModalSales(event);
   }
@@ -197,8 +202,9 @@ export class ReservationsListComponent extends BasePage implements OnInit {
   }
 
 
-  output(event: any){
+  output(event: any) {
     console.log(event);
+    this.openModalIncrease(event);
   }
 
   async getAllReservations() {

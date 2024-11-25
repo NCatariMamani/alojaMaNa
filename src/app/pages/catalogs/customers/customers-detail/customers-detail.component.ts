@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
@@ -22,6 +22,7 @@ export class CustomersDetailComponent extends BasePage implements OnInit {
   edit: boolean = false;
   accomodations = new DefaultSelect();
   result?: any[];
+  idAloja?: number;
   
   constructor(
     private modalRef: BsModalRef,
@@ -30,6 +31,10 @@ export class CustomersDetailComponent extends BasePage implements OnInit {
     private customersService: CustomersService
   ) { 
     super();
+  }
+
+  get alojaId() {
+    return this.form.get('alojamientoId') as FormControl;
   }
 
   ngOnInit() {
@@ -46,6 +51,10 @@ export class CustomersDetailComponent extends BasePage implements OnInit {
       alojamientoId: [null, [Validators.required]]
     });
     //this.form.controls['userId'].disable();
+    if(this.idAloja){
+      this.form.controls['alojamientoId'].disable();
+      this.alojaId.setValue(this.idAloja);
+    }
     if (this.customer != null) {
       this.edit = true;
       this.form.patchValue(this.customer);

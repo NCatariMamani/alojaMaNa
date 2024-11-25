@@ -25,6 +25,10 @@ export class BedroomsService extends HttpService{
     return this.bedroomsRepo.getById(this.router, id);
   }
 
+  getAllHabUserById(id: string | number, params: ListParams): Observable<any> {
+    return this.bedroomsRepo.getById02(`${this.router}/getAllHabUser`, id, params);
+  }
+
   create(model: any): Observable<any> {
     return this.bedroomsRepo.create(this.router, model);
   }
