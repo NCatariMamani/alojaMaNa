@@ -1,26 +1,16 @@
 import { IAccommodation } from "./accommodation.model";
 import { IBedroom } from "./bedrooms.model";
+import { ICustomer } from "./customer.model";
 import { IInCharge } from "./inCharge.model";
 import { IProducts } from "./products.model";
 import { ISales } from "./sales.model";
 
 export interface IReservations {
     id: number;
-    nombre: string;
-    paterno: string;
-    materno: string;
-    edad: number;
-    ci: number;
-    extencion: string;
-    nomberA?: string;
-    paternoA?: string;
-    maternoA?: string;
-    edadA?: number;
-    ciA?: number;
-    extencionA?: string;
     fecha: string;
     horaEntrada: string;
     horaSalida: string;
+    horaProgramada: string;
     tiempo: string;
     montoEntregado: string;
     compania: string;
@@ -37,4 +27,6 @@ export interface IReservations {
     encargados: IInCharge [];
     alojamientoId: number;
     alojamientos: IAccommodation[];
+    clienteId: number;
+    clientes: ICustomer[];
  }

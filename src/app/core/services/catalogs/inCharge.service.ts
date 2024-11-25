@@ -25,6 +25,11 @@ export class InChargeService extends HttpService{
     return this.usersRepo.getById(this.router, id);
   }
 
+  getAllHabUserById(id: string | number, params: ListParams): Observable<any> {
+    return this.usersRepo.getById02(`${this.router}/getByEncargadoUser`, id, params);
+  }
+
+  
   create(model: any): Observable<any> {
     return this.usersRepo.create(this.router, model);
   }

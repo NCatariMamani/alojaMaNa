@@ -26,6 +26,10 @@ export class CustomersService extends HttpService {
     return this.customerRepo.getById(this.router, id);
   }
 
+  getAllAlojaClientesById(id: string | number, params: ListParams): Observable<any> {
+    return this.customerRepo.getById02(`${this.router}/getByIdAlojaCli`, id, params);
+  }
+
   create(model: any): Observable<any> {
     return this.customerRepo.create(this.router, model);
   }
