@@ -4,7 +4,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   selector: 'app-button',
   template: `
     <button class="btn btn-primary btn-sm active" (click)="onClick1()">
-      <i class="fas fa-clock" aria-hidden="true"></i>
+      <i class="fas fa-broom" aria-hidden="true"></i>
     </button>
     <!--<i
       class="fas fa-clock"

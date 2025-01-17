@@ -4,6 +4,7 @@ import { ISales } from "./sales.model";
 
 export interface IProductSales {
     id: number;
+    precioVenta: string;
     productoId: string;
     productos: IProducts[];
     ventaId: number;

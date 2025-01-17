@@ -87,7 +87,7 @@
               bindLabel="noHabPref"
               label="No. Habitación"
               value="id"
-              (change)="onChangeBedroom($event)"
+              (change)="onChangeBedroom($event.preferencias)"
               [readonly]="false"
             ></ngx-select>
           </form-field>
@@ -214,6 +214,7 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false"
+              (change)="onChangeState($event)"
             >
               <ng-option value="P">PENDIENTE</ng-option>
               <ng-option value="E">ENTREGADO</ng-option>

@@ -25,6 +25,10 @@ export class SalesService extends HttpService{
     return this.salesRepo.getById(this.router, id);
   }
 
+  getAllVentaClientesById(id: string | number, params: ListParams): Observable<any> {
+    return this.salesRepo.getById02(`${this.router}/getVentaCliente`, id, params);
+  }
+
   create(model: any): Observable<any> {
     return this.salesRepo.create(this.router, model);
   }

@@ -143,8 +143,11 @@ export class SalesDetailComponent extends BasePage implements OnInit {
     }
     this.reservationsService.getAll(params).subscribe({
       next: data => {
+        console.log(data);
         this.result = data.data.map(async (item: any) => {
-          item['name'] = item.nombre +' '+ item.paterno + ' ' + item.materno;
+          console.log(item.clientes);
+          let clien = item.clientes;
+          item['name'] = clien.nombre +' '+ clien.paterno + ' ' + clien.materno;
         });
         this.accomodations = new DefaultSelect(data.data, data.count);
       },

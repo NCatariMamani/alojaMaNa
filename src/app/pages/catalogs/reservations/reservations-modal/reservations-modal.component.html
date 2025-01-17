@@ -38,9 +38,7 @@
                 'bg-info1': validation === '1H',
                 'bg-info2': validation === '2H',
                 'bg-info3': validation === '3H',
-                'bg-info4': validation === '4H',
-                'bg-info5': validation === '5H',
-                'bg-info6': validation === 'TN'
+                'bg-info4': validation === '4H'
               }"
               type="text"
               class="form-control"
@@ -56,9 +54,7 @@
                 'bg-info1': validation === '1H',
                 'bg-info2': validation === '2H',
                 'bg-info3': validation === '3H',
-                'bg-info4': validation === '4H',
-                'bg-info5': validation === '5H',
-                'bg-info6': validation === 'TN'
+                'bg-info4': validation === '4H'
               }"
               type="text"
               class="form-control"
@@ -75,7 +71,8 @@
               [ngClass]="{
                 'bg-info1': validation === '1H',
                 'bg-info2': validation === '2H',
-                'bg-info6': validation === 'TN'
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H'
               }"
               type="text"
               class="form-control"
@@ -111,7 +108,18 @@
         </div>
         <div class="col-md-4">
           <form-field label="Cambio" [control]="form.get('cambio')">
-            <input type="text" class="form-control" formControlName="cambio" />
+            <input
+              type="text"
+              [ngClass]="{
+                'bg-info7': validation === 'OK',
+                'bg-info1': validation === '1H',
+                'bg-info2': validation === '2H',
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H'
+              }"
+              class="form-control"
+              formControlName="cambio"
+            />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -138,7 +146,8 @@
               [ngClass]="{
                 'bg-info1': validation === '1H',
                 'bg-info2': validation === '2H',
-                'bg-info6': validation === 'TN'
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H'
               }"
               type="text"
               class="form-control"
@@ -150,10 +159,11 @@
           <form-field label="Deuda Cliente" [control]="form.get('deuda')">
             <input
               [ngClass]="{
-                'badge-soft-pink': validation === 'DE',
+                'badge-soft-pink': validation === 'OK',
                 'bg-info1': validation === '1H',
                 'bg-info2': validation === '2H',
-                'bg-info6': validation === 'TN'
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H'
               }"
               type="text"
               class="form-control"
@@ -168,7 +178,8 @@
                 'bg-info7': validation === 'OK',
                 'bg-info1': validation === '1H',
                 'bg-info2': validation === '2H',
-                'bg-info6': validation === 'TN'
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H'
               }"
               type="text"
               class="form-control"
