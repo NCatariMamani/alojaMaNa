@@ -13,6 +13,7 @@ import { ProductSalesService } from 'src/app/core/services/catalogs/productSales
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IProductSales } from 'src/app/core/models/catalogs/productSales.model';
 import { ProductSalesDetailComponent } from '../../productSales/productSales-detail/productSales-detail.component';
+import { CustomersService } from 'src/app/core/services/catalogs/customers.service';
 
 @Component({
   selector: 'app-sales-list',
@@ -41,6 +42,7 @@ export class SalesListComponent extends BasePage implements OnInit {
     private salesService: SalesService,
     private modalRef: BsModalRef,
     private productSalesService: ProductSalesService,
+    private customersService: CustomersService,
     private fb: FormBuilder
   ) {
     super();
@@ -132,21 +134,23 @@ export class SalesListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.salesService.getAll(params).subscribe({
-      next: response => {
-        console.log(response);
-        this.data.load(response.data);
-        this.data.refresh();
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => {
-        (this.loading = false);
-        this.data.load([]);
-      }
+    if (this.reservations) {
+      this.salesService.getAllVentaClientesById(this.reservations.id,params).subscribe({
+        next: response => {
+          console.log(response);
+          this.data.load(response.data);
+          this.data.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error: error => {
+          (this.loading = false);
+          this.data.load([]);
+        }
+      });
+    }else{
+      this.loading = false;
     }
-
-    );
   }
 
   edit(shopping1: ISales) {
@@ -201,7 +205,7 @@ export class SalesListComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  rowsSelected(event: any){
+  rowsSelected(event: any) {
     console.log(event);
     this.productSales = true;
     this.idSale = event.id;
@@ -223,7 +227,7 @@ export class SalesListComponent extends BasePage implements OnInit {
               case 'fecha':
                 filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
-                break;   
+                break;
               case 'alojamientos':
                 searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}.nombre`;
@@ -280,10 +284,12 @@ export class SalesListComponent extends BasePage implements OnInit {
 
   openModal1(productSales?: IProductSales) {
     const idSale = this.idSale;
+    const reservationsSales = this.reservations;
     let config: ModalOptions = {
       initialState: {
         productSales,
         idSale,
+        reservationsSales,
         callback: (next: boolean) => {
           if (next) this.getAllProductSales();
         },

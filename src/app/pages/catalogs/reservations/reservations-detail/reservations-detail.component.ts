@@ -107,7 +107,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       horaEntrada: [null, [Validators.required]],
       horaProgramada: [null, [Validators.required]],
       tiempo: ['MOMENTANEO', [Validators.required]],
-      compania: ['SOLO', [Validators.required]],
+      compania: ['OCUPADO', [Validators.required]],
       costoHabitacion: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       costoExtra: [null, [Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       total: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
@@ -120,8 +120,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       clienteId: [null, [Validators.required]]
       //
     });
-
-    this.form.controls['fecha'].disable();
+    this.form.disable();
+    //this.form.controls['tiempo'].enable();
+    this.form.controls['habitacionId'].enable();
+    this.form.controls['clienteId'].enable();
+    /*this.form.controls['fecha'].disable();
     this.form.controls['horaEntrada'].disable();
     this.form.controls['horaProgramada'].disable();
     this.form.controls['costoHabitacion'].disable();
@@ -132,7 +135,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     this.form.controls['alojamientoId'].disable();
     this.form.controls['cambio'].disable();
     this.form.controls['estadoCambio'].disable();
-    this.form.controls['montoEntregado'].disable();
+    this.form.controls['montoEntregado'].disable();*/
 
 
     if (this.reservations != null) {
@@ -155,7 +158,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
       this.form.controls['fecha'].setValue(formattedDate);
       this.form.controls['horaEntrada'].setValue(this.getCurrentFormattedTime());
-      this.form.controls['horaProgramada'].setValue(this.getTimeTwo());
+      this.canExecuteProcess();
     }
     setTimeout(() => {
       this.getBedroom(new ListParams());
@@ -205,6 +208,32 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     hours = hours ? hours : 12; // Si es 0, lo cambiamos a 12
 
     return `${hours}:${minutes} ${ampm}`;
+  }
+
+  canExecuteProcess() {
+    /*const date = this.addHoursToTime(2);
+    let currentHour = date.getHours();
+    const currentMinutes = date.getMinutes();*/
+    const now = new Date();
+    let currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+    //console.log(date, currentHour, currentMinutes);
+    // Verificar si es después de las 10:00 PM (22:00)
+    if (currentHour > 22 || (currentHour === 22 && currentMinutes >= 0) || (currentHour >= 0 && currentHour <= 5)) {
+      setTimeout(() => {
+        this.alert('info', 'A partir de las 10:00 PM solo se ofrecen habitaciones por toda la noche', ``);
+      }, 500);
+      const time = '12:00 pm';
+      this.form.controls['horaProgramada'].setValue(time);
+      this.form.controls['tiempo'].setValue('TODA LA NOCHE');
+      //this.onChangeTime('TODA LA NOCHE');
+      this.form.controls['montoEntregado'].enable();
+      this.form.controls['tiempo'].disable();
+    } else {
+      this.form.controls['horaProgramada'].setValue(this.getTimeTwo());
+      console.log(this.getTimeTwo());
+      this.form.controls['tiempo'].enable();
+    }
   }
 
 
@@ -259,6 +288,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       }
     }
     );
+
   }
 
 
@@ -348,20 +378,20 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
 
   onChangeBedroom(event: any) {
     console.log(event);
-    this.prefe = event.preferencias;
-    if (event.preferencias == 'SIMPLE' && this.form.controls['tiempo'].value == 'MOMENTANEO') {
+    this.prefe = event;
+    if (event == 'SIMPLE' && this.form.controls['tiempo'].value == 'MOMENTANEO') {
       const formatCos = this.formatToBolivianCurrency(30);
       this.form.controls['costoHabitacion'].setValue(formatCos);
       this.form.controls['total'].setValue(formatCos);
       this.form.controls['montoEntregado'].enable();
       this.form.controls['estadoCambio'].enable();
-    } else if (event.preferencias == 'SIMPLE' && this.form.controls['tiempo'].value == 'TODA LA NOCHE') {
+    } else if (event == 'SIMPLE' && this.form.controls['tiempo'].value == 'TODA LA NOCHE') {
       const formatCos1 = this.formatToBolivianCurrency(60);
       this.form.controls['costoHabitacion'].setValue(formatCos1);
       this.form.controls['total'].setValue(formatCos1);
       this.form.controls['montoEntregado'].enable();
       this.form.controls['estadoCambio'].enable();
-    } else if (event.preferencias == 'BAÑO PRIVADO' && this.form.controls['tiempo'].value == 'MOMENTANEO') {
+    } else if (event == 'BAÑO PRIVADO' && this.form.controls['tiempo'].value == 'MOMENTANEO') {
       const formatCost2 = this.formatToBolivianCurrency(40);
       this.form.controls['costoHabitacion'].setValue(formatCost2);
       this.form.controls['total'].setValue(formatCost2);
@@ -454,7 +484,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   getTimeTwo(): string {
-    const date = this.addHoursToTime(this.form.controls['horaEntrada'].value, 2);
+    const date = this.addHoursToTime(2);
     console.log(date);
     //SUMAR 15 MINUTOS
     date.setMinutes(date.getMinutes() + 10);
@@ -469,19 +499,9 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     return `${hours}:${minutes} ${ampm}`;
   }
 
-  addHoursToTime(time: string, hoursToAdd: number): Date {
-    // Convertir el tiempo de string a un objeto Date
-    const [timeString, meridiem] = time.split(" ");
-    const [hour, minute] = timeString.split(":").map(Number);
-    // Ajustar la hora según AM/PM
-    let hour24 = meridiem.toLowerCase() === "pm" && hour !== 12 ? hour + 12 : hour;
-    hour24 = meridiem.toLowerCase() === "am" && hour === 12 ? 0 : hour24;
-    // Crear la fecha actual con la hora especificada
+  addHoursToTime(hoursToAdd: number): Date {
     const date = new Date();
-    date.setHours(hour24, minute, 0, 0);
-    // Sumar las horas especificadas
     date.setHours(date.getHours() + hoursToAdd);
-
     return date;
   }
 
@@ -538,6 +558,15 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
 
   onChangeAccomodation(event: any) {
     console.log(event);
+  }
+
+  onChangeState(event: any) {
+    if (event == 'E') {
+      const set0 = this.formatToBolivianCurrency(0);
+      this.form.controls['cambio'].setValue(set0);
+    } else {
+      this.onChangeMoney(this.form.controls['montoEntregado'].getRawValue());
+    }
   }
 
   onChangeMoney(event: any) {

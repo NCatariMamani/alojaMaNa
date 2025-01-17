@@ -13,7 +13,7 @@ export const PRODUCTSALES_COLUMNS = {
         width: '10%',
     },
     ventas: {
-        title: 'Nombre de la Reservación',
+        title: 'Fecha de Reservación',
         sort: false,
         valuePrepareFunction: (value: ISales) => {
             return value?.fecha;
@@ -24,7 +24,7 @@ export const PRODUCTSALES_COLUMNS = {
           },
     },
     productos: {
-        title: 'Nombre de la Reservación',
+        title: 'Productos',
         sort: false,
         valuePrepareFunction: (value: IProducts) => {
             return `${value?.nombre} - ${value?.precio}`;
@@ -40,5 +40,17 @@ export const PRODUCTSALES_COLUMNS = {
                 return false;
             }
         },
+    },
+    precioUni: {
+        title: 'Precio Uni.',
+        sort: false,
+    },
+    cantidad: {
+        title: 'Cantidad',
+        sort: false,
+    },
+    precioTotal: {
+        title: 'Total',
+        sort: false,
     }
 };

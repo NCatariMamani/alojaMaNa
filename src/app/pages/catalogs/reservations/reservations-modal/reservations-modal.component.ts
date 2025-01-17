@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IReservations } from 'src/app/core/models/catalogs/reservations.model';
+import { BedroomsService } from 'src/app/core/services/catalogs/bedrooms.service';
 import { ReservationsService } from 'src/app/core/services/catalogs/reservations.service';
 import { BasePage } from 'src/app/core/shared';
 import { DOUBLE_POSITIVE_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -15,7 +16,7 @@ import { DOUBLE_POSITIVE_PATTERN, STRING_PATTERN } from 'src/app/core/shared/pat
 export class ReservationsModalComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
-  title: string = 'AUMENTAR HORAS EXTRAS';
+  title: string = 'SALIDA';
   status: string = 'Nuevo';
   edit: boolean = false;
   reservations?: IReservations;
@@ -28,6 +29,9 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
   time?: string;
   extra?: string;
   currTime?: string;
+  changeValid?: string;
+  bodyWithoutChange?: {};
+  bodyWithChange?: {};
 
 
   constructor(
@@ -35,7 +39,8 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private datePipe: DatePipe,
     private reservationsService: ReservationsService,
-    private currencyPipe: CurrencyPipe
+    private currencyPipe: CurrencyPipe,
+    private bedroomService: BedroomsService
   ) {
     super();
 
@@ -50,7 +55,7 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
       horaEntrada: [null, [Validators.required]],
       horaSalida: [null, [Validators.required]],
       horaProgramada: [null, [Validators.required]],
-      costoExtra: [null,[Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
+      costoExtra: [null, [Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       total: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       costoHabitacion: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       //aumentar: [null, [Validators.required]],
@@ -69,19 +74,16 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
     this.form.controls['horaSalida'].disable();
     if (this.reservations != null) {
       console.log(this.reservations);
-      if (this.reservations.horaSalida) {
-        this.alert('success', 'Ya se regisro la hora de salida', '');
-      } else {
-        this.currentTime();
-        this.edit = true;
-        this.timeProgram = this.reservations.horaProgramada;
-        this.timeInput = this.reservations.horaEntrada;
-        this.form.patchValue(this.reservations);
-        this.form.controls['horaSalida'].setValue(this.currTime);
-        this.validarHorarioConParametros12Horas(this.timeInput, this.timeProgram);
-        this.time = this.reservations.tiempo;
-        this.extra = this.reservations.costoExtra;
-      }
+      this.currentTime();
+      this.edit = true;
+      this.timeProgram = this.reservations.horaProgramada;
+      this.timeInput = this.reservations.horaEntrada;
+      this.form.patchValue(this.reservations);
+      this.form.controls['horaSalida'].setValue(this.currTime);
+      this.validarHorarioConParametros12Horas(this.timeInput, this.timeProgram);
+      this.time = this.reservations.tiempo;
+      this.extra = this.reservations.costoExtra;
+
     }
   }
 
@@ -104,7 +106,11 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
 
   confirm() {
     //this.edit ? this.update() : this.create();
-    this.update();
+    if (this.changeValid == 'SI') {
+      this.updateReservations(this.bodyWithChange);
+    } else {
+      this.updateReservations(this.bodyWithoutChange);
+    }
   }
 
 
@@ -118,23 +124,15 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  update() {
+  updateReservations(body: any) {
     if (this.reservations) {
       this.loading = true;
-      let body = {
-        horaSalida: this.form.controls['horaSalida'].getRawValue(),
-        costoExtra: this.form.controls['costoExtra'].getRawValue(),
-        total: this.form.controls['total'].getRawValue(),
-        tiempo: this.time
-      }
-
-      console.log(body);
       this.reservationsService
         .update(this.reservations.id, body)
         .subscribe({
           next: response => {
             this.loading = false;
-            this.handleSuccess()
+            this.updateBedroom('SUCIO');
           },
           error: error => {
             this.loading = false;
@@ -144,6 +142,29 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
         );
     }
   }
+
+  updateBedroom(state: string) {
+    if (this.reservations) {
+      this.loading = true;
+      let body = {
+        estado: state
+      }
+      this.bedroomService
+        .update(this.reservations.habitacionId, body)
+        .subscribe({
+          next: response => {
+            this.loading = false;
+            this.handleSuccess()
+          },
+          error: error => {
+            this.loading = false;
+          }
+        }
+        );
+    }
+  }
+
+
 
   close() {
     this.modalRef.hide();
@@ -287,74 +308,75 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
     let newHours = currentTime.getHours();
     const newMinutes = currentTime.getMinutes();
     const newModifier = newHours >= 12 ? 'pm' : 'am';
-    newHours = newHours % 12 || 12; // Si es 0, se convierte a 12
-    // Formatear los minutos con dos dígitos
+    newHours = newHours % 12 || 12;
     const formattedMinutes = newMinutes.toString().padStart(2, '0');
     const formattTime = `${newHours}:${formattedMinutes} ${newModifier}`;
-    // Convierte las horas de 12 horas a formato de 24 horas
     const horaProgram24 = this.convertirHora12a24(horaProgram);
     const horaInicio24 = this.convertirHora12a24(horaInicio);
     const horaFin24 = this.convertirHora12a24(formattTime);
-
     console.log(horaProgram24, horaInicio24, horaFin24);
-    // Convierte las cadenas de tiempo a objetos Date
     const [horaProgra, minProgra] = horaProgram24.split(":").map(Number);
     const [horaIni, minIni] = horaInicio24.split(":").map(Number);
     const [horaFin, minFin] = horaFin24.split(":").map(Number);
-    const program = new Date();
-    const inicio = new Date();
-    const fin = new Date();
+    let program = new Date();
+    let inicio = new Date();
+    let fin = new Date();
     program.setHours(horaProgra, minProgra, 0); // Hora program
     inicio.setHours(horaIni, minIni, 0); // Hora inicio
     fin.setHours(horaFin, minFin, 0); // Hora fin
+    /*if (horaInicio24 > horaProgram24) {
+      // Ajusta horaProgram al día siguiente
+      program = new Date(program.getTime() + 24 * 60 * 60 * 1000);  
+    }*/
+    //console.log(inicio, program, fin);
     // Verifica si la hora program está dentro del rango
-    if (fin >= inicio && fin <= program) {
-      console.log(`Está dentro del rango (${horaInicio} - ${horaProgram}). Realizar acción A.`);
-      this.validation = 'OK';
-      setTimeout(() => {
-        this.alert('warning', `Está dentro del rango (${horaInicio} - ${horaProgram})`, ``);
-      }, 1000);
+    const tiempo = this.reservations?.tiempo;
+    const dateAc = new Date();
+    const date = this.reservations?.fecha;
 
+    if (tiempo == 'TODA LA NOCHE') {
+      const time1 = new DatePipe('en-EN').transform(date, 'dd/MM/yyyy', 'UTC');
+      const time2 = new DatePipe('en-EN').transform(dateAc, 'dd/MM/yyyy', 'UTC');
+      if (time1 == time2) {
+        this.withoutChange(formattTime);
+      } else {
+        const actual = this.form.controls['horaSalida'].getRawValue();
+        let vari = this.contarHorasDespuesDeMediodia(actual);
+        console.log(vari);
+        if (vari == 0) {
+          this.withoutChange(formattTime);
+        } else if (vari == 1) {
+          this.validChange(10);
+        } else if (vari == 2) {
+          this.validChange(20);
+        } else if (vari == 3) {
+          this.validChange(30);
+        } else {
+          this.validChange(40);
+        }
+      }
+
+    } else if (fin >= inicio && fin <= program) {
+      this.withoutChange(formattTime);
     } else if (fin > program) {
-      // Si la hora fin es después de la hora program, calcula cuántas horas han pasado
       const diferenciaHoras = (fin.getTime() - program.getTime()) / (1000 * 60 * 60);
-
       console.log(diferenciaHoras);
       console.log(`Han pasado ${Math.ceil(diferenciaHoras)} horas después de las ${horaProgram}.`);
-      // Realiza acciones dependiendo del número de horas que pasaron
       if (diferenciaHoras < 1) {
-        console.log("Realizar acción B (menos de una hora después).");
-        const setCostExt = this.formatToBolivianCurrency(10);
-        this.form.controls['costoExtra'].setValue(setCostExt);
-        const change = this.form.controls['cambio'].getRawValue();
-        const costExtra = this.form.controls['costoExtra'].getRawValue();
-        const tot = this.form.controls['total'].getRawValue();
-        if (change != '0,00 Bs') {
-          const subsChange = this.subtractCurrency(change, costExtra);
-          const setSubsChange = this.formatToBolivianCurrency(subsChange);
-          this.form.controls['cambio'].setValue(setSubsChange);
-          const totCobrar = this.addCurrency(costExtra, tot );
-          const total = this.formatToBolivianCurrency(totCobrar);
-          this.form.controls['total'].setValue(total);
-          
-          this.form.controls['deuda'].setValue(setCostExt);
-        } else {
-          this.validation = 'DE';
-          this.form.controls['deuda'].setValue(setCostExt);
-          const totCobrar = this.addCurrency(costExtra, tot );
-          const total = this.formatToBolivianCurrency(totCobrar);
-          this.form.controls['total'].setValue(total);
-          setTimeout(() => {
-            this.alert('warning', `El cliente queda debiendo ${setCostExt}`, ``);
-          }, 1000); 
-        }
+        this.validation = '1H';
+        this.validChange(10);
       } else if (diferenciaHoras < 2) {
-        console.log("Realizar acción C (entre 1 y 2 horas después).");
-      } else {
-        console.log("Realizar acción D (más de 2 horas después).");
+        this.validation = '2H';
+        this.validChange(20);
       }
-    } else {
-      console.log(`Está fuera del rango antes de las ${horaInicio}. No hacer nada.`);
+      else if (diferenciaHoras < 3) {
+        this.validation = '3H';
+        this.validChange(30);
+      }
+      else {
+        this.validation = '4H';
+        this.validChange(40);
+      }
     }
   }
 
@@ -368,4 +390,94 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
     }
     return `${hora24.toString().padStart(2, "0")}:${minutos}`;
   }
+
+  validChange(increase: number) {
+    const setCostExt = this.formatToBolivianCurrency(increase);
+    this.form.controls['costoExtra'].setValue(setCostExt);
+    const change = this.form.controls['cambio'].getRawValue();
+    const costExtra = this.form.controls['costoExtra'].getRawValue();
+    const tot = this.form.controls['total'].getRawValue();
+    if (change != '0,00 Bs') {
+      this.changeValid = 'SI';
+      const setCost1 = this.formatToBolivianCurrency(0);
+      const subsChange = this.subtractCurrency(change, costExtra);
+      console.log(subsChange);
+      const setSubsChange = this.formatToBolivianCurrency(subsChange);
+      this.form.controls['cambio'].setValue(setSubsChange);
+      const totCobrar = this.addCurrency(costExtra, tot);
+      const total = this.formatToBolivianCurrency(totCobrar);
+      this.form.controls['total'].setValue(total);
+      this.form.controls['deuda'].setValue(setCost1);
+      setTimeout(() => {
+        this.alert('warning', `Se debe cambio de ${setSubsChange}`, ``);
+      }, 500);
+      this.bodyWithChange = {
+        horaSalida: this.currentTime(),
+        costoExtra: this.form.controls['costoExtra'].getRawValue(),
+        total: this.form.controls['total'].getRawValue(),
+        cambio: setCost1,
+        estadoCambio: 'E',
+        compania: 'SUCIO'
+      }
+    } else {
+      this.changeValid = 'NO';
+      this.form.controls['deuda'].setValue(setCostExt);
+      const totCobrar = this.addCurrency(costExtra, tot);
+      const total = this.formatToBolivianCurrency(totCobrar);
+      this.form.controls['total'].setValue(total);
+      setTimeout(() => {
+        this.alert('warning', `El cliente debe ${setCostExt}`, ``);
+      }, 1000);
+      this.bodyWithoutChange = {
+        horaSalida: this.currentTime(),
+        compania: 'SUCIO'
+      }
+    }
+  }
+
+  //Funcion cuando no se deve cambio
+  withoutChange(formattTime: string) {
+    const setCost0 = this.formatToBolivianCurrency(0);
+    this.form.controls['deuda'].setValue(setCost0);
+    //console.log(`Está dentro del rango (${horaInicio} - ${horaProgram}). Realizar acción A.`);
+    this.validation = 'OK';
+    const change = this.form.controls['cambio'].getRawValue();
+    if (change != '0,00 Bs') {
+      this.changeValid = 'SI';
+      setTimeout(() => {
+        this.alert('warning', `Se debe cambio de ${change}`, ``);
+      }, 500);
+      this.bodyWithChange = {
+        horaSalida: formattTime,
+        cambio: setCost0,
+        estadoCambio: 'E',
+        compania: 'SUCIO'
+      }
+    } else {
+      this.changeValid = 'NO';
+      this.bodyWithoutChange = {
+        horaSalida: formattTime,
+        compania: 'SUCIO'
+      }
+    }
+  }
+
+
+  contarHorasDespuesDeMediodia(horaActual: string): number {
+    console.log(horaActual);
+    const actu = this.convertirHora12a24(horaActual);
+    console.log(actu);
+    const [horas, minutos] = actu.split(':').map(Number);
+    const mediodia = new Date();
+    mediodia.setHours(12, 0, 0, 0);
+    const horaActualDate = new Date();
+    horaActualDate.setHours(horas, minutos, 0, 0);
+    console.log(mediodia, horaActualDate, horas, minutos);
+    if (horaActualDate <= mediodia) {
+      return 0;
+    }
+    const diferencia = (mediodia.getTime() - horaActualDate.getTime()) / (1000 * 60 * 60);
+    return Math.abs(Math.floor(diferencia));
+  }
+
 }

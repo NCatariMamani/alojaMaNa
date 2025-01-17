@@ -15,21 +15,6 @@ export const SALES_COLUMNS = {
     reservaciones: {
         title: 'Nombre de la Reservación',
         sort: false,
-        valuePrepareFunction: (value: IReservations) => {
-            //return `${value?.nombre} ${value?.paterno} ${value?.materno}`;
-            return 'test';
-        },
-        filterFunction(cell?: any, search?: string): boolean {
-            let column = cell.nombre;
-            if (typeof search !== 'string') {
-                return true;
-            }
-            if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
-                return true;
-            } else {
-                return false;
-            }
-        },
     },
     fecha: {
         title: 'Fecha',
@@ -53,7 +38,7 @@ export const PRODUCTSALES_COLUMNS = {
         width: '10%',
     },
     ventas: {
-        title: 'Nombre de la Reservación',
+        title: 'Fecha de Reservación',
         sort: false,
         valuePrepareFunction: (value: ISales) => {
             var raw = new Date(value?.fecha);
@@ -67,12 +52,13 @@ export const PRODUCTSALES_COLUMNS = {
             type: 'custom',
             component: CustomDateFilterComponent,
           },
+          width: '15%',
     },
     productos: {
-        title: 'Nombre de la Reservación',
+        title: 'Productos',
         sort: false,
         valuePrepareFunction: (value: IProducts) => {
-            return `${value?.nombre} - ${value?.precio}`;
+            return `${value?.nombre}`;
         },
         filterFunction(cell?: any, search?: string): boolean {
             let column = cell.nombre;
@@ -85,5 +71,17 @@ export const PRODUCTSALES_COLUMNS = {
                 return false;
             }
         },
+    },
+    precioUni: {
+        title: 'Precio Uni.',
+        sort: false,
+    },
+    cantidad: {
+        title: 'Cantidad',
+        sort: false,
+    },
+    precioTotal: {
+        title: 'Total',
+        sort: false,
     }
 };
