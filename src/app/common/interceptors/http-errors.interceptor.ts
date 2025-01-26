@@ -34,13 +34,13 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   showError?: boolean;
   constructor(
     private router: Router,
-    private showHideErrorInterceptorService: showHideErrorInterceptorService
+    private ShowHideErrorInterceptorService: showHideErrorInterceptorService
   ) {
     super();
   }
 
   get blockAllErrors() {
-    return this.showHideErrorInterceptorService.blockAllErrors;
+    return this.ShowHideErrorInterceptorService.blockAllErrors;
   }
 
   intercept(
