@@ -131,6 +131,7 @@ export class AccommodationListComponent extends BasePage implements OnInit {
   }
 
   getAllAcommodations() {
+    console.log('hola');
     this.loading = true;
     let params = {
       ...this.params.getValue(),
