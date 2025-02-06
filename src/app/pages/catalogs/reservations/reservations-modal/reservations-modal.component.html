@@ -1,0 +1,209 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <!--<form-field label="Aumentar Tiempo" [control]="form.get('aumentar')">
+            <ng-select
+              formControlName="aumentar"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+              (change)="onChange($event)"
+            >
+              <ng-option value="1H">1 HORA</ng-option>
+              <ng-option value="2H">2 HORAS</ng-option>
+              <ng-option value="TN">TODA LA NOCHE</ng-option>
+            </ng-select>
+          </form-field>-->
+          <form-field label="Hora Entrada" [control]="form.get('horaEntrada')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="horaEntrada"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Hora Programada"
+            [control]="form.get('horaProgramada')"
+          >
+            <input
+              [ngClass]="{
+                'bg-info7': validation === 'OK',
+                'bg-info1': validation === '1H',
+                'bg-info2': validation === '2H',
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H'
+              }"
+              type="text"
+              class="form-control"
+              formControlName="horaProgramada"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Hora Salida" [control]="form.get('horaSalida')">
+            <input
+              [ngClass]="{
+                'bg-info7': validation === 'OK',
+                'bg-info1': validation === '1H',
+                'bg-info2': validation === '2H',
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H'
+              }"
+              type="text"
+              class="form-control"
+              formControlName="horaSalida"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Costo Habitacion"
+            [control]="form.get('costoHabitacion')"
+          >
+            <input
+              [ngClass]="{
+                'bg-info1': validation === '1H',
+                'bg-info2': validation === '2H',
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H'
+              }"
+              type="text"
+              class="form-control"
+              formControlName="costoHabitacion"
+            />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            label="Monto Entregado"
+            [control]="form.get('montoEntregado')"
+          >
+            <ng-select
+              formControlName="montoEntregado"
+              class="form-control"
+              [clearable]="false"
+              (change)="onChangeMoney($event)"
+            >
+              <ng-option value="30,00 Bs">30,00 Bs</ng-option>
+              <ng-option value="40,00 Bs">40,00 Bs</ng-option>
+              <ng-option value="50,00 Bs">50,00 Bs</ng-option>
+              <ng-option value="60,00 Bs">60,00 Bs</ng-option>
+              <ng-option value="70,00 Bs">70,00 Bs</ng-option>
+              <ng-option value="80,00 Bs">80,00 Bs</ng-option>
+              <ng-option value="90,00 Bs">90,00 Bs</ng-option>
+              <ng-option value="100,00 Bs">100,00 Bs</ng-option>
+              <ng-option value="150,00 Bs">150,00 Bs</ng-option>
+              <ng-option value="200,00 Bs">200,00 Bs</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Cambio" [control]="form.get('cambio')">
+            <input
+              type="text"
+              [ngClass]="{
+                'bg-info7': validation === 'OK',
+                'bg-info1': validation === '1H',
+                'bg-info2': validation === '2H',
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H'
+              }"
+              class="form-control"
+              formControlName="cambio"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Estado Cambio"
+            [control]="form.get('estadoCambio')"
+          >
+            <ng-select
+              formControlName="estadoCambio"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+            >
+              <ng-option value="P">PENDIENTE</ng-option>
+              <ng-option value="E">ENTREGADO</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field label="Costo Extra" [control]="form.get('costoExtra')">
+            <input
+              [ngClass]="{
+                'bg-info1': validation === '1H',
+                'bg-info2': validation === '2H',
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H'
+              }"
+              type="text"
+              class="form-control"
+              formControlName="costoExtra"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Deuda Cliente" [control]="form.get('deuda')">
+            <input
+              [ngClass]="{
+                'badge-soft-pink': validation === 'OK',
+                'bg-info1': validation === '1H',
+                'bg-info2': validation === '2H',
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H'
+              }"
+              type="text"
+              class="form-control"
+              formControlName="deuda"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Total" [control]="form.get('total')">
+            <input
+              [ngClass]="{
+                'bg-info7': validation === 'OK',
+                'bg-info1': validation === '1H',
+                'bg-info2': validation === '2H',
+                'bg-info3': validation === '3H',
+                'bg-info4': validation === '4H'
+              }"
+              type="text"
+              class="form-control"
+              formControlName="total"
+            />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="form.invalid"
+          (confirm)="confirm()"
+        ></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

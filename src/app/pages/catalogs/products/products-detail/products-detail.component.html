@@ -1,0 +1,83 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? "Editar" : "Nuevo" }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form" (ngSubmit)="confirm()">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field label="Nombre" [control]="form.get('nombre')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nombre"
+            />
+          </form-field> 
+        </div>
+        <div class="col-md-2">
+          <form-field label="Precio" [control]="form.get('precio')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="precio"
+              (change)="updateCurrency($event)"
+              (dblclick)="showHistory($event)"
+            />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Departamento"
+            [control]="form.get('departamento')">
+            <ng-select
+              formControlName="departamento"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="LP">LA PAZ</ng-option>
+              <ng-option value="OR">ORURO</ng-option>
+              <ng-option value="PT">POTOSI</ng-option>
+              <ng-option value="CBBA">COCHABAMBA</ng-option>
+              <ng-option value="CH">CHUQUISACA</ng-option>
+              <ng-option value="TJA">TARIJA</ng-option>
+              <ng-option value="SCZ">SANTA CRUZ</ng-option>
+              <ng-option value="BE">BENI</ng-option>
+              <ng-option value="PD">PANDO</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Estado"
+            [control]="form.get('estado')">
+            <ng-select
+              formControlName="estado"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="SR">SIN REGISTRAR</ng-option>
+              <ng-option value="R">REGISTRADO</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="form.invalid"
+          (confirm)="confirm()"
+        ></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
+
