@@ -3,5 +3,5 @@ export const environment = {
   /*apiUrl: 'https://ncatarimamani.github.io/alojaMaNa/',
   tokenUrl: 'https://ncatarimamani.github.io/alojaMaNa/auth/login',*/
   apiUrl: 'http://localhost:3000/',
-  tokenUrl: 'http://localhost:3000/auth/login' 
+  tokenUrl: 'http://localhost:3000/auth/login'
 };
