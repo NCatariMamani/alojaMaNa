@@ -49,13 +49,24 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     // Clone the request object
     let newReq = request.clone();
+    let authReq = request;
     const formData = this.formDataService.getFormData();
     const email = formData.username || '';
     const password = formData.password || '';
 
-    const authToken = this.authService.getToken(email,password);
+    const authToken = this.authService.getToken(email, password);
+    //const authToken = this.authService.accessToken();
+    const token = localStorage.getItem('token');
 
-    
+    if (token) {
+      authReq = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
+
+
 
     //ignore interceptor when is refresh token
     if (request.context.get(BYPASS_JW_TOKEN) === true) {
@@ -76,20 +87,27 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
     ) {
       /*const timeNow = new Date(
         this.authService.getTokenExpiration().valueOf() - new Date().valueOf()
-      ).getMinutes();
+      ).getMinutes();*/
 
+      const expiration = this.authService.getTokenExpiration(); // Obtiene la fecha de expiración
+      const now = new Date();
 
-      if (timeNow <= this.timeOut && timeNow > 0) {
-        this.refreshToken(newReq, next).subscribe();
+      if (expiration) {
+        const timeNow = Math.floor((expiration.getTime() - now.getTime()) / (1000 * 60)); // Diferencia en minutos
+        console.log('Tiempo restante en minutos:', timeNow);
+        if (timeNow <= this.timeOut && timeNow > 0) {
+          this.refreshToken(newReq, next).subscribe();
+        }
       }
-      if (request.url.indexOf('firebase') < 0) {
+
+      if (token) {
         newReq = request.clone({
           headers: request.headers.set(
             'Authorization',
             'Bearer ' + this.authService.accessToken()
           ),
         });
-      }*/
+      }
 
       //Set Bearer Token
     }
