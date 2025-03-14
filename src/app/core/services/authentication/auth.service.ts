@@ -58,8 +58,8 @@ export class AuthService {
     //let params = `client_id=indep-auth&grant_type=password&client_secret=AzOyl1GDe3G9mhI8c7cIEYQ1nr5Qdpjs&scope=openid&username=${username}&password=${password}`;
     /*let headers = new HttpHeaders().set(
       'Content-Type',
-      'application/x-www-form-urlencoded' , { headers }
-    );*/
+      'application/x-www-form-urlencoded' 
+    ); , { headers }*/
     let body = {
       email: email0,
       password: password0
@@ -71,7 +71,8 @@ export class AuthService {
 
         const token = response.token;
         if (this.isValidJWT(token)) {
-          localStorage.setItem('token', response.token);
+          console.log(token);
+          localStorage.setItem('token', token);
           //localStorage.setItem('r_token', response.refresh_token);
         }
       })
@@ -137,6 +138,7 @@ export class AuthService {
   }
 
   getTokenExpiration(): Date | null {
+    
     const expirationDate = this.jwtService.getTokenExpirationDate(this.token);
     return expirationDate;
   }

@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams,HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
@@ -49,14 +49,16 @@ export class Repository<T> implements IRepository<T> {
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
+    const headers = this.getAuthHeaders();
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, {
-      params
+      params,headers
     });
   }
 
   getById(route: string, id: number | string): Observable<T> {
     const fullRoute = this.buildRoute(route);
-    return this.httpClient.get<T>(`${fullRoute}/${id}`);
+    const headers = this.getAuthHeaders();
+    return this.httpClient.get<T>(`${fullRoute}/${id}`,{headers});
   }
 
   getByIdH(route: string): Observable<T> {
@@ -578,5 +580,13 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     console.log(body);
     return this.httpClient.delete(`${fullRoute}`, body);
+  }
+
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return token
+      ? new HttpHeaders().set('Authorization', `Bearer ${token}`)
+      : new HttpHeaders();
   }
 }
