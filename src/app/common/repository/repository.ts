@@ -50,7 +50,7 @@ export class Repository<T> implements IRepository<T> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, {
-      params,
+      params
     });
   }
 
@@ -63,6 +63,11 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
 
     return this.httpClient.get<T>(`${fullRoute}`);
+  }
+
+  getGeneratePDF(route: string, formData: object): Observable<Blob> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.post(`${fullRoute}`,formData,{responseType: 'blob'});
   }
 
   getById02(route: string, id: number | string, params: ListParams): Observable<IListResponse<T>> {

@@ -6,6 +6,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProductSales } from 'src/app/core/models/catalogs/productSales.model';
 import { IReservations } from 'src/app/core/models/catalogs/reservations.model';
 import { ISales } from 'src/app/core/models/catalogs/sales.model';
+import { OutputService } from 'src/app/core/services/catalogs/output.service';
+import { ProductInventoryService } from 'src/app/core/services/catalogs/productInventory.service';
 import { ProductsService } from 'src/app/core/services/catalogs/products.service';
 import { ProductSalesService } from 'src/app/core/services/catalogs/productSales.service';
 import { ReservationsService } from 'src/app/core/services/catalogs/reservations.service';
@@ -21,7 +23,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ProductSalesDetailComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
-  title: string = 'PRODUCTO COMPRA';
+  title: string = 'PRODUCTO VENTA';
   status: string = 'Nuevo';
   edit: boolean = false;
   //products?: IProducts [];
@@ -31,9 +33,14 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
   idSale: number = 0;
   DateSale: any;
   reservationsSales?: IReservations;
+  alojaId: number = 0;
+  producInId?: number;
+  descProducto?: string;
 
   reservations = new DefaultSelect();
   products = new DefaultSelect();
+
+  validation?: string;
 
   result: any;
   result1: any;
@@ -49,14 +56,16 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
     private productSalesService: ProductSalesService,
     private reservationsService: ReservationsService,
     private currencyPipe: CurrencyPipe,
-    private salesService: SalesService
+    private salesService: SalesService,
+    private outputService: OutputService,
+    private productInventoryService: ProductInventoryService,
   ) {
     super();
   }
 
   get saleId() {
-      return this.form.get('ventaId') as FormControl;
-    }
+    return this.form.get('ventaId') as FormControl;
+  }
 
   ngOnInit() {
     this.prepareForm();
@@ -68,24 +77,26 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
       productoId: [null, [Validators.required]],
       ventaId: [null, [Validators.required]],
       cantidad: [null, [Validators.required]],
-      precioUni: [null, [Validators.required]]
+      precioUni: [null, [Validators.required]],
+      stock: [null, [Validators.required]]
     });
     this.form.controls['ventaId'].disable();
     this.form.controls['precioUni'].disable();
     this.form.controls['precioTotal'].disable();
+    this.form.controls['stock'].disable();
     if (this.productSales != null) {
       this.edit = true;
       this.form.patchValue(this.productSales);
       this.previouStart(this.idSale);
       console.log(this.idSale);
-    }else{
+    } else {
       this.previouStart(this.idSale);
       console.log(this.idSale);
     }
     /*if(this.sales){
       this.idSale = this.sales.id;
     }*/
-   //console.log(this.reservationsSales?.cambio);
+    //console.log(this.reservationsSales?.cambio);
     setTimeout(() => {
       this.getSales(new ListParams());
       this.getProducts(new ListParams());
@@ -93,7 +104,7 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
 
   }
 
-  async previouStart(idSales:number){
+  async previouStart(idSales: number) {
     this.DateSale = await this.validSales(idSales);
     let saleDate = this.DateSale[0].id;
     console.log(saleDate);
@@ -102,7 +113,7 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
     this.saleId.setValue(saleDate);
   }
 
-  async validSales(idSale: number){
+  async validSales(idSale: number) {
     const params = new ListParams();
     params['filter.id'] = `$eq:${idSale}`;
     return new Promise((resolve, reject) => {
@@ -145,12 +156,43 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
       cantidad: Number(this.form.controls['cantidad'].getRawValue()),
       precioUni: this.form.controls['precioUni'].getRawValue(),
     }
+
+    let bodyOutput = {
+      cantidad: Number(this.form.controls['cantidad'].getRawValue()),
+      descripcion: this.descProducto,
+      fecha: this.maxDate,
+      productoInventarioId: Number(this.producInId),
+    }
+
+    const stockAct = Number(this.form.controls['stock'].getRawValue()) - Number(this.form.controls['cantidad'].getRawValue());
+    let bodyProInven = {
+      salida: Number(this.form.controls['cantidad'].getRawValue()),
+      stock: stockAct
+    }
     this.productSalesService.create(body).subscribe({
       next: resp => {
-        this.handleSuccess(),
-          this.loading = false
+        this.outputService.create(bodyOutput).subscribe({
+          next: resp => {
+            this.productInventoryService
+              .update(Number(this.producInId), bodyProInven)
+              .subscribe({
+                next: response => {
+                  this.loading = false;
+                  this.handleSuccess()
+                },
+                error: error => {
+                  this.loading = false;
+                }
+              }
+              );
+          }, error: err => {
+            this.loading = false
+          }
+        }
+        );
       }, error: err => {
         this.loading = false
+        this.alert('error', 'Se debe llenar todos los campos', ``);
       }
     }
     );
@@ -229,10 +271,13 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
     if (params.text) {
       params['filter.nombre'] = `$ilike:${params.text}`;
     }
-    this.productsService.getAll(params).subscribe({
+    console.log(this.alojaId);
+    this.productsService.getAllPoducInven(this.alojaId, params).subscribe({
       next: data => {
+        console.log(data);
         this.result1 = data.data.map(async (item: any) => {
-          item['product'] = item.nombre + ' - ' + item.precio;
+          //item['product'] = item.nombre + ' - ' + item.precio;
+          item['product'] = item.nombre;
         });
         this.products = new DefaultSelect(data.data, data.count);
       },
@@ -244,27 +289,45 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
   }
 
   onChangeProducts(event: any) {
-    console.log(event.precio);
-    const cant = this.form.controls['cantidad'].getRawValue();
-    if(event.precio){
-      this.price = event.precio;
-      this.form.controls['precioUni'].setValue(event.precio);
+    if (event) {
+      console.log(event.nombre, event.productoInventarios[0]);
+      this.descProducto = event.nombre;
+      this.producInId = event.productoInventarios[0].id;
+      this.form.controls['stock'].setValue(event.productoInventarios[0].stock);
+      const stock1 = event.productoInventarios[0].stock;
+      if (stock1 > 4) {
+        this.validation = 'OK';
+      } else {
+        this.validation = 'OF'
+      }
+      const cant = this.form.controls['cantidad'].getRawValue();
+      if (event.precio) {
+        this.price = event.precio;
+        this.form.controls['precioUni'].setValue(event.precio);
+      }
+      if (event.precio && cant) {
+        const currency = this.addCurrency(cant, event.precio);
+        const priceTot = this.formatToBolivianCurrency(currency);
+        this.form.controls['precioTotal'].setValue(priceTot);
+      }
     }
-    if(event.precio && cant){
-      const currency = this.addCurrency(cant, event.precio);
-      const priceTot = this.formatToBolivianCurrency(currency);
-      this.form.controls['precioTotal'].setValue(priceTot);
-    }
+
   }
 
-  onChangeAmount(event: any){
+  onChangeAmount(event: any) {
     console.log(event);
-    const price = this.form.controls['precioUni'].getRawValue();
-    if(event && price){
-      const currency = this.addCurrency(event, price);
-      const priceTot = this.formatToBolivianCurrency(currency);
-      this.form.controls['precioTotal'].setValue(priceTot);
+    if (Number(this.form.controls['stock'].getRawValue()) < event) {
+      this.alert('warning', `No cuenta con los productos suficientes`, '');
+      return;
+    } else {
+      const price = this.form.controls['precioUni'].getRawValue();
+      if (event && price) {
+        const currency = this.addCurrency(event, price);
+        const priceTot = this.formatToBolivianCurrency(currency);
+        this.form.controls['precioTotal'].setValue(priceTot);
+      }
     }
+
   }
 
   addCurrency(value: string, value1: string): number {

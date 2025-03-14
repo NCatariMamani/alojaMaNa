@@ -188,6 +188,7 @@ body[data-sidebar-size='small'] {
 body[data-layout='horizontal'] {
   .main-content {
     margin-right: 0 !important;
+    //flex: 1;
   }
 
   .footer {

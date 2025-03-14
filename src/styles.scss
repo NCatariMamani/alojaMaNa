@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'simple-keyboard/build/css/index.css';
 @import 'ngx-toastr/toastr';
+@import "assets/argon/scss/argon-dashboard.scss";
 
 .toast-title {
   color: #808b96 !important;
@@ -829,13 +830,15 @@ custom-view-component {
 }
 
 footer {
-  position: absolute;
-  width: 100% !important;
+  position: relative;
+  margin-left: $sidebar-width;
+  width: 100vh !important;
+  //width: calc(100vh - #{$sidebar-width}) !important;
 }
 
 .vertical-menu {
   position: absolute;
-  bottom: 100px;
+  bottom:100px;
 }
 
 .bg-donacion-1 {
@@ -937,5 +940,5 @@ div:where(.swal2-container).swal2-bottom {
 }
 
 
-html, body { height: 100%; }
+html, body { height: 100%;}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

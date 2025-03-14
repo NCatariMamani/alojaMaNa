@@ -71,11 +71,13 @@
               "node_modules/quill/dist/quill.snow.css",
               "node_modules/quill-mention/dist/quill.mention.min.css",
               "src/styles.scss",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css"
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/assets/argon/css/argon-dashboard.css",
+              "src/assets/argon/scss/argon-dashboard.scss"
             ],
             "scripts": [
-              "node_modules/apexcharts/dist/apexcharts.min.js",
-              "./node_modules/quill/dist/quill.js"
+              "./node_modules/quill/dist/quill.js",
+              "src/assets/argon/js/argon-dashboard.js"
             ]
           },
           "configurations": {
