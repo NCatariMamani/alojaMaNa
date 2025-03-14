@@ -1,52 +1,34 @@
 <!-- ========== Left Sidebar Start ========== -->
 
 <ng-template #contentTemplate>
-  <!--- Sidemenu -->
-  <div id="sidebar-menu">
-    <!-- Left Menu Start -->
+ 
+  <div id="sidebar-menu" >
     <ul class="metismenu list-unstyled" id="side-menu" #sideMenu>
-      <!-- {{menuItems}} -->
       <ng-container *ngFor="let item of menuItems">
         <li class="menu-title" *ngIf="item.isTitle">{{ item.label }}</li>
         <li *ngIf="!item.isTitle && !item.isLayout">
-          <a
-            *ngIf="hasItems(item)"
-            href="javascript:void(0);"
-            class="is-parent"
-            [ngClass]="{
+          <a *ngIf="hasItems(item)" href="javascript:void(0);" class="is-parent" [ngClass]="{
               'has-arrow': !item.badge,
               'has-dropdown': item.badge
             }">
             <i class="bx {{ item.icon }}" *ngIf="item.icon"></i>
             <span> {{ item.label }}</span>
-            <span
-              class="badge rounded-pill float-end bg-{{ item.badge.variant }}"
-              *ngIf="item.badge"
-              >{{ item.badge.text }}</span
-            >
+            <span class="badge rounded-pill float-end bg-{{ item.badge.variant }}"
+              *ngIf="item.badge">{{ item.badge.text }}</span>
           </a>
 
-          <a
-            [routerLink]="item.link"
-            *ngIf="!hasItems(item)"
-            class="side-nav-link-ref"
-            routerLinkActive="active">
+          <a [routerLink]="item.link" *ngIf="!hasItems(item)" class="side-nav-link-ref" routerLinkActive="active">
             <i class="bx {{ item.icon }}" *ngIf="item.icon"></i>
             <span> {{ item.label }}</span>
-            <span
-              class="badge rounded-pill bg-{{ item.badge.variant }} float-end"
-              *ngIf="item.badge"
-              >{{ item.badge.text }}</span
-            >
+            <span class="badge rounded-pill bg-{{ item.badge.variant }} float-end"
+              *ngIf="item.badge">{{ item.badge.text }}</span>
           </a>
-          <app-menu-dynamic
-            [hasChild]="hasItems(item)"
-            [menuChild]="item.subItems"></app-menu-dynamic>
+          <app-menu-dynamic [hasChild]="hasItems(item)" [menuChild]="item.subItems"></app-menu-dynamic>
 
 
 
 
-           <ul *ngIf="hasItems(item)" class="sub-menu" aria-expanded="false">
+          <ul *ngIf="hasItems(item)" class="sub-menu" aria-expanded="false">
             <li *ngFor="let subitem of item.subItems">
               <a [routerLink]="subitem.link" *ngIf="!hasItems(subitem)" class="side-nav-link-ref"
                 [attr.data-parent]="subitem.parentId" routerLinkActive="active">
@@ -98,11 +80,127 @@
       </ng-container>
     </ul>
   </div>
+  
+
 </ng-template>
+<!--<ng-template #contentTemplate>
+  
+</ng-template>
+
+
+<!--<aside class=" sidenavbg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 "
+  id="sidenav-main" #contentTemplate>
+  <div class="sidenav-header">
+    <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
+      aria-hidden="true" id="iconSidenav"></i>
+    <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/argon-dashboard/pages/dashboard.html "
+      target="_blank">
+      <img src="../assets/images/login3.png" width="30px" height="30px" class="navbar-brand-img h-100" alt="main_logo">
+      <span class="ms-1 font-weight-bold">HOSPEDAJES</span>
+    </a>
+  </div>
+  <hr class="horizontal dark mt-0">
+  <div id="sidebar-menu" class="collapse navbar-collapse w-auto">
+    
+    <ul class="metismenu list-unstyled" id="side-menu" #sideMenu>
+      <ng-container *ngFor="let item of menuItems">
+        <li class="menu-title" *ngIf="item.isTitle">{{ item.label }}</li>
+        <li *ngIf="!item.isTitle && !item.isLayout">
+          <a *ngIf="hasItems(item)" href="javascript:void(0);" class="is-parent" [ngClass]="{
+              'has-arrow': !item.badge,
+              'has-dropdown': item.badge
+            }">
+            <i class="bx {{ item.icon }}" *ngIf="item.icon"></i>
+            <span> {{ item.label }}</span>
+            <span class="badge rounded-pill float-end bg-{{ item.badge.variant }}"
+              *ngIf="item.badge">{{ item.badge.text }}</span>
+          </a>
+
+          <a [routerLink]="item.link" *ngIf="!hasItems(item)" class="side-nav-link-ref" routerLinkActive="active">
+            <i class="bx {{ item.icon }}" *ngIf="item.icon"></i>
+            <span> {{ item.label }}</span>
+            <span class="badge rounded-pill bg-{{ item.badge.variant }} float-end"
+              *ngIf="item.badge">{{ item.badge.text }}</span>
+          </a>
+          <app-menu-dynamic [hasChild]="hasItems(item)" [menuChild]="item.subItems"></app-menu-dynamic>
+
+
+
+
+          <ul *ngIf="hasItems(item)" class="sub-menu" aria-expanded="false">
+            <li *ngFor="let subitem of item.subItems">
+              <a [routerLink]="subitem.link" *ngIf="!hasItems(subitem)" class="side-nav-link-ref"
+                [attr.data-parent]="subitem.parentId" routerLinkActive="active">
+                {{ subitem.label }}
+              </a>
+              <a *ngIf="hasItems(subitem)" class="side-nav-link-a-ref has-arrow" href="javascript:void(0);"
+                [attr.data-parent]="subitem.parentId">
+                {{ subitem.label }}
+              </a>
+              <ul *ngIf="hasItems(subitem)" class="sub-menu mm-collapse" aria-expanded="false">
+                <li *ngFor="let subSubitem of subitem.subItems">
+
+                  <a [routerLink]="subSubitem.link" *ngIf="!hasItems(subSubitem)" class="side-nav-link-ref"
+                    [attr.data-parent]="subSubitem.parentId" routerLinkActive="active">
+                    {{ subSubitem.label }}
+                  </a>
+                  <a *ngIf="hasItems(subSubitem)" class="side-nav-link-a-ref has-arrow" href="javascript:void(0);"
+                    [attr.data-parent]="subSubitem.parentId">
+                    {{ subSubitem.label }}
+                  </a>
+                  <ul *ngIf="hasItems(subSubitem)" class="sub-menu mm-collapse" aria-expanded="false">
+                    <li *ngFor="let subSubSubitem of subSubitem.subItems">
+                      <a [attr.data-parent]="subSubSubitem.parentId" [routerLink]="subSubSubitem.link"
+                        routerLinkActive="active" *ngIf="!hasItems(subSubSubitem)" class="side-nav-link-ref">
+                        {{ subSubSubitem.label }}
+                      </a>
+                      <a *ngIf="hasItems(subSubSubitem)" class="side-nav-link-a-ref has-arrow"
+                        href="javascript:void(0);" [attr.data-parent]="subSubSubitem.parentId">
+                        {{ subSubSubitem.label }}
+                      </a>
+
+                      <ul *ngIf="hasItems(subSubSubitem)" class="sub-menu mm-collapse" aria-expanded="false">
+                        <li *ngFor="
+                            let subSubSubSubitem of subSubSubitem.subItems
+                          ">
+                          <a [attr.data-parent]="subSubSubSubitem.parentId" [routerLink]="subSubSubSubitem.link"
+                            routerLinkActive="active" class="side-nav-link-ref">
+                            {{ subSubSubSubitem.label }}
+                          </a>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ng-container>
+    </ul>
+    
+
+  </div>
+  <div class="sidenav-footer mx-3">
+    <div class="card card-plain shadow-none" id="sidenavCard">
+      <img class="w-50 mx-auto" src="../assets/argon/img/illustrations/icon-documentation.svg"
+        alt="sidebar_illustration">
+      <div class="card-body text-center p-3 w-100 pt-0">
+        <div class="docs-info">
+          <h2 class="mb-0">Bienvenido a Mágica Noche</h2>
+          <p class="text-xs font-weight-bold mb-0">Donde cada estadía se convierte en un recuerdo inolvidable.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>-->
+
+
 <!-- Sidebar -->
 
 <div class="vertical-menu">
-  <ng-scrollbar class="h-100 scrollbar-menu" #componentRef>
+  
+  <ng-scrollbar class="scrollbar-menu" #componentRef>
     <div *ngIf="!isCondensed">
       <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
     </div>
@@ -111,4 +209,3 @@
     </div>
   </ng-scrollbar>
 </div>
-<!-- Left Sidebar End -->

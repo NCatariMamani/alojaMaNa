@@ -19,6 +19,9 @@ import { SalesListComponent } from '../../sales/sales-list/sales-list.component'
 import { BedroomsService } from 'src/app/core/services/catalogs/bedrooms.service';
 import { IBedroom } from 'src/app/core/models/catalogs/bedrooms.model';
 import { DatePipe } from "@angular/common";
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { ReportPdfComponent } from '../report-pdf/report-pdf.component';
 
 @Component({
   selector: 'app-reservations-list',
@@ -34,6 +37,8 @@ export class ReservationsListComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   infoUser: number = 0;
   idInCharge: any;
+  pdfUrl?: SafeResourceUrl;
+  loadingDoc: boolean = false;
 
   reservarions?: IReservations;
 
@@ -42,7 +47,8 @@ export class ReservationsListComponent extends BasePage implements OnInit {
     private reservationsService: ReservationsService,
     private authService: AuthService,
     private inChargeService: InChargeService,
-    private bedroomService: BedroomsService
+    private bedroomService: BedroomsService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings = {
@@ -231,9 +237,11 @@ export class ReservationsListComponent extends BasePage implements OnInit {
   }
 
   openModalSales(reservations?: IReservations) {
+    const idAloja = this.idInCharge;
     let config: ModalOptions = {
       initialState: {
         reservations,
+        idAloja,
         callback: (next: boolean) => {
           if (next) this.getAllReservations();
         },
@@ -360,9 +368,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
         (this.loading = false);
         this.data.load([]);
       }
-    }
-
-    );
+    });
   }
 
   edit(reservations: IReservations) {
@@ -455,5 +461,21 @@ export class ReservationsListComponent extends BasePage implements OnInit {
     const formattedDate = `${day}/${month}/${year}`;
     return formattedDate;
   }
+
+  openModalPDF(dates?: any) {
+    const idAloja = this.idInCharge;
+    let config: ModalOptions = {
+      initialState: {
+        idAloja,
+        callback: (next: boolean) => {
+          if (next) this.getAllReservations();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ReportPdfComponent, config);
+  }
+
 
 }

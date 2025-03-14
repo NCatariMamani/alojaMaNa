@@ -20,7 +20,7 @@ import { MENU } from 'src/app/core/menu';
   styles: [
     `
       .scrollbar-menu {
-        --scrollbar-thumb-color: #10312b;
+        --scrollbar-thumb-color:rgb(2, 118, 147);
         --scrollbar-thumb-hover-color: var(--scrollbar-thumb-color);
       }
     `,

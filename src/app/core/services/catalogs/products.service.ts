@@ -25,6 +25,11 @@ export class ProductsService extends HttpService{
     return this.productsRepo.getById(this.router, id);
   }
 
+  getAllPoducInven(id: string | number,params: ListParams): Observable<any> {
+    return this.productsRepo.getById02(`${this.router}/producInven`, id, params);
+  }
+
+
   create(model: any): Observable<any> {
     return this.productsRepo.create(this.router, model);
   }

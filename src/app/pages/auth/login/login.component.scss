@@ -10,7 +10,7 @@ h2 {
 }
 
 .component-background {
-  top: -1px;
+  //top: -0px;
   margin-bottom: -1px;
   // background: linear-gradient(125deg,
   //     #fff 0%, #fff 40%,
@@ -28,8 +28,8 @@ h2 {
   //     hsl(172, 66%, 45%) calc(60% + 1px), hsl(172, 66%, 45%) 72%,
   //     hsl(172.22deg 47.37% 22.35%) calc(72% + 1px), hsl(172.22deg 47.37% 22.35%) 100%);
 
-  // height: 100vh;
-  background-image: url('/assets/images/fondo.jpg');
+  //height: 100vh;
+  background-image: url('/assets/images/fondo5.jpg');
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -38,6 +38,11 @@ h2 {
 //   // background-image: url("assets/images/fondo.jpg");
 //   /* Otras propiedades CSS para el fondo de imagen */
 // }
+
+.account-pages{
+  position: relative;
+  top: -30px;
+}
 
 .btn-primary {
   background-color: #9d2449;

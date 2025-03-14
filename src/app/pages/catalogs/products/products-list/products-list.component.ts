@@ -114,9 +114,11 @@ export class ProductsListComponent extends BasePage implements OnInit {
 
 
   openModal(products?: IProducts) {
+    const validButton = this.validButton;
     let config: ModalOptions = {
       initialState: {
         products,
+        validButton,
         callback: (next: boolean) => {
           if (next) this.getAllShopping();
         },

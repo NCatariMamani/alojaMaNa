@@ -16,7 +16,6 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
 @NgModule({
   imports: [
     CommonModule,
-    RouterModule,
     MatSidenavModule,
     ProgressbarModule,
     BrowserAnimationsModule,

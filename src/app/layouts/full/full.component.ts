@@ -147,6 +147,7 @@ import { ScriptService } from 'src/app/common/services/script.service';
 export class FullComponent implements OnInit {
   isCondensed = false;
   sidebartype?: string;
+  date1 = new Date().getFullYear();
   scriptsToRemove: string[] = [
     'https://framework-gb.cdn.gob.mx/gm/v4/js/jquery.min.js',
     'https://framework-gb.cdn.gob.mx/gm/v4/js/bootstrapV4.min.js',

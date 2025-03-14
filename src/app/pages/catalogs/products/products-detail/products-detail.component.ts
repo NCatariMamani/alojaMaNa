@@ -1,6 +1,6 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProducts } from 'src/app/core/models/catalogs/products.model';
@@ -39,6 +39,10 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
     super();
   }
 
+  get estate() {
+    return this.form.get('estado') as FormControl;
+  }
+
   ngOnInit() {
     this.prepareForm();
   }
@@ -48,12 +52,15 @@ export class ProductsDetailComponent extends BasePage implements OnInit {
       nombre: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       precio: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       departamento: [null, [Validators.required]],
-      estado: ['SR', [Validators.required]]
+      estado: [null, [Validators.required]]
     });
     if (this.products != null) {
       this.edit = true;
       this.form.controls['estado'].disable();
       this.form.patchValue(this.products);
+    }else {
+      this.estate.setValue('SR');
+      this.form.controls['estado'].disable()
     }
 
   }

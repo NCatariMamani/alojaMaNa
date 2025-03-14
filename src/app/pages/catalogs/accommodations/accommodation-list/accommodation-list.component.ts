@@ -40,7 +40,7 @@ export class AccommodationListComponent extends BasePage implements OnInit {
   noHab?: number;
   rowSelect: any;
   valueButton: boolean = false;
-  bedrooms: boolean = false;
+  bedrooms: boolean = true;
   settings2 = { ...this.settings };
   settings3 = { ...this.settings };
 

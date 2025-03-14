@@ -35,7 +35,9 @@ export class SalesListComponent extends BasePage implements OnInit {
   reservations?: IReservations;
   settings1 = { ...this.settings };
   idSale: number = 0;
-  productSales: boolean = false;
+  productSales: boolean = true;
+  buttonDet: boolean = false;
+  idAloja: number = 0;
 
   constructor(
     private modalService: BsModalService,
@@ -49,13 +51,14 @@ export class SalesListComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       hideSubHeader: true,
-      actions: {
+      actions: false,
+      /*actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
         add: false,
         position: 'right',
-      },
+      },*/
       columns: { ...SALES_COLUMNS },
     };
     this.settings1 = {
@@ -160,10 +163,12 @@ export class SalesListComponent extends BasePage implements OnInit {
 
   openModal(sales?: ISales) {
     const reservations = this.reservations;
+    const alojaId = this.idAloja;
     let config: ModalOptions = {
       initialState: {
         sales,
         reservations,
+        alojaId,
         callback: (next: boolean) => {
           if (next) this.getAllSales();
         },
@@ -208,6 +213,7 @@ export class SalesListComponent extends BasePage implements OnInit {
   rowsSelected(event: any) {
     console.log(event);
     this.productSales = true;
+    this.buttonDet = true;
     this.idSale = event.id;
     this.data1
       .onChanged()
@@ -285,11 +291,13 @@ export class SalesListComponent extends BasePage implements OnInit {
   openModal1(productSales?: IProductSales) {
     const idSale = this.idSale;
     const reservationsSales = this.reservations;
+    const alojaId = this.idAloja;
     let config: ModalOptions = {
       initialState: {
         productSales,
         idSale,
         reservationsSales,
+        alojaId,
         callback: (next: boolean) => {
           if (next) this.getAllProductSales();
         },

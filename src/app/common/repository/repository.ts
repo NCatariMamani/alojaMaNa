@@ -67,6 +67,11 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<T>(`${fullRoute}`);
   }
 
+  getGeneratePDF(route: string, formData: object): Observable<Blob> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.post(`${fullRoute}`,formData,{responseType: 'blob'});
+  }
+
   getById02(route: string, id: number | string, params: ListParams): Observable<IListResponse<T>> {
     const fullRoute = this.buildRoute(route);
 

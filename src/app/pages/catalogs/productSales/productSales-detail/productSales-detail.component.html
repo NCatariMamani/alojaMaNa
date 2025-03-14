@@ -5,54 +5,29 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-3">
-          <form-field [control]="form.get('ventaId')">
-            <ngx-select
-              [form]="form"
-              control="ventaId"
-              (fetchItems)="getSales($event)"
-              [data]="reservations"
-              bindLabel="idSales"
-              label="Fecha de la Venta"
-              value="id"
-              (change)="onChangeReservations($event)"
-              [readonly]="false"
-            ></ngx-select>
+        <div class="col-md-2">
+          <form-field label="Stock" [control]="form.get('stock')">
+            <input [ngClass]="{
+                'bg-info7': validation === 'OK',
+                'bg-info3': validation === 'OF' }" type="text" class="form-control" formControlName="stock" />
           </form-field>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-6">
           <form-field [control]="form.get('productoId')">
-            <ngx-select
-              [form]="form"
-              control="productoId"
-              (fetchItems)="getProducts($event)"
-              [data]="products"
-              bindLabel="product"
-              label="Nombre del Producto"
-              value="id"
-              (change)="onChangeProducts($event)"
-              [readonly]="false"
-            ></ngx-select>
+            <ngx-select [form]="form" control="productoId" (fetchItems)="getProducts($event)" [data]="products"
+              bindLabel="product" label="Nombre del Producto" value="id" (change)="onChangeProducts($event)"
+              [readonly]="false"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field label="Precio Uni." [control]="form.get('precioUni')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="precioUni"
-            />
+            <input type="text" class="form-control" formControlName="precioUni" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field label="Cantidad" [control]="form.get('cantidad')">
-            <ng-select
-              formControlName="cantidad"
-              [searchable]="false"
-              class="form-control"
-              (change)="onChangeAmount($event)"
-              [clearable]="false"
-            >
+            <ng-select formControlName="cantidad" [searchable]="false" class="form-control"
+              (change)="onChangeAmount($event)" [clearable]="false">
               <ng-option value="1">1 Uni.</ng-option>
               <ng-option value="2">2 Uni.</ng-option>
               <ng-option value="3">3 Uni.</ng-option>
@@ -71,12 +46,15 @@
       </div>
       <div class="row pt-3">
         <div class="col-md-3">
+          <form-field [control]="form.get('ventaId')">
+            <ngx-select [form]="form" control="ventaId" (fetchItems)="getSales($event)" [data]="reservations"
+              bindLabel="idSales" label="Fecha de la Venta" value="id" (change)="onChangeReservations($event)"
+              [readonly]="false"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
           <form-field label="Precio Total" [control]="form.get('precioTotal')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="precioTotal"
-            />
+            <input type="text" class="form-control" formControlName="precioTotal" />
           </form-field>
         </div>
       </div>
@@ -85,11 +63,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [type]="'button'"
-          [disabled]="form.invalid"
-          (confirm)="confirm()"
-        ></confirm-button>
+        <confirm-button [type]="'button'" [disabled]="form.invalid" (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

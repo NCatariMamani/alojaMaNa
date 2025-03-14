@@ -31,7 +31,7 @@ export class UsersListComponent extends BasePage implements OnInit {
   iInCharge?: IInCharge;
   settings1 = { ...this.settings };
   rowSelect: any;
-  charge: boolean = false;
+  charge: boolean = true;
   idUser: number = 0;
 
   constructor(
