@@ -3,13 +3,14 @@ import { inject, Injectable } from '@angular/core';
 import { forkJoin, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ListParams } from '../repository/interfaces/list-params';
+import { HttpHeaders } from '@angular/common/http';
 
 interface ObjectParams {
   [param: string]:
-    | string
-    | number
-    | boolean
-    | readonly (string | number | boolean)[];
+  | string
+  | number
+  | boolean
+  | readonly (string | number | boolean)[];
 }
 
 export type _Params = string | HttpParams | ListParams | ObjectParams;
@@ -22,12 +23,13 @@ export class HttpService {
   protected readonly prefix = environment.apiUrl;
   protected httpClient = inject(HttpClient);
   protected microservice?: string;
-  constructor() {}
+  constructor() { }
 
   protected get<T = any>(route: string, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    return this.httpClient.get<T>(`${url}`, { params });
+    const headers = this.getAuthHeaders();
+    return this.httpClient.get<T>(`${url}`, { params, headers });
   }
   protected get2<T = any>(route: string, _params?: _Params) {
     const params = this.getParams(_params);
@@ -101,5 +103,13 @@ export class HttpService {
 
   protected validationForkJoin(obs: Observable<any>[]) {
     return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    console.log(token);
+    return token
+      ? new HttpHeaders().set('Authorization', `Bearer ${token}`)
+      : new HttpHeaders();
   }
 }

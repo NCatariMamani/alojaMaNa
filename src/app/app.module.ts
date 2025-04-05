@@ -11,7 +11,7 @@ import { ContentComponent } from './layouts/content/content.component';
 import { LoadingComponent } from './shared/components/loading/loading.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthService } from './common/services/authentication/auth.service';
-import { AuthInterceptor } from './auth.interceptor';
+import { AuthInterceptor } from './common/interceptors/auth.interceptor';
 
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -40,7 +40,7 @@ registerLocaleData(localeEs, 'es-ES');
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:3000'],
+        allowedDomains: ['https://proyecto-curso-node-ts.onrender.com'],
         disallowedRoutes: [],
       },
     }),
