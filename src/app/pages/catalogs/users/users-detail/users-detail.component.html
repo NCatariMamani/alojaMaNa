@@ -30,6 +30,15 @@
             ></i>
           </form-field>
         </div>
+        <div class="row pt-4"> 
+          <div class="col-md-6">
+            <form-field [control]="form.get('roleId')">
+              <ngx-select [form]="form" control="roleId" (fetchItems)="getRole($event)"
+                [data]="roles" bindLabel="idName" label="Nombre del Rol" value="id"
+                (change)="onChangeRole($event)" [readonly]="false"></ngx-select>
+            </form-field>
+          </div>
+        </div>
       </div>
     </form>
   </div>

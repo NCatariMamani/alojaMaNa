@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 @Component({
   selector: 'app-button',
   template: `
-    <button class="btn btn-primary btn-sm active" (click)="onClick1()">
+    <button class="btn btn-primary btn-xs active" (click)="onClick1()">
       <i class="fas fa-broom" aria-hidden="true"></i>
     </button>
     <!--<i

@@ -75,9 +75,8 @@
               "src/assets/argon/css/argon-dashboard.css",
               "src/assets/argon/scss/argon-dashboard.scss"
             ],
-            "scripts": [
-              "./node_modules/quill/dist/quill.js",
-              "src/assets/argon/js/argon-dashboard.js"
+            "scripts": [      
+              
             ]
           },
           "configurations": {

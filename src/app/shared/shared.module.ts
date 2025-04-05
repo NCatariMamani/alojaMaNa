@@ -29,6 +29,9 @@ import { ButtonColumnDeleteComponent } from './components/button-column/button-c
 import { ButtonColumnComponent } from './components/button-column/button-column.component';
 import { ButtonColumnOutputComponent } from './components/button-column/button-column-output.component';
 import { ButtonColumnInputComponent } from './components/button-column/button-column-input.component';
+import { CheckboxDisabledElementComponent } from './components/checkbox-element-smarttable/checkbox-disabled-element';
+import { CheckboxElementRecordAccountStatementsComponent } from './components/checkbox-element-smarttable/checkbox-element-record-account-statements';
+import { ButtonColumnPermissionComponent } from './components/button-column/button-column-permission.component';
 
 export const customCurrencyMaskConfig = {
   align: 'right',
@@ -58,7 +61,10 @@ export const customCurrencyMaskConfig = {
     ButtonColumnDeleteComponent,
     ButtonColumnComponent,
     ButtonColumnOutputComponent,
-    ButtonColumnInputComponent
+    ButtonColumnInputComponent,
+    CheckboxDisabledElementComponent,
+    CheckboxElementRecordAccountStatementsComponent,
+    ButtonColumnPermissionComponent
   ],
   imports: [
     CommonModule,
@@ -94,7 +100,10 @@ export const customCurrencyMaskConfig = {
     ButtonColumnDeleteComponent,
     ButtonColumnComponent,
     ButtonColumnOutputComponent,
-    ButtonColumnInputComponent
+    ButtonColumnInputComponent,
+    CheckboxDisabledElementComponent,
+    CheckboxElementRecordAccountStatementsComponent,
+    ButtonColumnPermissionComponent
   ],
   providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })

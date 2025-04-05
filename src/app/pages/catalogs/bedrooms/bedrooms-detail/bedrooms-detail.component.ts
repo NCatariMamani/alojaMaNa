@@ -81,6 +81,11 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
         this.loading = false
       }, error: err =>  {
         this.loading = false
+        if (err.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       }
     }
     );
@@ -115,6 +120,11 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
           },
           error: error => {
             this.loading = false;
+            if (error.status == 403) {
+              this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+            } else {
+              //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+            }
           }
         }
 
@@ -134,6 +144,11 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
       error: error => {
         this.accomodations = new DefaultSelect();
         this.loading = false;
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       },
     });
   }

@@ -15,5 +15,8 @@ export enum ENDPOINT_LINKS {
     Entradas = 'catalog/entradas',
     Salidas = 'catalog/salidas',
     Clientes = 'catalog/clientes',
+    Roles = 'catalog/role',
+    Permisos = 'catalog/permission',
+    RolePermissions = 'catalog/rolePermissions'
   }
   

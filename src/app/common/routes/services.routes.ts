@@ -16,9 +16,34 @@ export const SERVICES_ROUTES = [
             icon: 'fas fa-wallet',
             link: '/pages/catalogs/reservations'
     },
-    {
+    /*{
         label: 'Productos',
         icon: 'fas fa-wallet',
         link: '/pages/catalogs/products'
-    }
+    }*/
+]
+
+export const SERVICES_ENCAR_ROUTES = [
+    {
+        /*label: 'ORGANIZACIÓN',
+        icon: 'fas fa-wallet',
+        subItems: [
+            {
+                label: 'Alojamientos',
+                link: '/pages/catalogs/accommodations',
+            },
+            {
+                label: 'Encargados',
+                link: '/pages/catalogs/inCharges',
+            },
+        ]*/
+            label: 'Reservaciones',
+            icon: 'fas fa-wallet',
+            link: '/pages/catalogs/reservations'
+    },
+    /*{
+        label: 'Productos',
+        icon: 'fas fa-wallet',
+        link: '/pages/catalogs/products'
+    }*/
 ]

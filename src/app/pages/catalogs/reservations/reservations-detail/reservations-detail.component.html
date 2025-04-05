@@ -50,7 +50,7 @@
         <div class="col-md-4">
           <form-field [control]="form.get('habitacionId')">
             <ngx-select [form]="form" control="habitacionId" (fetchItems)="getBedroom($event)" [data]="bedrooms"
-              bindLabel="noHabPref" label="No. Habitación" value="id" (change)="onChangeBedroom($event.preferencias)"
+              bindLabel="noHabPref" label="No. Habitación" value="id" (change)="onChangeBedroom($event)"
               [readonly]="false"></ngx-select>
           </form-field>
         </div>

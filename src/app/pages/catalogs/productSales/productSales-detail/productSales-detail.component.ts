@@ -186,13 +186,23 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
               }
               );
           }, error: err => {
-            this.loading = false
+            this.loading = false;
+            if (err.status == 403) {
+              this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+            } else {
+              //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+            }
           }
         }
         );
       }, error: err => {
         this.loading = false
         this.alert('error', 'Se debe llenar todos los campos', ``);
+        if (err.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       }
     }
     );
@@ -215,6 +225,7 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
         ventaId: Number(this.form.controls['ventaId'].getRawValue()),
         precioVenta: this.form.controls['precioVenta'].getRawValue()
       }
+      console.log(body);
       this.productSalesService
         .update(this.productSales.id, body)
         .subscribe({
@@ -224,6 +235,11 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
           },
           error: error => {
             this.loading = false;
+            if (error.status == 403) {
+              this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+            } else {
+              //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+            }
           }
         }
 
@@ -252,6 +268,11 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
       error: error => {
         this.reservations = new DefaultSelect();
         this.loading = false;
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       },
     });
   }
@@ -284,6 +305,11 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
       error: error => {
         this.products = new DefaultSelect();
         this.loading = false;
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       },
     });
   }

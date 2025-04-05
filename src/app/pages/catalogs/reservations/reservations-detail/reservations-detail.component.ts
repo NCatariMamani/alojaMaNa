@@ -59,6 +59,10 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   ci?: number;
   extencion?: string;
 
+  idAloja: number = 0;
+  eventReserId?: number;
+  eventHabId?: number
+
 
   constructor(
     private modalRef: BsModalRef,
@@ -71,7 +75,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     private currencyPipe: CurrencyPipe,
     private accomodationService: AccomodationService,
     private customersService: CustomersService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
   ) {
     super();
     this.form = this.fb.group({
@@ -142,15 +146,19 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       this.edit = true;
       const localDate = new Date(this.reservations.fecha);
       const formattedDate = this.datePipe.transform(new Date(localDate.getTime() + localDate.getTimezoneOffset() * 60000), 'dd/MM/yyyy');
+      this.eventReserId = this.reservations.id;
+      this.eventHabId = this.reservations.habitacionId;
+      this.habitaId.setValue(this.reservations.habitacionId);
       this.form.patchValue(this.reservations);
       this.cliente.setValue(this.reservations.clienteId);
-      this.habitaId.setValue(this.reservations.habitacionId);
+
       //this.form.controls['encargadoId'].setValue();
       this.form.controls['fecha'].setValue(formattedDate);
-      this.form.controls['habitacionId'].disable();
+      //this.form.controls['habitacionId'].disable();
       this.form.controls['encargadoId'].disable();
       this.form.controls['tiempo'].disable();
       this.form.controls['compania'].disable();
+
       //this.form.controls['habitacionId'].setValue(this.reservations.habitacionId);
       console.log(this.reservations.habitacionId);
     } else {
@@ -170,13 +178,18 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   async getInCharges() {
+
     const info = this.authService.getUserInfo();
     this.infoInCharge = info.id;
     console.log(this.infoInCharge);
     this.inCharge1 = await this.validInCharge(info.id);
-    this.idAccom = this.inCharge1[0].alojamientoId;
+    if (this.idAloja != 0) {
+      this.alojaId.setValue(this.idAloja);
+    } else {
+      this.idAccom = this.inCharge1[0].alojamientoId;
+      this.alojaId.setValue(this.idAccom);
+    }
     const idInCharge = this.inCharge1[0].id;
-    this.alojaId.setValue(this.idAccom);
     this.inChargeId.setValue(idInCharge);
     console.log(this.inCharge1);
   }
@@ -279,12 +292,22 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
             this.handleSuccess(),
               this.loading = false
           }, error: err => {
-            this.loading = false
+            this.loading = false;
+            if (err.status == 403) {
+              this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+            } else {
+              //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+            }
           }
         });
 
       }, error: err => {
-        this.loading = false
+        this.loading = false;
+        if (err.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       }
     }
     );
@@ -310,7 +333,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       const date = new Date(Date.UTC(year, month - 1, day));
       const isoString = date.toISOString();
       let body = {
-        compania: this.form.controls['compania'].getRawValue(),
+        /*compania: this.form.controls['compania'].getRawValue(),
         fecha: isoString,
         horaEntrada: this.form.controls['horaEntrada'].getRawValue(),
         horaProgramada: this.form.controls['horaProgramada'].getRawValue(),
@@ -323,7 +346,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
         habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
         encargadoId: Number(this.form.controls['encargadoId'].getRawValue()),
         alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue()),
+        clienteId: this.form.controls['clienteId'].getRawValue(),*/
+
+        //habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
         clienteId: this.form.controls['clienteId'].getRawValue(),
+
       }
       this.reservationsService
         .update(this.reservations.id, body)
@@ -334,6 +361,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
           },
           error: error => {
             this.loading = false;
+            if (error.status == 403) {
+              this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+            } else {
+              //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+            }
           }
         }
 
@@ -346,6 +378,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   getBedroom(params: ListParams) {
+    //let aloja: number;
     if (!this.reservations) {
       params['filter.estado'] = `$ilike:LIBRE`;
     }
@@ -357,41 +390,71 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
         params['filter.preferencias'] = `$ilike:${params.text}`;
       }
     }
+    //params['filter.estado'] = `$ilike:LIBRE`;
+    if (this.idAloja != 0) {
+      //this.idAloja;
+      params['filter.alojamientoId'] = `$eq:${this.idAloja}`;
+      this.bedroomsService.getAll(params).subscribe({
+        next: data => {
+          console.log(data);
+          this.result = data.data.map(async (item: any) => {
+            item['noHabPref'] = item.noHabitacion + ' - ' + item.preferencias + ' ' + item.estado;
+          });
+          this.bedrooms = new DefaultSelect(data.data, data.count);
+        },
+        error: error => {
+          this.bedrooms = new DefaultSelect();
+          this.loading = false;
+          if (error.status == 403) {
+            this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+          } else {
+            //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+          }
+        },
+      });
+    } else {
+      const info = this.authService.getUserInfo();
+      this.infoInCharge = info.id;
+      console.log(info.id);
 
-    const info = this.authService.getUserInfo();
-    this.infoInCharge = info.id;
-    console.log(info.id);
+      this.bedroomsService.getAllHabUserById(info.id, params).subscribe({
+        next: data => {
+          console.log(data);
+          this.result = data.data.map(async (item: any) => {
+            item['noHabPref'] = item.noHabitacion + ' - ' + item.preferencias + ' ' + item.estado;
+          });
+          this.bedrooms = new DefaultSelect(data.data, data.count);
+        },
+        error: error => {
+          this.bedrooms = new DefaultSelect();
+          this.loading = false;
+          if (error.status == 403) {
+            this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+          } else {
+            //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+          }
+        },
+      });
+    }
 
-    this.bedroomsService.getAllHabUserById(info.id, params).subscribe({
-      next: data => {
-        this.result = data.data.map(async (item: any) => {
-          item['noHabPref'] = item.noHabitacion + ' - ' + item.preferencias + ' ' + item.estado;
-        });
-        this.bedrooms = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        this.bedrooms = new DefaultSelect();
-        this.loading = false;
-      },
-    });
   }
 
   onChangeBedroom(event: any) {
     console.log(event);
     this.prefe = event;
-    if (event == 'SIMPLE' && this.form.controls['tiempo'].value == 'MOMENTANEO') {
+    if (event.preferencias == 'SIMPLE' && this.form.controls['tiempo'].value == 'MOMENTANEO') {
       const formatCos = this.formatToBolivianCurrency(30);
       this.form.controls['costoHabitacion'].setValue(formatCos);
       this.form.controls['total'].setValue(formatCos);
       this.form.controls['montoEntregado'].enable();
       this.form.controls['estadoCambio'].enable();
-    } else if (event == 'SIMPLE' && this.form.controls['tiempo'].value == 'TODA LA NOCHE') {
+    } else if (event.preferencias == 'SIMPLE' && this.form.controls['tiempo'].value == 'TODA LA NOCHE') {
       const formatCos1 = this.formatToBolivianCurrency(60);
       this.form.controls['costoHabitacion'].setValue(formatCos1);
       this.form.controls['total'].setValue(formatCos1);
       this.form.controls['montoEntregado'].enable();
       this.form.controls['estadoCambio'].enable();
-    } else if (event == 'BAÑO PRIVADO' && this.form.controls['tiempo'].value == 'MOMENTANEO') {
+    } else if (event.preferencias == 'BAÑO PRIVADO' && this.form.controls['tiempo'].value == 'MOMENTANEO') {
       const formatCost2 = this.formatToBolivianCurrency(40);
       this.form.controls['costoHabitacion'].setValue(formatCost2);
       this.form.controls['total'].setValue(formatCost2);
@@ -404,6 +467,84 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       this.form.controls['montoEntregado'].enable();
       this.form.controls['estadoCambio'].enable();
     }
+    console.log(event.estado);
+    if (event.estado === 'LIBRE') {
+      if (this.reservations && (this.reservations.habitacionId != this.form.controls['habitacionId'].getRawValue())) {
+        this.alertQuestion(
+          'warning',
+          `¿Desea cambiar de habitación?`,
+          '',
+          'SI',
+          'NO'
+        ).then(question => {
+          if (question.isConfirmed) {
+            //console.log(Number(this.eventHabId) , Number(this.eventReserId));
+            this.updateBedroom('LIBRE', Number(this.eventHabId));
+            this.updateBedroom('OCUPADO', event.id);
+            //this.updateReservation( Number(this.eventReserId), 'LIBRE');
+            this.updateReservation(Number(this.eventReserId), 'OCUPADO', event.id);
+          }
+        });
+      }
+    } else {
+      this.alert('warning', 'La habitación esta OCUPADA por otro cliente', ``);
+    }
+
+  }
+
+  updateBedroom(state: string, idHab: number) {
+    this.loading = true;
+    let body = {
+      estado: state
+    }
+    this.bedroomsService
+      .update(idHab, body)
+      .subscribe({
+        next: response => {
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          if (error.status == 403) {
+            this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+          } else {
+            //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+          }
+        }
+      }
+      );
+  }
+
+  updateReservation(idReser: number, state: string, habId?: number) {
+    let body;
+    if (habId) {
+      body = {
+        compania: state,
+        habitacionId: habId
+      }
+    } else {
+      body = {
+        compania: state
+      }
+    }
+
+    this.reservationsService
+      .update(idReser, body)
+      .subscribe({
+        next: response => {
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          if (error.status == 403) {
+            this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+          } else {
+            //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+          }
+        }
+      }
+
+      );
   }
 
 
@@ -424,6 +565,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       error: error => {
         this.inCharge = new DefaultSelect();
         this.loading = false;
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       },
     });
   }
@@ -520,12 +666,18 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       error: error => {
         this.accomodations = new DefaultSelect();
         this.loading = false;
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       },
     });
   }
 
   getCustomer(params: ListParams) {
     //params['filter.alojamientoId'] = `$eq:${this.idAccom}`;
+    let aloja: number;
     if (params.text) {
       const valid = Number(params.text);
       if (!isNaN(valid)) {
@@ -536,9 +688,13 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
         params['filter.nombre'] = `$ilike:${params.text}`;
       }
     }
-    console.log(this.idAccom);
+    if (this.idAloja != 0) {
+      aloja = this.idAloja;
+    } else {
+      aloja = this.idAccom;
+    }
 
-    this.customersService.getAllAlojaClientesById(this.idAccom, params).subscribe({
+    this.customersService.getAllAlojaClientesById(aloja, params).subscribe({
       next: data => {
         this.result = data.data.map(async (item: any) => {
           item['idName'] = item.nombre + ' ' + item.paterno + ' ' + item.materno + ' ' + item.ci + ' ' + item.extencion;
@@ -548,6 +704,11 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       error: error => {
         this.customers = new DefaultSelect();
         this.loading = false;
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       },
     });
   }
@@ -598,10 +759,16 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   openModal() {
-    const idAloja = this.idAccom;
+    let alojamientoId: number;
+    if (this.idAloja != 0) {
+      alojamientoId = this.idAloja;
+    } else {
+      alojamientoId = this.idAccom;
+    }
+
     let config: ModalOptions = {
       initialState: {
-        idAloja,
+        alojamientoId,
         callback: (next: boolean) => {
           if (next) this.getCustomer(new ListParams());
         },

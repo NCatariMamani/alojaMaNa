@@ -63,8 +63,14 @@ export class LoginComponent extends BasePage implements OnInit {
       next: data => {
         token = data;
         this.loading = false;
-        console.log('entraste');
-        this.router.navigate(['pages/catalogs/accommodations']);
+        //console.log('entraste');
+        const info = this.authService.getUserInfo();
+        if(info.role == 3){
+          this.router.navigate(['pages/catalogs/reservations']);
+        }else{
+          this.router.navigate(['pages/catalogs/accommodations']);
+        }
+        
       }, complete: () => {
         /*if(this.authService.existToken()){
 
