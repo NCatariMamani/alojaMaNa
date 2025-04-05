@@ -15,6 +15,8 @@ import { InventoriesService } from 'src/app/core/services/catalogs/inventories.s
 import { IInventories } from 'src/app/core/models/catalogs/inventories.model';
 import { InventoriesDetailComponent } from '../../inventories/inventories-detail/inventories-detail.component';
 import { ProductInventoryListComponent } from '../../productInventory/productInventory-list/productInventory-list.component';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { InChargeService } from 'src/app/core/services/catalogs/inCharge.service';
 
 @Component({
   selector: 'app-accommodation-list',
@@ -44,11 +46,17 @@ export class AccommodationListComponent extends BasePage implements OnInit {
   settings2 = { ...this.settings };
   settings3 = { ...this.settings };
 
+  infoUser: number = 0;
+  roleUser: number = 0;
+  idInCharge: number = 0;
+
   constructor(
     private modalService: BsModalService,
     private accomodationService: AccomodationService,
     private bedroomsService: BedroomsService,
-    private inventoriesService: InventoriesService
+    private inventoriesService: InventoriesService,
+    private authService: AuthService,
+    private inChargeService: InChargeService
   ) {
     super();
     this.settings = {
@@ -90,6 +98,7 @@ export class AccommodationListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
+    this.inicialize();
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -129,14 +138,48 @@ export class AccommodationListComponent extends BasePage implements OnInit {
       .subscribe(() => this.getAllAcommodations());
 
   }
+  private async inicialize() {
+    const info = this.authService.getUserInfo();
+    console.log(info);
+    let inCharge: any = await this.validInCharge(info.id);
+    this.idInCharge = inCharge.data[0].alojamientoId;
+    this.infoUser = info.id;
+    this.roleUser = info.role;
+    if (info.role == 2) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getAllAcommodations(this.idInCharge));
+    } else {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getAllAcommodations());
+    }
+  }
 
-  getAllAcommodations() {
-    console.log('hola');
+  async validInCharge(idUser: number) {
+    const params = new ListParams();
+    params['filter.userId'] = `$eq:${idUser}`;
+    return new Promise((resolve, reject) => {
+      this.inChargeService.getAll(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: err => {
+          resolve(0);
+        },
+      });
+    });
+  }
+
+  getAllAcommodations(idInCharg?: number) {
     this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    if(idInCharg){
+      params['filter.id'] = `$eq:${idInCharg}`;
+    }
     this.accomodationService.getAll(params).subscribe({
       next: response => {
         console.log(response);
@@ -261,18 +304,18 @@ export class AccommodationListComponent extends BasePage implements OnInit {
     };
     this.bedroomsService.getAll(params).subscribe({
       next: response => {
-        console.log(this.noHab);
+        console.log(this.noHab, response);
         this.data2.load(response.data);
         this.data2.refresh();
         this.totalItems2 = response.count;
-        if(this.noHab){
-          if(this.totalItems2 < this.noHab + 1){
+        if (this.noHab) {
+          if (this.totalItems2 < this.noHab + 1) {
             this.valueButton = true;
-          }else{
+          } else {
             this.valueButton = false;
           }
         }
-        
+
         this.loading = false;
       },
       error: error => {
@@ -375,7 +418,6 @@ export class AccommodationListComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-
         this.delete(accom.id);
         //Swal.fire('Borrado', '', 'success');
       }
@@ -416,7 +458,12 @@ export class AccommodationListComponent extends BasePage implements OnInit {
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getAllAcommodations());
       }, error: err => {
-        this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        if (err.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
+
       },
     });
   }
@@ -429,7 +476,11 @@ export class AccommodationListComponent extends BasePage implements OnInit {
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getBeddroms());
       }, error: err => {
-        this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        if (err.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       },
     });
   }
@@ -442,13 +493,17 @@ export class AccommodationListComponent extends BasePage implements OnInit {
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getAllInventories());
       }, error: err => {
-        this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        if (err.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       },
     });
   }
 
 
-  rowsSelected1(event: IInventories){
+  rowsSelected1(event: IInventories) {
     console.log(event);
     this.openModal4(event);
   }

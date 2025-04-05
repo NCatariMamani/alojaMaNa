@@ -22,14 +22,22 @@ import { MAINTENANCE_ROUTES } from '../common/routes/siab-web/maintenance.routes
 import { PARAMETRIZATION_ROUTES } from '../common/routes/siab-web/parametrization.routes';
 import { REPORTS_ROUTES } from '../common/routes/siab-web/reports.routes';
 import { SAMI_ROUTES } from '../common/routes/siab-web/simi.routes';*/
-import { ADMIN_ROUTES } from '../common/routes/admin.routes';
+import { ADMIN_ROUTES, ENCARGADO_ROUTES } from '../common/routes/admin.routes';
+import { ADMINSISTEM_ROUTES } from '../common/routes/adminSistem.routes';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { CONTROL_ROUTES } from '../common/routes/control.routes';
-import { SERVICES_ROUTES } from '../common/routes/services.routes';
+import { SERVICES_ENCAR_ROUTES, SERVICES_ROUTES } from '../common/routes/services.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
-export const MENU: IMenuItem[] = [
+export const MENU_ADMIN_SIS: IMenuItem[] = [
   /*SIAB ROUTES*/
+  {
+    label: 'CONTROL DE ACCESO',
+    icon: 'bx bx-shield-alt-2', 
+    subItems: [
+      ...ADMINSISTEM_ROUTES
+    ],
+  },
   {
     label: 'ADMINISTRACIÓN',
     icon: 'bx-buildings', 
@@ -63,3 +71,80 @@ export const MENU: IMenuItem[] = [
   },
 
 ];
+
+export const MENU_JEFE_NEGOCIO: IMenuItem[] = [
+  /*SIAB ROUTES*/
+  {
+    label: 'ADMINISTRACIÓN',
+    icon: 'bx-buildings', 
+    subItems: [
+      ...ADMIN_ROUTES
+    ],
+  },
+  /*SIAB-WEB ROUTES*/
+  {
+    label: 'SERVICIOS',
+    icon: 'bx-analyse',
+    subItems: [
+      ...SERVICES_ROUTES
+    ],
+  },
+  /*SAMI ROUTES*/
+  {
+    label: 'CONTROL',
+    icon: 'bx-purchase-tag',
+    subItems: [
+      ...CONTROL_ROUTES
+    ]
+  },
+
+  /*{
+    label: 'CATALOGOS',
+    icon: 'bx-server',
+    subItems: [
+      ...CATALOGS_ROUTES
+    ]
+  },*/
+
+];
+
+
+
+export const MENU_ENCARGADO: IMenuItem[] = [
+  /*SIAB ROUTES*/
+ /* {
+    label: 'ADMINISTRACIÓN',
+    icon: 'bx-buildings', 
+    subItems: [
+      ...ENCARGADO_ROUTES
+    ],
+  },*/
+  /*SIAB-WEB ROUTES*/
+  {
+    label: 'SERVICIOS',
+    icon: 'bx-analyse',
+    subItems: [
+      ...SERVICES_ENCAR_ROUTES
+    ],
+  },
+  /*SAMI ROUTES*/
+  {
+    label: 'CONTROL',
+    icon: 'bx-purchase-tag',
+    subItems: [
+      ...CONTROL_ROUTES
+    ]
+  },
+
+  /*{
+    label: 'CATALOGOS',
+    icon: 'bx-server',
+    subItems: [
+      ...CATALOGS_ROUTES
+    ]
+  },*/
+
+];
+
+
+

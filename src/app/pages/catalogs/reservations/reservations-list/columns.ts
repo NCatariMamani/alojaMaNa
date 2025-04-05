@@ -134,7 +134,7 @@ export const RESERVATIONS_COLUMNS = {
             component: CustomDateFilterComponent,
           },
     },compania: {
-        title: 'Compañia',
+        title: 'Estado',
         sort: false,
     },
     /*alojamientos: {

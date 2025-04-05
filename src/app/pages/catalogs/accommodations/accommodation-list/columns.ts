@@ -107,8 +107,8 @@ export const BEDROOMS_COLUMNS = {
           },
     },
     
-    /*alojamientos: {
-        title: 'Nombre de Alojamiento',
+    alojamientos: {
+        title: 'Hospedaje',
         sort: false,
         valuePrepareFunction: (value: IAccommodation) => {
             return value?.nombre;
@@ -124,7 +124,7 @@ export const BEDROOMS_COLUMNS = {
                 return false;
             }
         },
-    }*/
+    }
 };
 
 
@@ -139,9 +139,21 @@ export const INVENTORIES_COLUMNS = {
         title: 'Descripción',
         sort: false,
     },
-
-    /*alojamientos: {
-        title: 'Nombre de Alojamiento',
+    fecha: {
+        title: 'Fecha',
+        sort: false,
+        valuePrepareFunction: (date: Date) => {
+            var raw = new Date(date);
+            var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+            return formatted;
+        },
+        filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent,
+          },
+    },
+    alojamientos: {
+        title: 'Hospedaje',
         sort: false,
         valuePrepareFunction: (value: IAccommodation) => {
             return value?.nombre;
@@ -157,18 +169,5 @@ export const INVENTORIES_COLUMNS = {
                 return false;
             }
         },
-    },*/
-    fecha: {
-        title: 'Fecha',
-        sort: false,
-        valuePrepareFunction: (date: Date) => {
-            var raw = new Date(date);
-            var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
-            return formatted;
-        },
-        filter: {
-            type: 'custom',
-            component: CustomDateFilterComponent,
-          },
-    }
+    },
 };

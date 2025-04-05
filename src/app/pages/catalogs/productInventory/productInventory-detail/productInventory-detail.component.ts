@@ -29,6 +29,8 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
   idInven?: number;
   result: any;
   depa?: string;
+  productoInven: any;
+  prodId?: number;
 
   accomodations = new DefaultSelect();
   products = new DefaultSelect();
@@ -47,15 +49,15 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
   ngOnInit() {
     this.prepareForm();
   }
-  
-  private prepareForm() {
+
+  private async prepareForm() {
     this.form = this.fb.group({
       cantidad: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       entrada: [0, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       salida: [0, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       stock: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       fecha: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      productoId:  [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      productoId: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       //alojamientoId: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
     });
     this.form.controls['fecha'].disable();
@@ -68,10 +70,16 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
       console.log(formattedDate);
       this.form.patchValue(this.productInventory);
       this.form.controls['fecha'].setValue(formattedDate);
-    }else{
+    } else {
       const date = new Date();
       this.form.controls['fecha'].setValue(date);
     }
+    if (this.idInven) {
+      let prodInven: any = await this.producInven(this.idInven);
+      this.productoInven = prodInven.data
+      console.log(prodInven.data);
+    }
+
     setTimeout(() => {
       this.getAccomodation(new ListParams());
       this.getProducts(new ListParams());
@@ -86,38 +94,48 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
 
   create() {
     this.loading = true;
-    let body = {
-      cantidad: Number(this.form.controls['cantidad'].getRawValue()),
-      entrada: Number(this.form.controls['entrada'].getRawValue()),
-      salida: Number(this.form.controls['salida'].getRawValue()),
-      stock: Number(this.form.controls['stock'].getRawValue()),
-      fecha: this.form.controls['fecha'].getRawValue(),
-      productoId: Number(this.form.controls['productoId'].getRawValue()),
-      inventarioId: this.idInven,
-    }
-    this.productInventoryService.create(body).subscribe({
-      next: resp => { 
-        let body1 = {
-          estado: 'R'
-        };
-        this.productService.update(Number(this.form.controls['productoId'].getRawValue()), body1)
-        .subscribe({
-          next: response => {
-            this.loading = false;
-            this.handleSuccess()
-          },
-          error: error => {
-            this.loading = false;
-          }
-        }
-        );
-        /*this.handleSuccess(),
-        this.loading = false*/
-      }, error: err =>  {
-        this.loading = false
+    if (this.existeProductoId(this.productoInven, Number(this.prodId))) {
+      this.alert('warning', 'Este producto ya esta inventariado', ``);
+    } else {
+      let body = {
+        cantidad: Number(this.form.controls['cantidad'].getRawValue()),
+        entrada: Number(this.form.controls['entrada'].getRawValue()),
+        salida: Number(this.form.controls['salida'].getRawValue()),
+        stock: Number(this.form.controls['stock'].getRawValue()),
+        fecha: this.form.controls['fecha'].getRawValue(),
+        productoId: Number(this.form.controls['productoId'].getRawValue()),
+        inventarioId: this.idInven,
       }
+      this.productInventoryService.create(body).subscribe({
+        next: resp => {
+          let body1 = {
+            estado: 'R'
+          };
+          this.productService.update(Number(this.form.controls['productoId'].getRawValue()), body1)
+            .subscribe({
+              next: response => {
+                this.loading = false;
+                this.handleSuccess()
+              },
+              error: error => {
+                this.loading = false;
+                if (error.status == 403) {
+                  this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+                } else {
+                  //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+                }
+              }
+            }
+            );
+          /*this.handleSuccess(),
+          this.loading = false*/
+        }, error: err => {
+          this.loading = false
+        }
+      }
+      );
     }
-    );
+
   }
 
   handleSuccess() {
@@ -134,7 +152,7 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
   update() {
     if (this.productInventory) {
       this.loading = true;
-      let setDate;      
+      let setDate;
       let body = {
         cantidad: Number(this.form.controls['cantidad'].getRawValue()),
         entrada: Number(this.form.controls['entrada'].getRawValue()),
@@ -153,6 +171,11 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
           },
           error: error => {
             this.loading = false;
+            if (error.status == 403) {
+              this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+            } else {
+              //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+            }
           }
         }
 
@@ -181,13 +204,13 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
     });
   }
 
-  onChangeAccomodation(event: any){
+  onChangeAccomodation(event: any) {
     console.log(event);
   }
 
 
-  validateDate(event: any){
-    if(event){
+  validateDate(event: any) {
+    if (event) {
       this.editDate = event;
     }
   }
@@ -196,14 +219,14 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
     if (params.text) {
       params['filter.nombre'] = `$ilike:${params.text}`;
     }
-    params['filter.estado'] = `$ilike:SR`;
-    if(this.depa){
+    //params['filter.estado'] = `$ilike:SR`;
+    if (this.depa) {
       params['filter.departamento'] = `$ilike:${this.depa}`;
     }
     this.productService.getAll(params).subscribe({
       next: data => {
         this.result = data.data.map(async (item: any) => {
-          item['name'] = item.nombre +' - '+ item.precio;
+          item['name'] = item.nombre + ' - ' + item.precio;
         });
         this.products = new DefaultSelect(data.data, data.count);
       },
@@ -214,13 +237,22 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
     });
   }
 
-  onChangeProducts(event: any){
-    console.log(event);
+  onChangeProducts(event: any) {
+    this.prodId = event.id
+    if (event && this.productoInven) {
+      if (this.existeProductoId(this.productoInven, event.id)) {
+        this.alert('warning', 'Este producto ya esta inventariado', ``);
+      }
+    }
+  }
+
+  existeProductoId(data: any, idBuscado: number): boolean {
+    return data.some((item: any) => item.productoId === idBuscado);
   }
 
 
-  onChangeCant(event: any){
-    if(event){
+  onChangeCant(event: any) {
+    if (event) {
       const inputElement = event.target as HTMLInputElement;
       const valor = Number(inputElement.value);
       console.log(valor);
@@ -229,7 +261,22 @@ export class ProductInventoryDetailComponent extends BasePage implements OnInit 
     }
   }
 
+  async producInven(inventarioId: number) {
+    const params = new ListParams();
+    params['filter.inventarioId'] = `$eq:${inventarioId}`;
+    return new Promise((resolve, reject) => {
+      this.productInventoryService.getAll(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: err => {
+          resolve(0);
+        },
+      });
+    });
+  }
 
-  
+
+
 
 }

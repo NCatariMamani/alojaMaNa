@@ -22,6 +22,10 @@ import { DatePipe } from "@angular/common";
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ReportPdfComponent } from '../report-pdf/report-pdf.component';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AccomodationService } from 'src/app/core/services/catalogs/accomodation.service';
+import { IAccommodation } from 'src/app/core/models/catalogs/accommodation.model';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-reservations-list',
@@ -30,17 +34,23 @@ import { ReportPdfComponent } from '../report-pdf/report-pdf.component';
 })
 export class ReservationsListComponent extends BasePage implements OnInit {
 
+  form: FormGroup = new FormGroup({});
   data: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   data1: any = [];
   columnFilters: any = [];
   totalItems: number = 0;
   infoUser: number = 0;
+  roleUser: number = 0;
   idInCharge: any;
   pdfUrl?: SafeResourceUrl;
   loadingDoc: boolean = false;
+  result?: any[];
+  onSelect: boolean = false;
+  alojaIdRole: number = 0;
 
   reservarions?: IReservations;
+  accomodations = new DefaultSelect<IAccommodation>();
 
   constructor(
     private modalService: BsModalService,
@@ -48,7 +58,10 @@ export class ReservationsListComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private inChargeService: InChargeService,
     private bedroomService: BedroomsService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private fb: FormBuilder,
+    private accomodationService: AccomodationService,
+
   ) {
     super();
     this.settings = {
@@ -121,7 +134,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
-    this.getUser();
+    this.inicialize();
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -160,16 +173,69 @@ export class ReservationsListComponent extends BasePage implements OnInit {
         }
       });
 
-    this.params
+    /*this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAllReservations());
+      .subscribe(() => this.getAllReservations());*/
 
 
   }
 
-  getUser() {
+  private inicialize() {
+    this.form = this.fb.group({
+      selecAloja: [null, [Validators.required]],
+    });
     const info = this.authService.getUserInfo();
     this.infoUser = info.id;
+    this.roleUser = info.role;
+    if (info.role == 3) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getAllReservations());
+    } else {
+      this.onSelect = true;
+      this.getAccomodation(new ListParams());
+    }
+
+    //console.log(this.infoUser,this.roleUser);
+  }
+
+  getAccomodation(params: ListParams) {
+    if (params.text) {
+      const valid = Number(params.text);
+      if (!isNaN(valid)) {
+        // Si es un número
+        params['filter.id'] = `$eq:${params.text}`;
+      } else {
+        // Si es un string
+        params['filter.nombre'] = `$ilike:${params.text}`;
+      }
+    }
+    this.accomodationService.getAll(params).subscribe({
+      next: data => {
+        this.result = data.data.map(async (item: any) => {
+          item['idName'] = item.id + ' - ' + item.nombre;
+        });
+        this.accomodations = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.accomodations = new DefaultSelect();
+        this.loading = false;
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
+      },
+    });
+  }
+  onChangeAccomodation(event: any) {
+    console.log(event);
+    if (event) {
+      this.alojaIdRole = event.id;
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getAllReservations(event.id));
+    }
   }
 
   async validInCharge(idUser: number) {
@@ -275,7 +341,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
         if (validate > 4) {
           this.alertQuestion(
             'warning',
-            'El cliente se paso mas de 4 Horas ¿se le asigara un dia mas?',
+            'El cliente se paso mas de 4 Horas ¿se le asiganara un dia mas?',
             ''
           ).then(question => {
             if (question.isConfirmed) {
@@ -346,16 +412,21 @@ export class ReservationsListComponent extends BasePage implements OnInit {
 
 
 
-  async getAllReservations() {
+  async getAllReservations(idAloja?: number) {
     this.loading = true;
-    let inCharge: any = await this.validInCharge(this.infoUser);
-    this.idInCharge = inCharge.data[0].alojamientoId;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    console.log(this.idInCharge);
-    params['filter.alojamientoId'] = `$eq:${this.idInCharge}`;
+    if (idAloja) {
+      params['filter.alojamientoId'] = `$eq:${idAloja}`;
+    } else {
+      let inCharge: any = await this.validInCharge(this.infoUser);
+      this.idInCharge = inCharge.data[0].alojamientoId;
+      console.log(this.idInCharge);
+      params['filter.alojamientoId'] = `$eq:${this.idInCharge}`;
+    }
+
     this.reservationsService.getAll(params).subscribe({
       next: response => {
         console.log(response);
@@ -367,6 +438,11 @@ export class ReservationsListComponent extends BasePage implements OnInit {
       error: error => {
         (this.loading = false);
         this.data.load([]);
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       }
     });
   }
@@ -377,11 +453,13 @@ export class ReservationsListComponent extends BasePage implements OnInit {
 
 
   openModal(reservations?: IReservations) {
+    const idAloja = this.alojaIdRole;
     let config: ModalOptions = {
       initialState: {
         reservations,
+        idAloja,
         callback: (next: boolean) => {
-          if (next) this.getAllReservations();
+          if (next) this.getAllReservations(this.alojaIdRole);
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -412,7 +490,12 @@ export class ReservationsListComponent extends BasePage implements OnInit {
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getAllReservations());
       }, error: err => {
-        this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        if (err.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
+
       },
     });
   }
@@ -430,6 +513,11 @@ export class ReservationsListComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
+          if (error.status == 403) {
+            this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+          } else {
+            //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+          }
         }
       }
       );
@@ -447,6 +535,11 @@ export class ReservationsListComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
+          if (error.status == 403) {
+            this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+          } else {
+            //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+          }
         }
       }
 
@@ -463,7 +556,12 @@ export class ReservationsListComponent extends BasePage implements OnInit {
   }
 
   openModalPDF(dates?: any) {
-    const idAloja = this.idInCharge;
+    let idAloja;
+    if(this.alojaIdRole != 0){
+      idAloja = this.alojaIdRole;
+    }else{
+      idAloja = this.idInCharge;
+    }
     let config: ModalOptions = {
       initialState: {
         idAloja,

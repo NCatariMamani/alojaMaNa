@@ -108,6 +108,11 @@ export class InChargeListComponent extends BasePage implements OnInit {
       error: error => {
         (this.loading = false);
         this.data.load([]);
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       }
     }
 
@@ -155,7 +160,11 @@ export class InChargeListComponent extends BasePage implements OnInit {
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getAllInCharge());
       }, error: err => {
-        this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        if (err.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       },
     });
   }

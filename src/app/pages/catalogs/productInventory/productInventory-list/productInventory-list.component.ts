@@ -255,6 +255,11 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
       error: error => {
         (this.loading = false);
         this.data.load([]);
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       }
     }
 
@@ -266,8 +271,8 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
   }
 
 
-  openModal(productInventory?: IProductInventory) {
-    const idInven = this.idInventory;
+  async openModal(productInventory?: IProductInventory) {
+       const idInven = this.idInventory;
     const depa = this.departmen;
     console.log(idInven);
     let config: ModalOptions = {
@@ -315,13 +320,21 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
             },
             error: error => {
               this.loading = false;
+              if (error.status == 403) {
+                this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+              } else {
+                //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+              }
             }
           }
           );
-
-
       }, error: err => {
-        this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        if (err.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
+        
       },
     });
   }
@@ -343,6 +356,21 @@ export class ProductInventoryListComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(ProductsListComponent, config);
+  }
+
+  async producInven(inventarioId: number) {
+    const params = new ListParams();
+    params['filter.inventarioId'] = `$eq:${inventarioId}`;
+    return new Promise((resolve, reject) => {
+      this.productInventoryService.getAll(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: err => {
+          resolve(0);
+        },
+      });
+    });
   }
 
 

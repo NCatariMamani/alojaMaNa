@@ -59,7 +59,7 @@ export const PRODUCTS_COLUMNS = {
             },
           },
     },
-    estado: {
+    /*estado: {
         title: 'Estado',
         sort: false,
         type: 'html',
@@ -80,5 +80,5 @@ export const PRODUCTS_COLUMNS = {
               ],
             },
           },
-    }
+    }*/
 };

@@ -33,6 +33,7 @@ export class UsersListComponent extends BasePage implements OnInit {
   rowSelect: any;
   charge: boolean = true;
   idUser: number = 0;
+  valid: boolean = true;
 
   constructor(
     private modalService: BsModalService,
@@ -45,7 +46,7 @@ export class UsersListComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        edit: false,
+        edit: true,
         delete: true,
         add: false,
         position: 'right',
@@ -105,8 +106,10 @@ export class UsersListComponent extends BasePage implements OnInit {
   }
   rowsSelected(event: any){
     this.rowSelect = event.data;
+    //this.valid = true;
     if(event){
-      this.charge = true;
+      //this.charge = false;
+      this.valid = false;
       this.idUser = event.data.id;
       this.params1.getValue()[
         'filter.userId'
@@ -141,7 +144,6 @@ export class UsersListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
-
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -176,6 +178,11 @@ export class UsersListComponent extends BasePage implements OnInit {
       error: error => {
         (this.loading = false);
         this.data.load([]);
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       }
     }
 
@@ -199,6 +206,11 @@ export class UsersListComponent extends BasePage implements OnInit {
       error: error => {
         (this.loading = false);
         this.data1.load([]);
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       }
     }
 
@@ -281,7 +293,12 @@ export class UsersListComponent extends BasePage implements OnInit {
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getAllUsers());
       }, error: err => {
-        this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        if (err.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
+       
       },
     });
   }
@@ -294,9 +311,18 @@ export class UsersListComponent extends BasePage implements OnInit {
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getAllInCharge());
       }, error: err => {
-        this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        if (err.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
+       
       },
     });
   }
+
+  /*isDisabled(): boolean {
+    return this.valid = true || this.arrayPermission.length === 0;
+  }*/
 
 }

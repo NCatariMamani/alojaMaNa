@@ -1,5 +1,6 @@
 import { DatePipe } from "@angular/common";
 import { IAccommodation } from "src/app/core/models/catalogs/accommodation.model";
+import { IRole } from "src/app/core/models/catalogs/role.model";
 import { IUser } from "src/app/core/models/catalogs/users.model";
 import { CustomDateFilterComponent } from "src/app/shared/utils/custom-date-filter";
 
@@ -15,10 +16,24 @@ export const USERS_COLUMNS = {
         sort: false,
         width: '80%',
     },
-    /*password: {
-        title: 'Contraseña',
+    role: {
+        title: 'Rol',
         sort: false,
-    },*/
+        valuePrepareFunction: (value: IRole) => {
+            return `${value?.name}`;
+        },
+        filterFunction(cell?: any, search?: string): boolean {
+            let column = cell.name;
+            if (typeof search !== 'string') {
+                return true;
+            }
+            if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+                return true;
+            } else {
+                return false;
+            }
+        },
+    },
 };
 
 export const INCHARGE_COLUMNS = {
@@ -30,7 +45,7 @@ export const INCHARGE_COLUMNS = {
     nombre: {
         title: 'Nombre',
         sort: false,
-        
+
     },
     paterno: {
         title: 'Paterno',

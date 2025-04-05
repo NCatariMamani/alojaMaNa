@@ -12,7 +12,7 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
   templateUrl: './report-pdf.component.html',
   styleUrls: ['./report-pdf.component.css']
 })
-export class ReportPdfComponent extends BasePage  implements OnInit {
+export class ReportPdfComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
   title: string = 'VENTA';
@@ -30,7 +30,7 @@ export class ReportPdfComponent extends BasePage  implements OnInit {
     private modalService: BsModalService,
     private reservationsService: ReservationsService,
     private sanitizer: DomSanitizer
-  ) { 
+  ) {
     super();
   }
 
@@ -104,6 +104,13 @@ export class ReportPdfComponent extends BasePage  implements OnInit {
       error: error => {
         (this.loading = false);
         //this.data.load([]);
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else if (error.status == 500) {
+          this.alert('warning', 'No existe datos para mostrar en PDF', '');
+        } else {
+          this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
       }
     });
   }

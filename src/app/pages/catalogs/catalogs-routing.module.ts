@@ -81,6 +81,18 @@ const routes: Routes = [
       (await import('./customers/customers.module')).CustomersModule,
     data: { title: 'Clientes' },
   },
+  {
+    path: 'role',
+    loadChildren: async () =>
+      (await import('./role/role.module')).RoleModule,
+    data: { title: 'Roles' },
+  },
+  {
+    path: 'permission',
+    loadChildren: async () =>
+      (await import('./permission/permission.module')).PermissionModule,
+    data: { title: 'Permisos' },
+  },
 ]
 
 

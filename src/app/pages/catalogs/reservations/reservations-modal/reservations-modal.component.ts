@@ -136,6 +136,11 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
           },
           error: error => {
             this.loading = false;
+            if (error.status == 403) {
+              this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+            } else {
+              //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+            }
           }
         }
 
@@ -158,6 +163,11 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
           },
           error: error => {
             this.loading = false;
+            if (error.status == 403) {
+              this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+            } else {
+              this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+            }
           }
         }
         );

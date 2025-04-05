@@ -46,7 +46,8 @@
               <div class="mr-3" *ngIf="totalItems1 < 1">
                 <button type="button" tooltip="Nuevo" containerclass="tooltip-style"
                   class="btn btn-info btn-sm active d-flex justify-content-center align-items-center ml-3"
-                  (click)="openModal1()">
+                  (click)="openModal1()"
+                  [disabled]="valid">
                   Nuevo <i class="bx bx-plus bx-sm ml-2"></i>
                 </button>
               </div>

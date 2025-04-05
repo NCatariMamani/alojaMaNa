@@ -4,6 +4,17 @@
   </div>
   <div body>
     <div class="row">
+      <div class="row" *ngIf="onSelect">
+        <div class="col-md-6">
+          <form class="form-material" [formGroup]="form">
+            <form-field [control]="form.get('selecAloja')">
+              <ngx-select [form]="form" control="selecAloja" (fetchItems)="getAccomodation($event)"
+                [data]="accomodations" bindLabel="idName" label="Nombre del Alojamiento" value="id"
+                (change)="onChangeAccomodation($event)" [readonly]="false"></ngx-select>
+            </form-field>
+          </form>
+        </div>
+      </div>
       <div class="col-md-6 mb-3 justify-content-center">
         <div class="row">
           <div class="col-md-4">
@@ -35,8 +46,8 @@
         <app-columns-select [defaultColumns]="12" [(settings)]="settings" [leftList]="true"></app-columns-select>
         <div class="mr-3">
           <button type="button" containerclass="tooltip-style"
-            class="btn btn-info btn-sm active d-flex justify-content-center align-items-center ml-3"
-            (click)="openModalPDF()">Descargar PDF</button>
+            class="btn btn-info btn-md active d-flex justify-content-center align-items-center ml-3"
+            (click)="openModalPDF()">PDF&nbsp;&nbsp;<i class="fas fa-file-pdf" aria-hidden="true"></i></button>
           <!--<iframe *ngIf="pdfUrl" [src]="pdfUrl" width="100%" height="600px"></iframe>-->
         </div>
 

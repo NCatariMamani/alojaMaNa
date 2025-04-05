@@ -9,8 +9,12 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import MetisMenu from 'metismenujs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IMenuItem } from 'src/app/core/interfaces/menu.interface';
-import { MENU } from 'src/app/core/menu';
+import { MENU_JEFE_NEGOCIO, MENU_ADMIN_SIS, MENU_ENCARGADO } from 'src/app/core/menu';
+import { IRole } from 'src/app/core/models/catalogs/role.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { RoleService } from 'src/app/core/services/authentication/role.service';
 //import { MENU } from 'src/app/core/menu';
 //import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
@@ -31,6 +35,8 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() isCondensed = false;
   private menu: any;
   public menuItems: IMenuItem[] = [];
+  userAuth: any = {};
+  role: any = {};
 
   menus: any[] = [];
 
@@ -38,11 +44,13 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
 
   constructor(
     private route: ActivatedRoute,
-    //private authService: AuthService,
-    private router: Router
+    private authService: AuthService,
+    private router: Router,
+    private roleService: RoleService
   ) { }
 
   ngOnInit() {
+    this.userAuth = this.authService.getUserInfo();
     this.initialize();
   }
 
@@ -54,7 +62,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
       }
     });
     this._scrollElement();
-    if(this.sideMenu){
+    if (this.sideMenu) {
       this.menu = new MetisMenu(this.sideMenu?.nativeElement);
     }
     this._activateMenuDropdown();
@@ -67,7 +75,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnChanges() {
     if ((!this.isCondensed && this.sideMenu) || this.isCondensed) {
       setTimeout(() => {
-        if(this.sideMenu){
+        if (this.sideMenu) {
           this.menu = new MetisMenu(this.sideMenu!.nativeElement);
         }
       });
@@ -194,22 +202,74 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   /**
    * Initialize
    */
-  private initialize(): void {
-    let id = 0;
-    MENU.forEach(menu => {
-      if (Array.isArray(menu.subItems) && menu.subItems.length > 0) {
-        menu.id = id;
-        id = this.setParentId(menu, menu.id);
-      } else {
-        menu.id = id;
-        id++;
-      }
-      this.menuItems.push(menu);
-    });
+  private initialize() {
+    if (this.userAuth.role == 1) {
+      //console.log(this.userAuth.role);
+      this.menuItems = []; // Limpia los ítems anteriores
+      let idAd = 0;
+      MENU_ADMIN_SIS.forEach(menu => {
+        if (Array.isArray(menu.subItems) && menu.subItems.length > 0) {
+          menu.id = idAd;
+          idAd = this.setParentId(menu, menu.id);
+          //console.log(menu);
+        } else {
+          menu.id = idAd;
+          idAd++;
+        }
+        this.menuItems.push(menu);
+      });
+    } else if (this.userAuth.role == 2) {
+      this.menuItems = []; // Limpia los ítems anteriores
+      let idAd = 0;
+      MENU_JEFE_NEGOCIO.forEach(menu => {
+        if (Array.isArray(menu.subItems) && menu.subItems.length > 0) {
+          menu.id = idAd;
+          idAd = this.setParentId(menu, menu.id);
+          //console.log(menu);
+
+        } else {
+          menu.id = idAd;
+          idAd++;
+        }
+        this.menuItems.push(menu);
+      });
+    } else {
+      this.menuItems = []; // Limpia los ítems anteriores
+      let idAd = 0;
+      MENU_ENCARGADO.forEach(menu => {
+        if (Array.isArray(menu.subItems) && menu.subItems.length > 0) {
+          menu.id = idAd;
+          idAd = this.setParentId(menu, menu.id);
+          //console.log(menu);
+
+        } else {
+          menu.id = idAd;
+          idAd++;
+        }
+        this.menuItems.push(menu);
+      });
+    }
+
 
   }
+
+  async getByIdRole(idRole: number) {
+    const params = new ListParams();
+    //params['filter.roleId'] = `$eq:${idRole}`;
+    return new Promise((resolve, reject) => {
+      this.roleService.getById(idRole).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: err => {
+          resolve(0);
+        },
+      });
+    });
+  }
+
   private setParentId(menuItem: IMenuItem, id: number): number {
-    if (Array.isArray(menuItem.subItems)){
+    if (Array.isArray(menuItem.subItems)) {
       menuItem.subItems.forEach(sub => {
         id++;
         sub.id = id;
@@ -220,10 +280,10 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
         }
       });
       return id;
-    }else{
+    } else {
       return 0;
     }
-    
+
   }
   /**
    * Returns true or false if given menu item has child or not

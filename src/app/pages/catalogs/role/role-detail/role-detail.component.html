@@ -1,0 +1,56 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit1 ? "Editar" : "Nuevo" }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field label="Nombre del Rol" [control]="form.get('name')">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-md-8 mb-3"></div>
+            <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+              <div class="mr-3">
+                <button type="button" tooltip="Nuevo" containerclass="tooltip-style"
+                  class="btn btn-info btn-sm active d-flex justify-content-center align-items-center ml-3"
+                  (click)="openModal()">
+                  Nuevo <i class="bx bx-plus bx-sm ml-2"></i>
+                </button>
+              </div>
+              <app-columns-select [(settings)]="settings" [leftList]="true"></app-columns-select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div [class]="loading ? 'table-loading' : ''">
+                <div class="table-responsive">
+                  <ng2-smart-table [settings]="settings" [source]="data" (edit)="edit($event.data)"
+                    (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
+                </div>
+                <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button [type]="'button'" [disabled]="isDisabled()" (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
