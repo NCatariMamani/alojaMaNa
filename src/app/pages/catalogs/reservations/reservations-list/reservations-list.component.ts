@@ -341,7 +341,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
         if (validate > 4) {
           this.alertQuestion(
             'warning',
-            'El cliente se paso mas de 4 Horas ¿se le asiganara un dia mas?',
+            'El cliente se paso mas de 4 Horas ¿se le asiganagipra un dia mas?',
             ''
           ).then(question => {
             if (question.isConfirmed) {
