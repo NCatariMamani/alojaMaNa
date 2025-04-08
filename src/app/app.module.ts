@@ -40,7 +40,7 @@ registerLocaleData(localeEs, 'es-ES');
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ['https://proyecto-curso-node-ts.onrender.com'],
+        allowedDomains: ['https://stunning-adder-purely.ngrok-free.app'],
         disallowedRoutes: [],
       },
     }),
