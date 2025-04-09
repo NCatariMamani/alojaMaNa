@@ -32,6 +32,7 @@ import { ButtonColumnInputComponent } from './components/button-column/button-co
 import { CheckboxDisabledElementComponent } from './components/checkbox-element-smarttable/checkbox-disabled-element';
 import { CheckboxElementRecordAccountStatementsComponent } from './components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 import { ButtonColumnPermissionComponent } from './components/button-column/button-column-permission.component';
+import { NewButtonComponent } from './components/new-button/new-button.component';
 
 export const customCurrencyMaskConfig = {
   align: 'right',
@@ -64,7 +65,8 @@ export const customCurrencyMaskConfig = {
     ButtonColumnInputComponent,
     CheckboxDisabledElementComponent,
     CheckboxElementRecordAccountStatementsComponent,
-    ButtonColumnPermissionComponent
+    ButtonColumnPermissionComponent,
+    NewButtonComponent
   ],
   imports: [
     CommonModule,
@@ -103,7 +105,8 @@ export const customCurrencyMaskConfig = {
     ButtonColumnInputComponent,
     CheckboxDisabledElementComponent,
     CheckboxElementRecordAccountStatementsComponent,
-    ButtonColumnPermissionComponent
+    ButtonColumnPermissionComponent,
+    NewButtonComponent
   ],
   providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })

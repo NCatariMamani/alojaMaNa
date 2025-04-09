@@ -7,38 +7,20 @@
       <div class="col-md-8 mb-3"></div>
       <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
         <div class="mr-3">
-          <button
-            type="button"
-            tooltip="Nuevo"
-            containerclass="tooltip-style"
-            class="btn btn-info btn-sm active d-flex justify-content-center align-items-center ml-3"
-            (click)="openModal()"
-          >
-            Nuevo <i class="bx bx-plus bx-sm ml-2"></i>
-          </button>
+          <new-button (click)="openModal()">
+          </new-button>
         </div>
-        <app-columns-select
-          [(settings)]="settings"
-          [leftList]="true"
-        ></app-columns-select>
+        <app-columns-select [(settings)]="settings" [leftList]="true"></app-columns-select>
       </div>
     </div>
     <div class="row">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
-            <ng2-smart-table
-              [settings]="settings"
-              [source]="data"
-              (edit)="edit($event.data)"
-              (userRowSelect)="rowsSelected($event)"
-              (delete)="showDeleteAlert($event.data)"
-            ></ng2-smart-table>
+            <ng2-smart-table [settings]="settings" [source]="data" (edit)="edit($event.data)"
+              (userRowSelect)="rowsSelected($event)" (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
           </div>
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"
-          ></app-pagination>
+          <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
     </div>
@@ -52,20 +34,10 @@
           <div class="col-md-8 mb-3"></div>
           <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
             <div class="mr-3" *ngIf="valueButton">
-              <button
-                type="button"
-                tooltip="Nuevo"
-                containerclass="tooltip-style"
-                class="btn btn-info btn-sm active d-flex justify-content-center align-items-center ml-3"
-                (click)="openModal2()"
-              >
-                Nuevo <i class="bx bx-plus bx-sm ml-2"></i>
-              </button>
+              <new-button (click)="openModal2()">
+              </new-button>
             </div>
-            <app-columns-select
-              [(settings)]="settings2"
-              [leftList]="true"
-            ></app-columns-select>
+            <app-columns-select [(settings)]="settings2" [leftList]="true"></app-columns-select>
           </div>
         </div>
 
@@ -73,17 +45,10 @@
           <div class="col-md-12">
             <div [class]="loading ? 'table-loading' : ''">
               <div class="table-responsive">
-                <ng2-smart-table
-                  [settings]="settings2"
-                  [source]="data2"
-                  (edit)="edit2($event.data)"
-                  (delete)="showDeleteAlert2($event.data)"
-                ></ng2-smart-table>
+                <ng2-smart-table [settings]="settings2" [source]="data2" (edit)="edit2($event.data)"
+                  (delete)="showDeleteAlert2($event.data)"></ng2-smart-table>
               </div>
-              <app-pagination
-                [params]="params2"
-                [totalItems]="totalItems2"
-              ></app-pagination>
+              <app-pagination [params]="params2" [totalItems]="totalItems2"></app-pagination>
             </div>
           </div>
         </div>
@@ -96,39 +61,21 @@
           <div class="col-md-8 mb-3"></div>
           <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
             <div class="mr-3" *ngIf="totalItems3 < 1">
-              <button
-                type="button"
-                tooltip="Nuevo"
-                containerclass="tooltip-style"
-                class="btn btn-info btn-sm active d-flex justify-content-center align-items-center ml-3"
-                (click)="openModal3()"
-              >
-                Nuevo <i class="bx bx-plus bx-sm ml-2"></i>
-              </button>
+              <new-button (click)="openModal3()">
+              </new-button>
             </div>
-            <app-columns-select
-              [(settings)]="settings3"
-              [leftList]="true"
-            ></app-columns-select>
+            <app-columns-select [(settings)]="settings3" [leftList]="true"></app-columns-select>
           </div>
         </div>
-    
+
         <div class="row">
           <div class="col-md-12">
             <div [class]="loading ? 'table-loading' : ''">
               <div class="table-responsive">
-                <ng2-smart-table
-                  [settings]="settings3"
-                  [source]="data3"
-                  (edit)="edit3($event.data)"
-                (delete)="showDeleteAlert3($event.data)"
-                (userRowSelect)="rowsSelected1($event)"
-                ></ng2-smart-table>
+                <ng2-smart-table [settings]="settings3" [source]="data3" (edit)="edit3($event.data)"
+                  (delete)="showDeleteAlert3($event.data)" (userRowSelect)="rowsSelected1($event)"></ng2-smart-table>
               </div>
-              <app-pagination
-                [params]="params3"
-                [totalItems]="totalItems3"
-              ></app-pagination>
+              <app-pagination [params]="params3" [totalItems]="totalItems3"></app-pagination>
             </div>
           </div>
         </div>
