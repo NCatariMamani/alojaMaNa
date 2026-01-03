@@ -1,7 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import 'simple-keyboard/build/css/index.css';
 @import 'ngx-toastr/toastr';
 @import "assets/argon/scss/argon-dashboard.scss";
+
+
+
+@layer base {
+  html, body {
+    font-family: "Century Gothic", "CenturyGothic", "AppleGothic", sans-serif;
+  }
+}
+
 
 .toast-title {
   color: #808b96 !important;

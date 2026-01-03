@@ -1,3 +1,10 @@
+<div class="flex bg-blue-600 justify-center items-center p-4">
+    <div class="w-50 h-20 flex rounded-lg shadow-xl justify-center items-center bg-white">
+      
+        <img src="assets/images/login3.png" alt="Logo" class="max-h-full max-w-full"/>
+
+    </div>
+</div>
 <div class="min-vh-100 col-12 component-background">
     <div class="row justify-content-center">
       <div
@@ -74,7 +81,7 @@
                     <div class="mt-3 d-grid p-1">
                       <button
                         [ngClass]="{ loading: loading }"
-                        class="btn btn-sm"
+                        class="rounded-full p-2"
                         type="submit"
                         [disabled]="loginForm.invalid">
                         {{
@@ -83,7 +90,7 @@
                             : 'Iniciar Sesi&oacute;n'
                         }}
   
-                         <!--<img width="20 px" *ngIf="loading" src="assets/images/loader-button.gif" alt="loading" />-->
+                        <!--<img width="20 px" *ngIf="loading" src="assets/images/loader-button.gif" alt="loading" />-->
                       </button>
                     </div>
                   </form>
