@@ -14,44 +14,61 @@
             </form-field>
           </form>
         </div>
-      </div>
-      <div class="col-md-6 mb-3 justify-content-center">
-        <div class="row">
-          <div class="col-md-4">
-            <span class="badge bg-danger1 text-black d-flex">
-              <h3>OCUPADO</h3>
-            </span>
-          </div>
-          <div class="col-md-4">
-            <span class="badge bg-warning1 text-black d-flex">
-              <h3>SUCIO</h3>
-            </span>
-          </div>
-          <div class="col-md-4">
-            <span class="badge bg-success1 text-black d-flex">
-              <h3>LIBRE</h3>
-            </span>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-2 mb-3"></div>
-      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
-        <div class="mr-3">
+        <div class="col-md-2 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <!--<div class="mr-3">
           <new-button (click)="openModal()">
           </new-button>
         </div>
-        <app-columns-select [defaultColumns]="12" [(settings)]="settings" [leftList]="true"></app-columns-select>
-        <div class="mr-3">
-          <button type="button" containerclass="tooltip-style"
-            class="btn btn-warning btn-xs active d-flex justify-content-center align-items-center ml-3"
-            (click)="openModalPDF()">PDF&nbsp;&nbsp;<i class="fas fa-file-pdf bx-sm" aria-hidden="true"></i></button>
-          <!--<iframe *ngIf="pdfUrl" [src]="pdfUrl" width="100%" height="600px"></iframe>-->
+        <app-columns-select [defaultColumns]="12" [(settings)]="settings" [leftList]="true"></app-columns-select>-->
+          <div class="mr-3">
+            <button type="button" containerclass="tooltip-style"
+              class="btn btn-warning active d-flex justify-content-center align-items-center ml-3"
+              (click)="openModalPDF()">Reporte PDF&nbsp;&nbsp;<i class="fas fa-file-pdf bx-sm"
+                aria-hidden="true"></i></button>
+          </div>
         </div>
-
       </div>
     </div>
 
+
     <div class="row">
+      <div class="col-md-2" *ngFor="let habitacion of bedroom">
+        <div class="card mb-4 shadow-sm" [ngClass]="{
+          'bg-success1': habitacion.estado === 'LIBRE',
+          'bg-warning1': habitacion.estado === 'SUCIO',
+          'bg-danger1': habitacion.estado === 'OCUPADO'
+        }">
+          <div class="card-header">
+            <h3 class="fw-bold">{{ habitacion.preferencias }}</h3>
+          </div>
+          <div class="card-body">
+            <div class="row justify-content-center align-items-center">
+              <div class="col-md-12 text-center">
+                <h1 class="fs-1">
+                  <span class="badge rounded-pill" [ngClass]="{
+          'text-bg-info': habitacion.preferencias
+        }">{{ habitacion.noHabitacion }}</span></h1>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <h3>{{ habitacion.estado }}</h3>
+              </div>
+            </div>
+            <div class="row justify-content-center align-items-center">
+              <button type="button" class="btn btn-success"
+                (click)="openModalCreate(habitacion.id, habitacion.preferencias)" [disabled]="habitacion.estado === 'OCUPADO' || habitacion.estado === 'SUCIO'">Reservar&nbsp;&nbsp;<i
+                  class="fas fa-plus-circle"></i></button>
+              <button type="button" class="btn btn-info" (click)="openModalList(habitacion.id)">Detalles&nbsp;&nbsp;<i
+                  class="fas fa-list"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--<div class="row">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
@@ -61,6 +78,6 @@
           <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
 </app-card>

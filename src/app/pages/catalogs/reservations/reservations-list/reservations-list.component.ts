@@ -22,10 +22,11 @@ import { DatePipe } from "@angular/common";
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ReportPdfComponent } from '../report-pdf/report-pdf.component';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { AccomodationService } from 'src/app/core/services/catalogs/accomodation.service';
 import { IAccommodation } from 'src/app/core/models/catalogs/accommodation.model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ReservationsModalListComponent } from '../reservations-modal-list/reservations-modal-list.component';
 
 @Component({
   selector: 'app-reservations-list',
@@ -37,8 +38,10 @@ export class ReservationsListComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   data: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
   data1: any = [];
   columnFilters: any = [];
+  columnFilters1: any = [];
   totalItems: number = 0;
   infoUser: number = 0;
   roleUser: number = 0;
@@ -48,6 +51,10 @@ export class ReservationsListComponent extends BasePage implements OnInit {
   result?: any[];
   onSelect: boolean = false;
   alojaIdRole: number = 0;
+  bedroom: any;
+  validation?: string;
+  filterAloja: boolean = true;
+  ocupado: boolean = true;
 
   reservarions?: IReservations;
   accomodations = new DefaultSelect<IAccommodation>();
@@ -133,6 +140,10 @@ export class ReservationsListComponent extends BasePage implements OnInit {
     };
   }
 
+  get selecIdAloja() {
+    return this.form.get('selecAloja') as FormControl;
+  }
+
   ngOnInit() {
     this.inicialize();
     this.data
@@ -172,7 +183,6 @@ export class ReservationsListComponent extends BasePage implements OnInit {
           this.getAllReservations();
         }
       });
-
     /*this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getAllReservations());*/
@@ -180,7 +190,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
 
   }
 
-  private inicialize() {
+  private async inicialize() {
     this.form = this.fb.group({
       selecAloja: [null, [Validators.required]],
     });
@@ -191,9 +201,19 @@ export class ReservationsListComponent extends BasePage implements OnInit {
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getAllReservations());
+      let inCharge: any = await this.validInCharge(this.infoUser);
+      const idAloja = inCharge.data[0].alojamientoId;
+      //this.selecIdAloja.setValue(idAloja);
+      this.alojaIdRole = idAloja;
+      this.getAllBedrooms(idAloja);
     } else {
       this.onSelect = true;
+      let inCharge1: any = await this.validInCharge(this.infoUser);
+      const idAloja1 = inCharge1.data[0].alojamientoId;
+      this.selecIdAloja.setValue(idAloja1);
       this.getAccomodation(new ListParams());
+      this.getAllBedrooms(idAloja1);
+       this.alojaIdRole = idAloja1;
     }
 
     //console.log(this.infoUser,this.roleUser);
@@ -235,6 +255,9 @@ export class ReservationsListComponent extends BasePage implements OnInit {
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getAllReservations(event.id));
+      const idAloja1 = event.id;
+      console.log(idAloja1);
+      this.getAllBedrooms(idAloja1);
     }
   }
 
@@ -283,6 +306,38 @@ export class ReservationsListComponent extends BasePage implements OnInit {
     //this.openModalIncrease(event);
   }
 
+  getAllBedrooms(idAloja: number) {
+    this.loading = true;
+    this.bedroom = [];
+    console.log(idAloja);
+    let params = {
+      ...this.params1.getValue(),
+      ...this.columnFilters1,
+      limit: 50
+    };
+    if (idAloja) {
+      params['filter.alojamientoId'] = `$eq:${idAloja}`;
+    }
+    //params1['filter.alojamientoId'] = `$eq:${this.idInCharge}`
+    this.bedroomService.getAll(params).subscribe({
+      next: response => {
+        this.bedroom = response.data;
+        console.log(this.bedroom);
+      },
+      error: error => {
+        (this.loading = false);
+        this.data.load([]);
+        if (error.status == 403) {
+          this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
+        } else {
+          //this.alert('error', 'No se logro Eliminar', 'Existe una relacion');
+        }
+      }
+    }
+    );
+  }
+
+
   openModalIncrease(reservations?: IReservations) {
     let config: ModalOptions = {
       initialState: {
@@ -303,7 +358,8 @@ export class ReservationsListComponent extends BasePage implements OnInit {
   }
 
   openModalSales(reservations?: IReservations) {
-    const idAloja = this.idInCharge;
+    const idAloja = this.alojaIdRole;
+    console.log(this.alojaIdRole);
     let config: ModalOptions = {
       initialState: {
         reservations,
@@ -338,6 +394,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
         this.openModalIncrease(event);
       } else {
         const validate = this.contarHorasDespuesDeMediodia(time, event.horaProgramada);
+        console.log(validate);
         if (validate > 4) {
           this.alertQuestion(
             'warning',
@@ -349,7 +406,7 @@ export class ReservationsListComponent extends BasePage implements OnInit {
               this.params
                 .pipe(takeUntil(this.$unSubscribe))
                 .subscribe(() => this.getAllReservations());
-              this.openModal();
+              //this.openModal();
             }
           });
         } else if (validate <= 4) {
@@ -448,18 +505,40 @@ export class ReservationsListComponent extends BasePage implements OnInit {
   }
 
   edit(reservations: IReservations) {
-    this.openModal(reservations);
-  }
-
-
-  openModal(reservations?: IReservations) {
+    //this.openModal(reservations);
     const idAloja = this.alojaIdRole;
     let config: ModalOptions = {
       initialState: {
         reservations,
         idAloja,
         callback: (next: boolean) => {
-          if (next) this.getAllReservations(this.alojaIdRole);
+          if (next) {
+            this.getAllReservations(this.alojaIdRole);
+            this.getAllBedrooms(this.alojaIdRole);
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ReservationsDetailComponent, config);
+  }
+
+
+  openModalCreate(idHab?: number, pref?: string) {
+    const idAloja = this.alojaIdRole;
+    const idHabita = idHab;
+    const prefeHab = pref;
+    let config: ModalOptions = {
+      initialState: {
+        idAloja,
+        idHabita,
+        prefeHab,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getAllReservations(this.alojaIdRole);
+            this.getAllBedrooms(this.alojaIdRole);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -557,22 +636,55 @@ export class ReservationsListComponent extends BasePage implements OnInit {
 
   openModalPDF(dates?: any) {
     let idAloja;
-    if(this.alojaIdRole != 0){
+    if (this.alojaIdRole != 0) {
       idAloja = this.alojaIdRole;
-    }else{
+    } else {
       idAloja = this.idInCharge;
     }
     let config: ModalOptions = {
       initialState: {
         idAloja,
         callback: (next: boolean) => {
-          if (next) this.getAllReservations();
+          if (next) {
+            this.getAllReservations(this.alojaIdRole);
+            this.getAllBedrooms(this.alojaIdRole);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(ReportPdfComponent, config);
+  }
+
+
+  openModalList(event: number) {
+    const buttonCancel = true;
+    let idHab = event;
+    let idAloja;
+    let filter = this.filterAloja;
+    if (this.alojaIdRole != 0) {
+      idAloja = this.alojaIdRole;
+    } else {
+      idAloja = this.idInCharge;
+    }
+    let config: ModalOptions = {
+      initialState: {
+        idAloja,
+        filter,
+        idHab,
+        buttonCancel,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getAllReservations(this.alojaIdRole);
+            this.getAllBedrooms(this.alojaIdRole);
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ReservationsModalListComponent, config);
   }
 
 

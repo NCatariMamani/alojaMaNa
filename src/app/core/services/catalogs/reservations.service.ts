@@ -40,9 +40,13 @@ export class ReservationsService extends HttpService {
 
   getPdf(body: any): Observable<Blob> {
     //return this.shoppingRepo.getAll(`${this.router}/generatepdf`, params);
-    return this.shoppingRepo.getGeneratePDF(`${this.router}/generatepdf`,body);
+    return this.shoppingRepo.getGeneratePDF(`${this.router}/generatepdf`, body);
   }
 
-  
+  getIdBedroomReser(id: string | number): Observable<any> {
+    return this.shoppingRepo.getById(`${this.router}/getIdHabReser`, id);
+  }
+
+
 
 }

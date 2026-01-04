@@ -62,7 +62,8 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   idAloja: number = 0;
   eventReserId?: number;
   eventHabId?: number
-
+  idHabita?: number;
+  prefeHab?: string;
 
   constructor(
     private modalRef: BsModalRef,
@@ -110,7 +111,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       fecha: [null, [Validators.required]],
       horaEntrada: [null, [Validators.required]],
       horaProgramada: [null, [Validators.required]],
-      tiempo: ['MOMENTANEO', [Validators.required]],
+      tiempo: [null, [Validators.required]],
       compania: ['OCUPADO', [Validators.required]],
       costoHabitacion: [null, [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       costoExtra: [null, [Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
@@ -125,22 +126,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       //
     });
     this.form.disable();
-    //this.form.controls['tiempo'].enable();
-    this.form.controls['habitacionId'].enable();
     this.form.controls['clienteId'].enable();
-    /*this.form.controls['fecha'].disable();
-    this.form.controls['horaEntrada'].disable();
-    this.form.controls['horaProgramada'].disable();
-    this.form.controls['costoHabitacion'].disable();
-    this.form.controls['total'].disable();
-    this.form.controls['compania'].disable();
-    this.form.controls['costoExtra'].disable();
-    this.form.controls['encargadoId'].disable();
-    this.form.controls['alojamientoId'].disable();
-    this.form.controls['cambio'].disable();
-    this.form.controls['estadoCambio'].disable();
-    this.form.controls['montoEntregado'].disable();*/
-
 
     if (this.reservations != null) {
       this.edit = true;
@@ -165,8 +151,12 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       const date = new Date();
       const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
       this.form.controls['fecha'].setValue(formattedDate);
+      this.habitaId.setValue(this.idHabita);
       this.form.controls['horaEntrada'].setValue(this.getCurrentFormattedTime());
-      this.canExecuteProcess();
+      if (this.prefeHab) {
+        this.canExecuteProcess(this.prefeHab);
+      }
+      this.prefe = this.prefeHab;
     }
     setTimeout(() => {
       this.getBedroom(new ListParams());
@@ -223,7 +213,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     return `${hours}:${minutes} ${ampm}`;
   }
 
-  canExecuteProcess() {
+  canExecuteProcess(pref: string) {
     /*const date = this.addHoursToTime(2);
     let currentHour = date.getHours();
     const currentMinutes = date.getMinutes();*/
@@ -239,7 +229,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       const time = '12:00 pm';
       this.form.controls['horaProgramada'].setValue(time);
       this.form.controls['tiempo'].setValue('TODA LA NOCHE');
-      //this.onChangeTime('TODA LA NOCHE');
+      this.selectTN('TODA LA NOCHE', pref);
       this.form.controls['montoEntregado'].enable();
       this.form.controls['tiempo'].disable();
     } else {
@@ -394,6 +384,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     if (this.idAloja != 0) {
       //this.idAloja;
       params['filter.alojamientoId'] = `$eq:${this.idAloja}`;
+      params.limit = 50;
       this.bedroomsService.getAll(params).subscribe({
         next: data => {
           console.log(data);
@@ -602,9 +593,36 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     }
   }
 
+  selectTN(event: string, pref: string) {
+    console.log(event);
+    if (event == 'TODA LA NOCHE') {
+      const time = '12:00 pm';
+      this.form.controls['horaProgramada'].setValue(time);
+    }
+    if (pref == 'SIMPLE' && event == 'MOMENTANEO') {
+      const formatCostBob = this.formatToBolivianCurrency(30);
+      this.form.controls['costoHabitacion'].setValue(formatCostBob);
+      this.form.controls['total'].setValue(formatCostBob);
+    } else if (pref == 'SIMPLE' && event == 'TODA LA NOCHE') {
+      const formatCostBob1 = this.formatToBolivianCurrency(60);
+      this.form.controls['costoHabitacion'].setValue(formatCostBob1);
+      this.form.controls['total'].setValue(formatCostBob1);
+    } else if (pref == 'BAÑO PRIVADO' && event == 'MOMENTANEO') {
+      const formatCostBob2 = this.formatToBolivianCurrency(40);
+      this.form.controls['costoHabitacion'].setValue(formatCostBob2);
+      this.form.controls['total'].setValue(formatCostBob2);
+    } else {
+      const formatCostBob3 = this.formatToBolivianCurrency(70);
+      this.form.controls['costoHabitacion'].setValue(formatCostBob3);
+      this.form.controls['total'].setValue(formatCostBob3);
+    }
+  }
+
   onChangeTime(event: any) {
+    this.form.controls['montoEntregado'].enable();
     console.log(event);
     if (event == 'MOMENTANEO') {
+      console.log('momen');
       this.form.controls['horaProgramada'].setValue(this.getTimeTwo());
     } else if (event == 'TODA LA NOCHE') {
       const time = '12:00 pm';
@@ -714,7 +732,26 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
   }
 
   onChangeCustomer(event: any) {
-    console.log(event);
+    /*this.form.controls['montoEntregado'].enable();
+    const habId = this.form.controls['habitacionId'].value;
+    let habita: any = await this.getBedroomFilter(habId);
+    console.log(habId ,habita);*/
+  }
+
+  async getBedroomFilter(habId: number){
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${habId}`;
+    //params['filter.alojamientoId'] = `$eq:${this.idAloja}`;
+    return new Promise((resolve, reject) => {
+      this.bedroomsService.getAll(params).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: err => {
+          resolve(0);
+        },
+      });
+    });
   }
 
   onChangeAccomodation(event: any) {

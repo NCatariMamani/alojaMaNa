@@ -302,6 +302,7 @@ export class SalesListComponent extends BasePage implements OnInit {
     const idSale = this.idSale;
     const reservationsSales = this.reservations;
     const alojaId = this.idAloja;
+    console.log(alojaId);
     let config: ModalOptions = {
       initialState: {
         productSales,

@@ -32,6 +32,7 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
   changeValid?: string;
   bodyWithoutChange?: {};
   bodyWithChange?: {};
+  validTime?: number;
 
 
   constructor(
@@ -350,22 +351,23 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
       if (time1 == time2) {
         this.withoutChange(formattTime);
       } else {
-        const actual = this.form.controls['horaSalida'].getRawValue();
-        let vari = this.contarHorasDespuesDeMediodia(actual);
-        console.log(vari);
-        if (vari == 0) {
-          this.withoutChange(formattTime);
-        } else if (vari == 1) {
-          this.validChange(10);
-        } else if (vari == 2) {
-          this.validChange(20);
-        } else if (vari == 3) {
-          this.validChange(30);
-        } else {
-          this.validChange(40);
+        //const actual = this.form.controls['horaSalida'].getRawValue();
+        if (this.validTime) {
+          let vari = this.validTime;
+          console.log(vari);
+          if (vari == 0) {
+            this.withoutChange(formattTime);
+          } else if (vari == 1) {
+            this.validChange(10);
+          } else if (vari == 2) {
+            this.validChange(20);
+          } else if (vari == 3) {
+            this.validChange(30);
+          } else {
+            this.validChange(40);
+          }
         }
       }
-
     } else if (fin >= inicio && fin <= program) {
       this.withoutChange(formattTime);
     } else if (fin > program) {
@@ -473,7 +475,7 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
   }
 
 
-  contarHorasDespuesDeMediodia(horaActual: string): number {
+ /* contarHorasDespuesDeMediodia(horaActual: string): number {
     console.log(horaActual);
     const actu = this.convertirHora12a24(horaActual);
     console.log(actu);
@@ -488,6 +490,6 @@ export class ReservationsModalComponent extends BasePage implements OnInit {
     }
     const diferencia = (mediodia.getTime() - horaActualDate.getTime()) / (1000 * 60 * 60);
     return Math.abs(Math.floor(diferencia));
-  }
+  }*/
 
 }

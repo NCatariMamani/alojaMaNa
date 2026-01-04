@@ -4,7 +4,7 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row pt-4">
+      <!--<div class="row pt-4">
         <div class="col-md-4">
           <form-field [control]="form.get('alojamientoId')">
             <ngx-select [form]="form" control="alojamientoId" (fetchItems)="getAccomodation($event)"
@@ -28,8 +28,8 @@
             </ngx-select>
           </form-field>
         </div>
-      </div>
-      <div class="row pt-4">
+      </div>-->
+      <div class="row">
         <div class="col-md-6">
           <form-field [control]="form.get('clienteId')">
             <ngx-select [form]="form" control="clienteId" (fetchItems)="getCustomer($event)" [data]="customers"
@@ -39,13 +39,12 @@
         </div>
         <div class="col-md-2">
           <div class="row">
-            <button type="button" tooltip="Nuevo" containerclass="tooltip-style"
+            <button type="button" tooltip="Nuevo" 
               class="btn btn-info btn-sm active d-flex justify-content-center align-items-center"
               (click)="openModal()">
               <i class="bx bx-plus bx-sm"></i>
             </button>
           </div>
-
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('habitacionId')">
@@ -84,7 +83,6 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-4"></div>
 
       <div class="row pt-4">
         <div class="col-md-4">

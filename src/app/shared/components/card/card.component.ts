@@ -18,7 +18,7 @@ import { Component, Input, OnInit } from '@angular/core';
   styles: [
     `
       .card {
-        box-shadow: 0 3px 10px rgb(0 0 0 / 0.2) !important;
+        box-shadow: 0 1px 7px rgb(0 0 0 / 0.2) !important;
         border-radius: 7px;
       }
     `,

@@ -1,0 +1,142 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">RESERVACIÓNES</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <!--<div class="row" *ngIf="onSelect">
+        <div class="col-md-6">
+          <form class="form-material" [formGroup]="form">
+            <form-field [control]="form.get('selecAloja')">
+              <ngx-select [form]="form" control="selecAloja" (fetchItems)="getAccomodation($event)"
+                [data]="accomodations" bindLabel="idName" label="Nombre del Alojamiento" value="id"
+                (change)="onChangeAccomodation($event)" [readonly]="false"></ngx-select>
+            </form-field>
+          </form>
+        </div>
+      </div>-->
+      <div class="col-md-6 mb-3 justify-content-center">
+        <div class="row">
+          <div class="col-md-4">
+            <span class="badge bg-danger1 text-black d-flex">
+              <h3>OCUPADO</h3>
+            </span>
+          </div>
+          <div class="col-md-4">
+            <span class="badge bg-warning1 text-black d-flex">
+              <h3>SUCIO</h3>
+            </span>
+          </div>
+          <div class="col-md-4">
+            <span class="badge bg-success1 text-black d-flex">
+              <h3>LIBRE</h3>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <!--<div class="mr-3">
+          <new-button (click)="openModal()">
+          </new-button>
+        </div>-->
+        <app-columns-select [defaultColumns]="12" [(settings)]="settings" [leftList]="true"></app-columns-select>
+        <!--<div class="mr-3">
+          <button type="button" containerclass="tooltip-style"
+            class="btn btn-warning btn-xs active d-flex justify-content-center align-items-center ml-3"
+            (click)="openModalPDF()">PDF&nbsp;&nbsp;<i class="fas fa-file-pdf bx-sm" aria-hidden="true"></i></button>
+        </div>-->
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table [settings]="settings" [source]="data" (edit)="edit($event.data)"
+              (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
+          </div>
+          <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" *ngFor="let reser of reserv">
+      <!--<div class="card-header">
+        {{reser.clientes.nombre}}
+      </div>-->
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-2">
+            <h3 class="card-title"><strong>Nombre: </strong></h3>
+          </div>
+          <div class="col-md-4">
+            <h3 class="card-title">{{reser.clientes.nombre}} {{reser.clientes.paterno}} {{reser.clientes.materno}}</h3>
+          </div>
+          <div class="col-md-2">
+            <h3 class="card-title"><strong>Habitación: </strong></h3>
+          </div>
+          <div class="col-md-4">
+            <h3 class="card-title">{{reser.habitaciones.noHabitacion}} {{reser.habitaciones.preferencias}}</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <h3 class="card-title"><strong>Hora Entrada</strong></h3>
+          </div>
+          <div class="col-md-3">
+            <h3 class="card-title">{{reser.horaEntrada}}</h3>
+          </div>
+          <div class="col-md-3">
+            <h3 class="card-title"><strong>Hora Programada</strong></h3>
+          </div>
+          <div class="col-md-3">
+            <h3 class="card-title">{{reser.horaProgramada}}</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <h3 class="card-title"><strong>Tiempo</strong></h3>
+          </div>
+          <div class="col-md-3">
+            <h3 class="card-title">{{reser.tiempo}}</h3>
+          </div>
+          <div class="col-md-3">
+            <h3 class="card-title"><strong>Cambio</strong></h3>
+          </div>
+          <div class="col-md-3">
+            <h3 class="card-title">{{reser.cambio}}</h3>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="d-flex justify-content-around">
+            <button type="button" containerclass="tooltip-style"
+              class="btn btn-warning btn-ms active d-flex justify-content-center align-items-center ml-3"
+              (click)="showDeleteAlert(reserv[0])">Eliminar&nbsp;&nbsp;<i class="fas fa-broom"
+                aria-hidden="true"></i></button>
+            <button type="button" containerclass="tooltip-style"
+              class="btn btn-danger btn-ms active d-flex justify-content-center align-items-center ml-3"
+              (click)="increase(reserv[0])">Aseo&nbsp;&nbsp;<i class="fas fa-broom" aria-hidden="true"></i></button>
+            <button type="button" containerclass="tooltip-style"
+              class="btn btn-success btn-ms active d-flex justify-content-center align-items-center ml-3"
+              (click)="sales(reserv[0])">Ventas&nbsp;&nbsp;<i class="fas fa-cart-plus" aria-hidden="true"></i></button>
+            <button type="button" containerclass="tooltip-style"
+              class="btn btn-primary btn-ms active d-flex justify-content-center align-items-center ml-3"
+              (click)="output(reserv[0])">Salida&nbsp;&nbsp;<i class="fas fa-hand-point-right"
+                aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>
+<div footer *ngIf="buttonCancel">
+  <div class="d-flex justify-content-center">
+    <div class="">
+      <button type="button" class="btn btn-danger active" (click)="close()">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>

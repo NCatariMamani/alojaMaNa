@@ -133,6 +133,7 @@ export class ProductSalesListComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
+    console.log(shopping);
     this.modalService.show(ProductSalesDetailComponent, config);
   }
 

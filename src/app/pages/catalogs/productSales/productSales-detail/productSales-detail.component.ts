@@ -47,6 +47,7 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
   sales?: ISales;
 
   price?: string;
+  shopping: any;
 
   constructor(
     private modalRef: BsModalRef,
@@ -101,6 +102,8 @@ export class ProductSalesDetailComponent extends BasePage implements OnInit {
       this.getSales(new ListParams());
       this.getProducts(new ListParams());
     }, 100);
+
+    console.log(this.shopping);
 
   }
 
