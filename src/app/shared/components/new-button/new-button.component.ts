@@ -30,7 +30,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
             class="btn btn-success btn-xs active d-flex justify-content-center align-items-center ml-3"
             (click)="onConfirm()"
           >
-            Nuevo <i class="bx bx-plus bx-sm ml-2"></i>
+           {{ text ? text : 'Nuevo' }} <i class="bx bx-plus bx-xm ml-2"></i>
           </button>
   `,
   styles: [

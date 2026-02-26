@@ -53,6 +53,7 @@ export class InputModalComponent extends BasePage implements OnInit {
     this.form.controls['fecha'].disable();
     if (this.productInventory != null) {
       //this.edit = true;
+      
       this.proInId = this.productInventory.id;
       let product = this.productInventory.productoId;
       let descPrduct: any = await this.getProduct(Number(product));

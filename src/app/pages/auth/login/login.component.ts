@@ -16,6 +16,9 @@ export class LoginComponent extends BasePage implements OnInit {
   loginForm: FormGroup = new FormGroup({});
   showPassword: boolean = false;
   deleteClass: boolean = true;
+  isSubmitting: boolean = false; // Nueva propiedad para controlar envío
+  formSubmitted: boolean = false; // Para controlar si ya se intentó enviar
+  isButtonDisabled: boolean = true;
 
 
   //username: string = '';
@@ -47,6 +50,17 @@ export class LoginComponent extends BasePage implements OnInit {
       this.deleteClass = false;
     });
   }
+
+  /*  // Getter para verificar si el formulario es válido
+  get isFormValid(): boolean {
+    return this.loginForm.valid;
+  }
+
+  // Getter para verificar si debe estar deshabilitado
+  get isButtonDisabled(): boolean {
+    return this.isSubmitting || !this.isFormValid;
+  }*/
+
 
   onSubmit() {
     this.loading = true;

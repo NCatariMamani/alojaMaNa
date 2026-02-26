@@ -25,7 +25,7 @@ interface ISettings {
         margin-right: 0px !important;
       }
       #dropdown-basic.left {
-        inset: 0% auto auto -93px !important;
+        inset: 0% auto auto -110px !important;
         width: 200px !important;
         max-width: 200px !important;
       }
@@ -33,6 +33,10 @@ interface ISettings {
       #searchbar {
         font-size: 14px;
         height: 35px;
+      }
+
+     .btn-info:active {
+      transform: none !important;
       }
     `,
   ],
@@ -57,7 +61,7 @@ export class ColumnsSelectComponent implements OnInit {
   @Input() leftList: boolean = false;
   searchControl = new FormControl<any>(null);
   selectAllControl = new FormControl(false);
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     this.initColumns();

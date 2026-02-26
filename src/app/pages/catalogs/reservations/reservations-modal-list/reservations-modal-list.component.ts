@@ -17,6 +17,7 @@ import { DatePipe } from "@angular/common";
 import { ReservationsModalComponent } from '../reservations-modal/reservations-modal.component';
 import { ReservationsDetailComponent } from '../reservations-detail/reservations-detail.component';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { secondFormatDateToDate, secondFormatDateTofirstFormatDate, thirdFormatDate } from 'src/app/shared/utils/date';
 
 @Component({
   selector: 'app-reservations-modal-list',
@@ -42,117 +43,12 @@ export class ReservationsModalListComponent extends BasePage implements OnInit {
     private inChargeService: InChargeService,
     private modalService: BsModalService,
     private modalRef: BsModalRef,
+    private datePipe: DatePipe,
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: true,
-        add: false,
-        position: 'right',
-      },
-      columns: {
-        officialConclusion: {
-          title: 'Aseo',
-          width: '5%',
-          type: 'custom',
-          sort: false,
-          filter: false,
-          renderComponent: ButtonColumnAddComponent,
-          onComponentInitFunction: (instance: any) => {
-            instance.onClick.subscribe((row: any) => {
-              this.increase(row);
-            });
-          },
-        },
-        officialConclusion1: {
-          title: 'Venta',
-          width: '5%',
-          type: 'custom',
-          sort: false,
-          filter: false,
-          renderComponent: ButtonColumnComponent,
-          onComponentInitFunction: (instance: any) => {
-            instance.onClick.subscribe((row: any) => {
-              this.sales(row);
-            });
-          },
-        },
-        officialConclusion2: {
-          title: 'Salida',
-          width: '5%',
-          type: 'custom',
-          sort: false,
-          filter: false,
-          renderComponent: ButtonColumnOutputComponent,
-          onComponentInitFunction: (instance: any) => {
-            instance.onClick.subscribe((row: any) => {
-              this.output(row);
-            });
-          },
-        },
-        ...RESERVATIONS_COLUMNS_1,
-      },
-      rowClassFunction: (row: any) => {
-        let hab = row.data;
-        //console.log(hab.compania);
-        switch (hab.compania) {
-          case 'OCUPADO':
-            return 'bg-danger1';
-          case 'LIBRE':
-            return 'bg-success1';
-          case 'SUCIO':
-            return 'bg-warning1';
-          default:
-            return 'bg-light text-black';
-        }
-      },
-    };
   }
 
   ngOnInit() {
-    console.log(this.filter, this.idHab);
-    this.data
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'id':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'precio':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'clientes':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}.nombre`;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
-
-            if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters[field];
-            }
-          });
-          this.params = this.pageFilter(this.params);
-          this.getAllReservations();
-        }
-      });
-
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getAllReservations());
@@ -342,21 +238,12 @@ export class ReservationsModalListComponent extends BasePage implements OnInit {
       this.alert('success', 'Ya se regisro la hora de salida', '');
       return;
     } else {
-      let time = this.currentTime();
-      const timeReset1 = new Date();
-      /*const var1 = '1:20 pm';
-      const var2 = '5:22 pm';
-      const validate = this.contarHorasDespuesDeMediodia(var2, var1);
-      console.log(validate);*/
-      const time1 = new DatePipe('en-EN').transform(event.fecha, 'dd/MM/yyyy', 'UTC');
-      const time2 = new DatePipe('en-EN').transform(timeReset1, 'dd/MM/yyyy', 'UTC');
-      console.log(time1, time2);
-      if (time1 == time2) {
+
+      if (event.fecha === event.fechaSalida) {
         this.openModalIncrease(event);
       } else {
+        let time = this.currentTime();
         const validate = this.contarHorasDespuesDeMediodia(time, event.horaProgramada, event.fecha);
-        //const time2222 = new Date().toString();
-        console.log(validate)
         if (validate > 4) {
           this.alertQuestion(
             'warning',
@@ -384,7 +271,6 @@ export class ReservationsModalListComponent extends BasePage implements OnInit {
           this.openModalIncrease(event);
         }
       }
-
     }
   }
 
@@ -406,7 +292,6 @@ export class ReservationsModalListComponent extends BasePage implements OnInit {
     if (valid) {
       validTime = valid;
     }
-
     let config: ModalOptions = {
       initialState: {
         reservations,
@@ -447,18 +332,6 @@ export class ReservationsModalListComponent extends BasePage implements OnInit {
     const diferencia = (horaActualDate.getTime() - finRangoConTolerancia.getTime()) / (1000 * 60 * 60);
     return Math.abs(Math.floor(diferencia));
   }
-
-
-  /*convertirHora12a24(hora12: string): string {
-    const [hora, minutos, periodo] = hora12.match(/(\d+):(\d+)\s*(AM|PM)/i)!.slice(1);
-    let hora24 = parseInt(hora, 10);
-    if (periodo.toUpperCase() === "PM" && hora24 !== 12) {
-      hora24 += 12; // Convertir PM a formato 24 horas
-    } else if (periodo.toUpperCase() === "AM" && hora24 === 12) {
-      hora24 = 0; // Medianoche en formato 24 horas
-    }
-    return `${hora24.toString().padStart(2, "0")}:${minutos}`;
-  }*/
 
   convertirHora12a24(hora12: string): string {
     const [hora, minutoYPeriodo] = hora12.split(':');
@@ -509,6 +382,13 @@ export class ReservationsModalListComponent extends BasePage implements OnInit {
 
         this.delete(reservarions.id);
         //Swal.fire('Borrado', '', 'success');
+        this.updateBedroom('LIBRE', reservarions.habitacionId);
+        this.updateReservation(reservarions.id);
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getAllReservations());
+        this.modalRef.content.callback(true);
+        this.modalRef.hide();
       }
     });
   }
@@ -518,9 +398,7 @@ export class ReservationsModalListComponent extends BasePage implements OnInit {
     this.reservationsService.remove(id).subscribe({
       next: () => {
         this.alert('success', 'RESERVACIÓN', 'Borrado Correctamente');
-        this.params
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getAllReservations());
+
       }, error: err => {
         if (err.status == 403) {
           this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);

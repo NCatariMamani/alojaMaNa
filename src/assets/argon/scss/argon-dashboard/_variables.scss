@@ -52,7 +52,7 @@ $colors: (
 ) !default;
 // scss-docs-end colors-map
 
-$primary:       #5e72e4 !default;
+$primary:       #0d74cf !default;
 $secondary:     #8392ab !default;
 $info:          #11cdef !default;
 $success:       #2dce89 !default;
@@ -735,7 +735,7 @@ $btn-hover-box-shadow:        0 7px 14px rgba(50, 50, 93, .1), 0 3px 6px rgba(0,
 $btn-focus-box-shadow:        $btn-hover-box-shadow !default;
 $btn-focus-width:             $input-btn-focus-width !default;
 $btn-hover-opacity:           .85 !default;
-$btn-disabled-opacity:        .65 !default;
+$btn-disabled-opacity:        .40 !default;
 $btn-active-box-shadow:       none !default;
 $btn-hover-transform:         translateY(-1px) !default;
 $btn-active-hover-transform:  translateY(-1px) !default;

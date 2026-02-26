@@ -9,6 +9,7 @@ import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { ReservationsModalComponent } from './reservations-modal/reservations-modal.component';
 import { ReportPdfComponent } from './report-pdf/report-pdf.component';
 import { ReservationsModalListComponent } from './reservations-modal-list/reservations-modal-list.component';
+import { ReservationsBedroomsComponent } from './reservations-bedrooms/reservations-bedrooms.component';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { ReservationsModalListComponent } from './reservations-modal-list/reserv
     ReservationsListComponent,
     ReservationsModalComponent,
     ReportPdfComponent,
-    ReservationsModalListComponent
+    ReservationsModalListComponent,
+    ReservationsBedroomsComponent
   ]
 })
 export class ReservationsModule { }

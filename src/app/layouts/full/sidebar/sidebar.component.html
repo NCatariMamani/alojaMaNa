@@ -1,8 +1,8 @@
 <!-- ========== Left Sidebar Start ========== -->
 
 <ng-template #contentTemplate>
- 
-  <div id="sidebar-menu" >
+
+  <div id="sidebar-menu" class="">
     <ul class="metismenu list-unstyled" id="side-menu" #sideMenu>
       <ng-container *ngFor="let item of menuItems">
         <li class="menu-title" *ngIf="item.isTitle">{{ item.label }}</li>
@@ -80,7 +80,7 @@
       </ng-container>
     </ul>
   </div>
-  
+
 
 </ng-template>
 <!--<ng-template #contentTemplate>
@@ -88,7 +88,7 @@
 </ng-template>
 
 
-<!--<aside class=" sidenavbg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 "
+<aside class=" sidenavbg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 "
   id="sidenav-main" #contentTemplate>
   <div class="sidenav-header">
     <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
@@ -196,10 +196,11 @@
 </aside>-->
 
 
-<!-- Sidebar -->
+<!-- Sidebar-->
+
 
 <div class="vertical-menu">
-  
+
   <ng-scrollbar class="scrollbar-menu" #componentRef>
     <div *ngIf="!isCondensed">
       <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>

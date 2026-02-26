@@ -42,7 +42,7 @@ export const CATALOGS_ROUTES = [
     {
         label: 'Reservaciones',
         icon: 'fas fa-wallet',
-        link: '/pages/catalogs/reservations',
+        link: '/pages/catalogs/reservations/list',
     },
     {
         label: 'Producto Inventario',

@@ -17,10 +17,10 @@ import { Component, Input, OnInit } from '@angular/core';
   `,
   styles: [
     `
-      .card {
-        box-shadow: 0 1px 7px rgb(0 0 0 / 0.2) !important;
+      /*.card {
+        box-shadow: 0 1px 7px rgb(0 0 0 0) !important;
         border-radius: 7px;
-      }
+      }*/
     `,
   ],
 })

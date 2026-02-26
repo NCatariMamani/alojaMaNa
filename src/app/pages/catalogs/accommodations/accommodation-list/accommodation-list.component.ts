@@ -85,7 +85,7 @@ export class AccommodationListComponent extends BasePage implements OnInit {
     };
     this.settings3 = {
       ...this.settings,
-      hideSubHeader: false,
+      hideSubHeader: true,
       actions: {
         columnTitle: 'Acciones',
         edit: true,

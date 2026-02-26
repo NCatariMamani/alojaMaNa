@@ -35,6 +35,8 @@ export class SweetalertModel implements SweetAlertOptions {
   position?: SweetAlertPosition;
   backdrop?: string; //Propiedad para cerrar el alert cuando se presione en "Cancelar"
   allowOutsideClick?: boolean; //Propiedad para cerrar el alert cuando se presione en "Cancelar"
+
+
   constructor() {
     this.icon = 'success';
     this.toast = false;
@@ -51,6 +53,7 @@ export class SweetalertModel implements SweetAlertOptions {
       cancelButton: 'btn btn-danger active btn-sm',
     };
     this.buttonsStyling = false;
+
   }
 }
 

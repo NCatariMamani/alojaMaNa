@@ -183,9 +183,9 @@ export class ReservationsListComponent extends BasePage implements OnInit {
           this.getAllReservations();
         }
       });
-    /*this.params
+    this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAllReservations());*/
+      .subscribe(() => this.getAllReservations());
 
 
   }

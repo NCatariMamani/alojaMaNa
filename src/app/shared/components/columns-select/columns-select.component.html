@@ -1,62 +1,36 @@
 <div class="btn-group" dropdown>
-  <button
-    id="button-basic"
-    dropdownToggle
-    type="button"
-    class="btn btn-xs btn-info dropdown-toggle active d-flex justify-content-center align-items-center"
+  <button id="button-basic" dropdownToggle type="button"
+    class="btn btn-xs btn-info dropdown-toggle active:none d-flex justify-content-center align-items-center"
     aria-controls="dropdown-basic">
-    Columnas &nbsp;&nbsp;<i class="fas fa-ellipsis-v bx-sm"></i>
+    Columnas &nbsp;&nbsp;<i class="fas fa-ellipsis-v bx-xm"></i>
   </button>
-  <!-- <div ngbDropdownMenu aria-labelledby="dropdownBasic1"> -->
-  <ul
-    id="dropdown-basic"
-    *dropdownMenu
-    class="dropdown-menu"
-    [ngClass]="leftList == false ? '' : 'left'"
-    role="menu"
-    aria-labelledby="button-basic">
-    <li (click)="$event.stopPropagation()" role="menu" class="dropdown-item">
-      <input
-        type="text"
-        id="searchbar"
-        [formControl]="searchControl"
-        class="form-control" />
-    </li>
-    <li (click)="$event.stopPropagation()" role="menu" class="dropdown-item">
-      <input
-        [formControl]="selectAllControl"
-        type="checkbox"
-        (click)="selectAll()" />
-      Todas las columnas
-    </li>
-    <li
-      role="menuitem"
-      *ngFor="let column of getColumns()"
-      [class]="
+  <div ngbDropdownMenu aria-labelledby="dropdownBasic">
+    <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu " [ngClass]="leftList == false ? '' : 'left'" role="menu"
+      aria-labelledby="button-basic">
+      <li (click)="$event.stopPropagation()" role="menu" class="dropdown-item">
+        <input type="text" id="searchbar" [formControl]="searchControl" class="form-control" />
+      </li>
+      <li (click)="$event.stopPropagation()" role="menu" class="dropdown-item">
+        <input [formControl]="selectAllControl" type="checkbox" (click)="selectAll()" />
+        Todas las columnas
+      </li>
+      <li role="menuitem" *ngFor="let column of getColumns()" [class]="
         (selectVal().length < 3 && column.show) || column.showAlways
           ? 'dropdown-item disabled '
           : 'dropdown-item '
-      "
-      (click)="
+      " (click)="
         column.show = !column.show; selectColumn($event, column.id, column.show)
       ">
-      <input
-        type="checkbox"
-        name=""
-        id=""
-        (click)="
+        <input type="checkbox" name="" id="" (click)="
           column.show = !column.show;
           selectColumn($event, column.id, column.show)
-        "
-        [disabled]="
+        " [disabled]="
           (selectVal().length < 3 && column.show) || column.showAlways
-        "
-        [value]="column"
-        [checked]="column.show" />
-      {{ column.name }}
-    </li>
-  </ul>
-  <!-- </div> -->
+        " [value]="column" [checked]="column.show" />
+        {{ column.name }}
+      </li>
+    </ul>
+  </div>
 </div>
 
 <!-- Example split danger button -->

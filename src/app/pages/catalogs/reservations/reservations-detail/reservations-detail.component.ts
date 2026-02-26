@@ -18,6 +18,7 @@ import { IAccommodation } from 'src/app/core/models/catalogs/accommodation.model
 import { CustomersService } from 'src/app/core/services/catalogs/customers.service';
 import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
 import { CustomersDetailComponent } from '../../customers/customers-detail/customers-detail.component';
+import { formatDateToString } from 'src/app/shared/utils/date';
 
 @Component({
   selector: 'app-reservations-detail',
@@ -109,6 +110,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     //console.log(this.infoInCharge,this.idInCharge, this.inCharge1);
     this.form = this.fb.group({
       fecha: [null, [Validators.required]],
+      fechaSalida: [null, [Validators.required]],
       horaEntrada: [null, [Validators.required]],
       horaProgramada: [null, [Validators.required]],
       tiempo: [null, [Validators.required]],
@@ -250,13 +252,9 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    const dateString = this.form.controls['fecha'].getRawValue();
-    const [day, month, year] = dateString.split("/").map(Number);
-    const date = new Date(Date.UTC(year, month - 1, day));
-    const isoString = date.toISOString();
-
     let body = {
-      fecha: isoString,
+      fecha: formatDateToString(this.form.controls['fecha'].getRawValue()),
+      fechaSalida: formatDateToString(this.form.controls['fechaSalida'].getRawValue()),
       horaEntrada: this.form.controls['horaEntrada'].getRawValue(),
       horaProgramada: this.form.controls['horaProgramada'].getRawValue(),
       tiempo: this.form.controls['tiempo'].getRawValue(),
@@ -274,7 +272,6 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     let body1 = {
       estado: 'OCUPADO'
     }
-
     this.reservationsService.create(body).subscribe({
       next: resp => {
         this.bedroomsService.update(this.form.controls['habitacionId'].getRawValue(), body1).subscribe({
@@ -323,22 +320,6 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       const date = new Date(Date.UTC(year, month - 1, day));
       const isoString = date.toISOString();
       let body = {
-        /*compania: this.form.controls['compania'].getRawValue(),
-        fecha: isoString,
-        horaEntrada: this.form.controls['horaEntrada'].getRawValue(),
-        horaProgramada: this.form.controls['horaProgramada'].getRawValue(),
-        tiempo: this.form.controls['tiempo'].getRawValue(),
-        montoEntregado: this.form.controls['montoEntregado'].getRawValue(),
-        cambio: this.form.controls['cambio'].getRawValue(),
-        estadoCambio: this.form.controls['estadoCambio'].getRawValue(),
-        costoHabitacion: this.form.controls['costoHabitacion'].getRawValue(),
-        total: this.form.controls['total'].getRawValue(),
-        habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
-        encargadoId: Number(this.form.controls['encargadoId'].getRawValue()),
-        alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue()),
-        clienteId: this.form.controls['clienteId'].getRawValue(),*/
-
-        //habitacionId: Number(this.form.controls['habitacionId'].getRawValue()),
         clienteId: this.form.controls['clienteId'].getRawValue(),
 
       }
@@ -620,15 +601,29 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
 
   onChangeTime(event: any) {
     this.form.controls['montoEntregado'].enable();
-    console.log(event);
+    console.log(event, this.bedrooms.data[0].precioTemporal);
     if (event == 'MOMENTANEO') {
       console.log('momen');
+       const date = new Date();
+      const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
+      this.form.controls['fechaSalida'].setValue(formattedDate);
       this.form.controls['horaProgramada'].setValue(this.getTimeTwo());
+      this.form.controls['costoHabitacion'].setValue(this.formatToBolivianCurrency(this.bedrooms.data[0].precioTemporal));
+      this.form.controls['total'].setValue(this.formatToBolivianCurrency(this.bedrooms.data[0].precioTemporal));
+
     } else if (event == 'TODA LA NOCHE') {
       const time = '12:00 pm';
+      const date = new Date();
+      date.setDate(date.getDate() + 1); // Aumenta un día
+      const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
+      this.form.controls['fechaSalida'].setValue(formattedDate);
       this.form.controls['horaProgramada'].setValue(time);
+      this.form.controls['costoHabitacion'].setValue(this.formatToBolivianCurrency(this.bedrooms.data[0].precioNoche));
+      this.form.controls['total'].setValue(this.formatToBolivianCurrency(this.bedrooms.data[0].precioNoche));
     }
-    if (this.prefe == 'SIMPLE' && event == 'MOMENTANEO') {
+
+
+    /*if (this.prefe == 'SIMPLE' && event == 'MOMENTANEO') {
       const formatCostBob = this.formatToBolivianCurrency(30);
       this.form.controls['costoHabitacion'].setValue(formatCostBob);
       this.form.controls['total'].setValue(formatCostBob);
@@ -644,7 +639,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       const formatCostBob3 = this.formatToBolivianCurrency(70);
       this.form.controls['costoHabitacion'].setValue(formatCostBob3);
       this.form.controls['total'].setValue(formatCostBob3);
-    }
+    }*/
   }
 
   getTimeTwo(): string {
@@ -738,7 +733,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
     console.log(habId ,habita);*/
   }
 
-  async getBedroomFilter(habId: number){
+  async getBedroomFilter(habId: number) {
     const params = new ListParams();
     params['filter.id'] = `$eq:${habId}`;
     //params['filter.alojamientoId'] = `$eq:${this.idAloja}`;
@@ -785,7 +780,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
       this.form.controls['estadoCambio'].setValue('E');
     }
     else {
-      this.alert('warning', `El monto ${event} debe ser mayor al total`, ``);
+      this.alert('warning', `El monto ${event} debe ser mayor al costo de la habitación`, ``);
       this.form.controls['montoEntregado'].setValue('');
       return;
     }
@@ -810,7 +805,7 @@ export class ReservationsDetailComponent extends BasePage implements OnInit {
           if (next) this.getCustomer(new ListParams());
         },
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(CustomersDetailComponent, config);

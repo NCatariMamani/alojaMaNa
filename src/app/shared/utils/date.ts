@@ -110,7 +110,7 @@ export function thirdFormatDate(value: Date) {
     if (day < 10) {
       day = '0' + day;
     }
-    return `${year}${month}${day}`;
+    return `${day}/${month}/${year}`;
   } else {
     return null;
   }
@@ -204,9 +204,9 @@ export function formatForIsoDate(
   }
   return format === 'string'
     ? `${values[2]}/${mes}/${values[0]}` +
-        (widthTime
-          ? ` ${values2[0]}:${values2[1]}:${values2[2].substring(0, 2)}`
-          : '')
+    (widthTime
+      ? ` ${values2[0]}:${values2[1]}:${values2[2].substring(0, 2)}`
+      : '')
     : new Date(+values[0], +mes - 1, +values[2]);
 }
 
@@ -219,5 +219,15 @@ export function secondFormatDateToDate2(date: string) {
   } else {
     return null;
   }
+}
+
+export function formatDateToString(value: string) {
+  if (!value) return null;
+  
+  const [day, month, year] = value.split("/").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  
+  // Toma solo la parte de YYYY-MM-DD del ISO string
+  return date.toISOString().split('T')[0];
 }
 

@@ -106,9 +106,8 @@ export const BEDROOMS_COLUMNS = {
             },
           },
     },
-    
-    alojamientos: {
-        title: 'Hospedaje',
+    /*alojamientos: {
+        title: 'Nombre de Alojamiento',
         sort: false,
         valuePrepareFunction: (value: IAccommodation) => {
             return value?.nombre;
@@ -124,7 +123,15 @@ export const BEDROOMS_COLUMNS = {
                 return false;
             }
         },
-    }
+    }*/
+   precioTemporal: {
+        title: 'Precio Temporal',
+        sort: false,
+    },
+    precioNoche: {
+        title: 'Precio Noche',
+        sort: false,
+    },
 };
 
 

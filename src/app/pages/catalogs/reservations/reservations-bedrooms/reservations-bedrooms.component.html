@@ -3,7 +3,7 @@
     <h5 class="title">RESERVACIÓNES</h5>
   </div>
   <div body>
-
+    
     <div class="flex flex-wrap w-full gap-3 " *ngIf="onSelect">
       <div class="flex-1">
         <form class="form-material" [formGroup]="form">
@@ -22,7 +22,7 @@
     </div>
 
 
-    <!--<div class="row">
+    <div class="row">
       <div class="col-md-2" *ngFor="let habitacion of bedroom">
         <div class="card mb-4 shadow-sm" [ngClass]="{
           'bg-success1': habitacion.estado === 'LIBRE',
@@ -52,14 +52,15 @@
                 [disabled]="habitacion.estado === 'OCUPADO' || habitacion.estado === 'SUCIO'">Reservar&nbsp;&nbsp;<i
                   class="fas fa-plus-circle"></i></button>
               <button type="button" class="btn btn-info" (click)="openModalList(habitacion.id)"
-                [disabled]="habitacion.estado === 'LIBRE'">Detalles&nbsp;&nbsp;<i class="fas fa-list"></i></button>
+              [disabled]="habitacion.estado === 'LIBRE'">Detalles&nbsp;&nbsp;<i
+                  class="fas fa-list"></i></button>
             </div>
           </div>
         </div>
       </div>
-    </div>-->
+    </div>
 
-    <div class="row">
+    <!--<div class="row">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
@@ -69,6 +70,6 @@
           <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
 </app-card>

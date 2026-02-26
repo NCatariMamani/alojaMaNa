@@ -27,7 +27,7 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
   noHabi?: number;
 
   accomodations = new DefaultSelect();
-  
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -47,7 +47,9 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
       noHabitacion: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)]],
       preferencias: ['SIMPLE', [Validators.required]],
       estado: ['LIBRE', [Validators.required]],
-      alojamientoId: [this.idAccom,[Validators.required]],
+      alojamientoId: [this.idAccom, [Validators.required]],
+      precioTemporal: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      precioNoche: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
     });
     this.form.controls['alojamientoId'].disable();
     if (this.bedroom != null) {
@@ -73,13 +75,15 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
       noHabitacion: Number(this.form.controls['noHabitacion'].getRawValue()),
       preferencias: this.form.controls['preferencias'].getRawValue(),
       estado: this.form.controls['estado'].getRawValue(),
-      alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue())
+      alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue()),
+      precioTemporal: Number(this.form.controls['precioTemporal'].getRawValue()),
+      precioNoche: Number(this.form.controls['precioNoche'].getRawValue())
     }
     this.bedroomService.create(body).subscribe({
       next: resp => {
         this.handleSuccess(),
-        this.loading = false
-      }, error: err =>  {
+          this.loading = false
+      }, error: err => {
         this.loading = false
         if (err.status == 403) {
           this.alert('error', 'No puede realizar esta acción', `Usted no cuenta con los permisos necesarios`);
@@ -109,7 +113,9 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
         noHabitacion: Number(this.form.controls['noHabitacion'].getRawValue()),
         preferencias: this.form.controls['preferencias'].getRawValue(),
         estado: this.form.controls['estado'].getRawValue(),
-        alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue())
+        alojamientoId: Number(this.form.controls['alojamientoId'].getRawValue()),
+        precioTemporal: Number(this.form.controls['precioTemporal'].getRawValue()),
+        precioNoche: Number(this.form.controls['precioNoche'].getRawValue())
       }
       this.bedroomService
         .update(this.bedroom.id, body)
@@ -153,7 +159,7 @@ export class BedroomsDetailComponent extends BasePage implements OnInit {
     });
   }
 
-  onChangeAccomodation(event: any){
+  onChangeAccomodation(event: any) {
     console.log(event);
   }
 
